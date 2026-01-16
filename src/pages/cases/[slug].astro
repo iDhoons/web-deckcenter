@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTA from '../../components/CTA.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const cases: CollectionEntry<'cases'>[] = await getCollection('cases');
+  return cases.map((caseItem) => ({
+    params: { slug: caseItem.slug },
+    props: { caseItem },
+  }));
+}
+
+interface Props {
+  caseItem: CollectionEntry<'cases'>;
+}
+
+const { caseItem } = Astro.props;
+const { Content } = await caseItem.render();
+---
+
+<BaseLayout
+  title={`${caseItem.data.title} | 데크센터`}
+  description={caseItem.data.excerpt}
+  image={caseItem.data.cover}
+>
+  <div class="case-hero">
+    <img src={caseItem.data.cover} alt={caseItem.data.title} loading="eager" />
+  </div>
+
+  <div class="case-content">
+    <h1>{caseItem.data.title}</h1>
+    <p class="excerpt">{caseItem.data.excerpt}</p>
+
+    <div class="case-meta">
+      <div class="meta-item">
+        <strong>위치:</strong> {caseItem.data.location}
+      </div>
+      <div class="meta-item">
+        <strong>면적:</strong> {caseItem.data.area}
+      </div>
+      <div class="meta-item">
+        <strong>자재:</strong> {caseItem.data.material}
+      </div>
+      <div class="meta-item">
+        <strong>공기:</strong> {caseItem.data.duration}
+      </div>
+    </div>
+
+    <Content />
+
+    {caseItem.data.gallery && caseItem.data.gallery.length > 0 && (
+      <div class="gallery">
+        <h2>갤러리</h2>
+        <div class="gallery-grid">
+          {caseItem.data.gallery.map((img) => (
+            <img src={img} alt={caseItem.data.title} loading="lazy" />
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="cta-section">
+      <CTA text="견적 문의하기" link="https://calc.deckctr.com" variant="primary" />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .case-hero {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+  }
+
+  .case-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .case-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .case-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .excerpt {
+    font-size: 1.25rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .case-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    background: var(--color-gray-100);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+
+  .meta-item {
+    font-size: 0.95rem;
+  }
+
+  .meta-item strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--color-primary);
+  }
+
+  .gallery {
+    margin-top: 3rem;
+  }
+
+  .gallery h2 {
+    margin-bottom: 1.5rem;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .gallery-grid img {
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .gallery-grid img:hover {
+    opacity: 0.8;
+  }
+
+  .cta-section {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--color-gray-100);
+    border-radius: 8px;
+  }
+</style>

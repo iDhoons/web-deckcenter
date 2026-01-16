@@ -1,16 +1,114 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Card from '../components/Card.astro';
+import Section from '../components/Section.astro';
+import CTA from '../components/CTA.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 
+const products: CollectionEntry<'products'>[] = await getCollection('products');
+
+const cases: CollectionEntry<'cases'>[] = (await getCollection('cases')).slice(0, 3);
+
+const productCards = [
+  {
+    title: "목재 데크",
+    description: "자연의 질감과 따뜻한 감성",
+    image: "https://images.unsplash.com/photo-1590059392209-799446d3283c?auto=format&fit=crop&q=80&w=800",
+    link: "/products/wood"
+  },
+  {
+    title: "합성목/WPC",
+    description: "유지보수 걱정 없는 현대적 솔루션",
+    image: "https://images.unsplash.com/photo-1544033333-722a4667469a?auto=format&fit=crop&q=80&w=800",
+    link: "/products/composite"
+  },
+  {
+    title: "알루미늄 데크",
+    description: "반영구적 수명과 완벽한 내화성",
+    image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&q=80&w=800",
+    link: "/products/aluminum"
+  },
+  {
+    title: "부자재/난간",
+    description: "시공의 완성도를 높이는 디테일",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800",
+    link: "/products/accessories"
+  }
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <Hero
+    title="데크의 모든 것, 데크센터"
+    description="목재부터 합성목, 프리미엄 알루미늄 데크까지. 당신의 공간에 가장 가치 있는 바닥재를 제안합니다."
+    ctaText="지금 바로 견적내기"
+    ctaLink="https://calc.deckctr.com"
+    youtubeId="AZVyFLZpuuk"
+    image="https://images.unsplash.com/photo-1590059392209-799446d3283c?auto=format&fit=crop&q=80&w=1200"
+  />
+
+  <Section title="제품 카테고리">
+    <div class="products-grid">
+      {productCards.map(card => (
+        <Card {...card} />
+      ))}
+    </div>
+  </Section>
+
+  <Section title="시공사례">
+    <div class="cases-grid">
+      {cases.map((c) => (
+        <Card
+          title={c.data.title}
+          description={c.data.excerpt}
+          image={c.data.cover}
+          link={`/cases/${c.slug}`}
+        />
+      ))}
+    </div>
+    <div class="more-link">
+      <a href="/cases">더 많은 시공사례 보기 →</a>
+    </div>
+  </Section>
+
+  <Section title="견적 문의">
+    <div class="cta-section">
+      <p>프로젝트 조건 알려주시면 가장 적합한 자재로 제안드립니다.</p>
+      <CTA text="견적내기" link="https://calc.deckctr.com" variant="primary" />
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .products-grid,
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .more-link {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .more-link a {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 3rem;
+    background: var(--color-gray-100);
+    border-radius: 8px;
+  }
+
+  .cta-section p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+  }
+</style>

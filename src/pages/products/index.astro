@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/Card.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+const products: CollectionEntry<'products'>[] = await getCollection('products');
+---
+
+<BaseLayout title="제품 | 데크센터">
+  <div class="page-header">
+    <h1>제품군</h1>
+    <p>목재, 합성목, 알루미늄 데크까지, 현장에 맞는 자재를 제안합니다.</p>
+  </div>
+
+  <div class="products-list">
+    {products.map((product) => (
+      <Card
+        title={product.data.title}
+        description={product.data.excerpt}
+        image={product.data.cover}
+        link={`/products/${product.slug}`}
+      />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-header p {
+    font-size: 1.25rem;
+    color: #666;
+  }
+
+  .products-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+</style>

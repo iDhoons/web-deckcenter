@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/Card.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+const posts: CollectionEntry<'blog'>[] = await getCollection('blog');
+---
+
+<BaseLayout title="블로그 | 데크센터">
+  <div class="page-header">
+    <h1>블로그</h1>
+    <p>데크재, 시공 팁, 유지관리 등 유용한 정보를 공유합니다.</p>
+  </div>
+
+  <div class="blog-list">
+    {posts.map((post) => (
+      <article class="blog-card">
+        <img src={post.data.cover} alt={post.data.title} loading="lazy" />
+        <div class="blog-content">
+          <h2><a href={`/blog/${post.slug}`}>{post.data.title}</a></h2>
+          <p class="excerpt">{post.data.excerpt}</p>
+          <div class="meta">
+            <time>{post.data.date.toLocaleDateString('ko-KR')}</time>
+            {post.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-header p {
+    font-size: 1.25rem;
+    color: #666;
+  }
+
+  .blog-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .blog-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s;
+  }
+
+  .blog-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .blog-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .blog-content {
+    padding: 1.5rem;
+  }
+
+  .blog-content h2 {
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+  }
+
+  .blog-content h2 a {
+    color: var(--color-primary);
+  }
+
+  .blog-content h2 a:hover {
+    color: var(--color-accent);
+  }
+
+  .excerpt {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .meta time {
+    font-size: 0.85rem;
+    color: #999;
+  }
+
+  .tag {
+    display: inline-block;
+    background: var(--color-gray-100);
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    color: var(--color-primary);
+  }
+</style>
