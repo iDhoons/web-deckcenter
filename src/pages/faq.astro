@@ -1,0 +1,434 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTA from '../components/CTA.astro';
+
+const faqCategories = [
+  {
+    id: 'order',
+    name: '주문/배송',
+    faqs: [
+      {
+        question: '최소 주문량이 있나요?',
+        answer: '소량 주문도 가능합니다. 다만, 일정 수량 이상 주문 시 단가 할인이 적용되며, 자세한 내용은 견적 문의를 통해 확인하실 수 있습니다.'
+      },
+      {
+        question: '어느 지역까지 배송 가능한가요?',
+        answer: '전국 배송 가능합니다. 수도권은 직배송, 지방은 화물 택배를 통해 배송됩니다. 도서산간 지역은 별도 배송비가 발생할 수 있습니다.'
+      },
+      {
+        question: '배송 기간은 얼마나 걸리나요?',
+        answer: '재고 제품은 결제 완료 후 2-3일 내 출고됩니다. 주문 제작 제품의 경우 약 7-14일 소요되며, 정확한 일정은 주문 시 안내드립니다.'
+      },
+      {
+        question: '배송비는 얼마인가요?',
+        answer: '주문 금액 및 지역에 따라 상이합니다. 일정 금액 이상 주문 시 무료 배송이 적용되며, 견적서에 배송비가 명시됩니다.'
+      },
+      {
+        question: '대량 주문 할인이 있나요?',
+        answer: '네, 수량에 따라 할인율이 적용됩니다. B2B 고객의 경우 별도 협의를 통해 추가 혜택을 제공합니다. 도매 문의는 별도 페이지를 참고해주세요.'
+      }
+    ]
+  },
+  {
+    id: 'product',
+    name: '제품/기술',
+    faqs: [
+      {
+        question: '목재와 합성목의 차이는 무엇인가요?',
+        answer: '목재 데크는 자연 질감과 따뜻한 감성이 특징이며, 주기적인 오일 스테인 관리가 필요합니다. 합성목(WPC)은 목분과 플라스틱 복합 소재로 유지보수가 간편하고 변형이 적습니다. 각 소재의 장단점은 비교 가이드를 참고하세요.'
+      },
+      {
+        question: '데크 두께는 어떻게 선택하나요?',
+        answer: '일반 주거용은 20-25mm, 상업시설이나 고하중 구간은 30mm 이상을 권장합니다. 시공 구조와 용도에 따라 적합한 두께가 다르므로 상담 시 안내드립니다.'
+      },
+      {
+        question: '색상 샘플을 받을 수 있나요?',
+        answer: '네, 무료 샘플을 제공합니다. 홈페이지 견적 문의 또는 전화 상담을 통해 신청하시면 실물 샘플을 발송해드립니다.'
+      },
+      {
+        question: '내구성은 얼마나 되나요?',
+        answer: '목재 데크는 관리 상태에 따라 5-15년, 합성목은 15-25년, 알루미늄 데크는 30년 이상 사용 가능합니다. 환경과 사용 빈도에 따라 달라질 수 있습니다.'
+      },
+      {
+        question: '방염 성능이 있나요?',
+        answer: '알루미늄 데크는 불연 소재로 방염 성능이 우수합니다. 합성목 중 일부 제품은 방염 인증을 받은 제품이 있으며, 목재는 방염 처리된 제품을 별도로 취급합니다.'
+      }
+    ]
+  },
+  {
+    id: 'installation',
+    name: '시공',
+    faqs: [
+      {
+        question: '시공 서비스도 제공하나요?',
+        answer: '자재 납품 전문이지만, 협력 시공업체 연결 서비스를 제공합니다. 지역과 프로젝트 규모에 맞는 검증된 시공업체를 안내해드립니다.'
+      },
+      {
+        question: 'DIY 시공이 가능한가요?',
+        answer: '간단한 발코니나 소규모 테라스는 DIY 가능합니다. 시공 매뉴얼과 동영상 가이드를 제공하며, 필요시 전화 상담도 지원합니다.'
+      },
+      {
+        question: '시공 매뉴얼이 있나요?',
+        answer: '네, 제품별 상세 시공 매뉴얼을 PDF로 제공합니다. 기술자료실에서 다운로드하거나 제품 구매 시 함께 발송됩니다.'
+      },
+      {
+        question: '시공에 필요한 공구는 무엇인가요?',
+        answer: '기본적으로 전동 드라이버, 원형톱, 수평계, 줄자 등이 필요합니다. 전용 클립이나 스페이서 등 부자재는 함께 구매 가능합니다.'
+      }
+    ]
+  },
+  {
+    id: 'warranty',
+    name: '보증/A/S',
+    faqs: [
+      {
+        question: '보증 기간은 어떻게 되나요?',
+        answer: '목재 데크 2년, 합성목 데크 5년, 알루미늄 데크 10년의 제품 보증을 제공합니다. 보증 범위와 조건은 보증서를 참고해주세요.'
+      },
+      {
+        question: '교환/환불 정책은 어떻게 되나요?',
+        answer: '제품 수령 후 7일 이내 미개봉 상품에 한해 교환/환불이 가능합니다. 단, 주문 제작 제품 및 재단 제품은 교환/환불이 제한됩니다.'
+      },
+      {
+        question: 'A/S 신청은 어떻게 하나요?',
+        answer: '홈페이지 문의하기 또는 고객센터(010-1234-5678)로 연락해주세요. 제품 사진과 구매 정보를 전달해주시면 빠르게 처리해드립니다.'
+      }
+    ]
+  }
+];
+---
+
+<BaseLayout
+  title="자주 묻는 질문 (FAQ) | 데크센터"
+  description="데크센터 제품 및 서비스에 대해 자주 묻는 질문과 답변을 확인하세요."
+>
+  <div class="faq-hero">
+    <div class="faq-hero-overlay"></div>
+    <div class="faq-hero-content">
+      <h1>자주 묻는 질문</h1>
+      <p>궁금하신 내용을 빠르게 찾아보세요</p>
+    </div>
+  </div>
+
+  <div class="faq-container">
+    <!-- 카테고리 탭 -->
+    <div class="category-tabs">
+      {faqCategories.map((category, index) => (
+        <button
+          class={`category-tab ${index === 0 ? 'active' : ''}`}
+          data-category={category.id}
+        >
+          {category.name}
+        </button>
+      ))}
+    </div>
+
+    <!-- FAQ 목록 -->
+    <div class="faq-content">
+      {faqCategories.map((category, catIndex) => (
+        <div
+          class={`faq-category ${catIndex === 0 ? 'active' : ''}`}
+          data-category={category.id}
+        >
+          <div class="faq-list">
+            {category.faqs.map((faq, faqIndex) => (
+              <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                  <span class="question-text">{faq.question}</span>
+                  <span class="faq-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </button>
+                <div class="faq-answer">
+                  <p>{faq.answer}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- CTA -->
+    <div class="faq-cta">
+      <h2>답변을 찾지 못하셨나요?</h2>
+      <p>전문 상담원이 친절하게 안내해드립니다.</p>
+      <div class="cta-buttons">
+        <CTA text="문의하기" link="/contact" variant="primary" />
+        <CTA text="전화 상담" link="tel:010-1234-5678" variant="secondary" />
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  function initFAQ() {
+    // 카테고리 탭 전환
+    const tabs = document.querySelectorAll('.category-tab');
+    const categories = document.querySelectorAll('.faq-category');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const categoryId = tab.getAttribute('data-category');
+
+        // 탭 활성화
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // 카테고리 표시
+        categories.forEach(cat => {
+          if (cat.getAttribute('data-category') === categoryId) {
+            cat.classList.add('active');
+          } else {
+            cat.classList.remove('active');
+          }
+        });
+      });
+    });
+
+    // 아코디언 토글
+    const faqQuestions = document.querySelectorAll('.faq-question');
+
+    faqQuestions.forEach(question => {
+      question.addEventListener('click', () => {
+        const faqItem = question.parentElement;
+        const isOpen = faqItem?.classList.contains('open');
+
+        // 같은 카테고리 내 다른 항목 닫기
+        const categoryContent = faqItem?.closest('.faq-category');
+        categoryContent?.querySelectorAll('.faq-item.open').forEach(item => {
+          if (item !== faqItem) {
+            item.classList.remove('open');
+            item.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // 현재 항목 토글
+        faqItem?.classList.toggle('open');
+        question.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      });
+    });
+  }
+
+  // 첫 로드
+  initFAQ();
+
+  // View Transitions 후 재초기화
+  document.addEventListener('astro:page-load', initFAQ);
+</script>
+
+<style>
+  .faq-hero {
+    position: relative;
+    height: 280px;
+    background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=1600');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .faq-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 66, 80, 0.85) 0%, rgba(0, 90, 110, 0.75) 100%);
+  }
+
+  .faq-hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+  }
+
+  .faq-hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+
+  .faq-hero-content p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+
+  .faq-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  /* 카테고리 탭 */
+  .category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+
+  .category-tab {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 25px;
+    background: white;
+    color: var(--color-text);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .category-tab:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .category-tab.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+  }
+
+  /* FAQ 카테고리 */
+  .faq-category {
+    display: none;
+  }
+
+  .faq-category.active {
+    display: block;
+  }
+
+  /* FAQ 아이템 */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    background: white;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .faq-item:hover {
+    border-color: var(--color-accent);
+  }
+
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .question-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    flex: 1;
+  }
+
+  .faq-icon {
+    color: var(--color-text-light);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .faq-item.open .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+
+  .faq-item.open .faq-answer {
+    max-height: 500px;
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .faq-answer p {
+    color: var(--color-text);
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* CTA 섹션 */
+  .faq-cta {
+    margin-top: 4rem;
+    padding: 3rem;
+    background: linear-gradient(180deg, var(--color-bg-alt) 0%, #ffffff 100%);
+    border-radius: 16px;
+    border: 1px solid var(--color-gray-200);
+    text-align: center;
+  }
+
+  .faq-cta h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .faq-cta p {
+    color: var(--color-text-light);
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* 반응형 */
+  @media (max-width: 768px) {
+    .faq-hero {
+      height: 220px;
+    }
+
+    .faq-hero-content h1 {
+      font-size: 2rem;
+    }
+
+    .category-tabs {
+      justify-content: center;
+    }
+
+    .category-tab {
+      padding: 0.6rem 1.25rem;
+      font-size: 0.9rem;
+    }
+
+    .faq-question {
+      padding: 1rem 1.25rem;
+    }
+
+    .question-text {
+      font-size: 0.95rem;
+    }
+
+    .faq-cta {
+      padding: 2rem 1.5rem;
+    }
+  }
+</style>

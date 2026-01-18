@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro';
 import Card from '../components/Card.astro';
 import Section from '../components/Section.astro';
 import CTA from '../components/CTA.astro';
+import Testimonial from '../components/Testimonial.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
@@ -117,6 +118,61 @@ const productCards = [
         <p>납품 이후 유지관리와 A/S 절차를 안내합니다.</p>
       </li>
     </ol>
+  </Section>
+
+  <Section
+    title="고객 후기"
+    description="데크센터와 함께한 고객들의 생생한 후기를 확인하세요."
+  >
+    <div class="testimonials-grid">
+      <Testimonial
+        name="김OO 대표"
+        company="카페 테라스 운영"
+        content="합성목 데크 시공 후 유지보수가 정말 편해졌습니다. 비 온 다음 날도 물 마름이 빠르고, 손님들 반응도 좋아요."
+        rating={5}
+        project="판교 카페 테라스 - 합성목 시공"
+      />
+      <Testimonial
+        name="박OO님"
+        company="한남동 주택 시공"
+        content="알루미늄 데크로 교체하고 나서 10년은 걱정 없겠다는 생각이 들었습니다. 전문적인 상담과 깔끔한 시공에 만족합니다."
+        rating={5}
+        project="한남동 주택 알루미늄 데크"
+      />
+      <Testimonial
+        name="이OO 과장"
+        company="공공시설 관리"
+        content="대량 납품이었는데 일정 맞춰 정확하게 배송해주셨고, 품질도 균일해서 시공팀에서도 만족했습니다."
+        rating={5}
+        project="공공시설 목재 데크 납품"
+      />
+      <Testimonial
+        name="정OO님"
+        company="다세대 주택"
+        content="베란다 합성목 시공 후 여름에도 맨발로 다닐 수 있어 좋아요. 처음 상담부터 A/S까지 꼼꼼하게 안내받았습니다."
+        rating={5}
+        project="다세대 주택 베란다 시공"
+      />
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number">500+</span>
+        <span class="stat-label">완료 프로젝트</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">98%</span>
+        <span class="stat-label">고객 만족도</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">15년</span>
+        <span class="stat-label">업계 경력</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">5년</span>
+        <span class="stat-label">품질 보증</span>
+      </div>
+    </div>
   </Section>
 
   <Section
@@ -336,5 +392,57 @@ const productCards = [
     font-size: 1.2rem;
     margin-bottom: 2rem;
     color: var(--color-secondary);
+  }
+
+  /* Testimonials Grid */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+  }
+
+  .stat-item {
+    text-align: center;
+    color: white;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.95rem;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    .testimonials-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      padding: 2rem 1.5rem;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+    }
   }
 </style>
