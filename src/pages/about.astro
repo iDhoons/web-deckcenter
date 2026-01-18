@@ -3,7 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CTA from '../components/CTA.astro';
 ---
 
-<BaseLayout title="회사소개 | 데크센터">
+<BaseLayout
+  title="회사소개 | 데크센터"
+  description="데크센터는 15년 이상의 경력을 가진 외장 데크재 전문 기업입니다. 품질, 신뢰, 혁신을 핵심 가치로 최고의 데크 솔루션을 제공합니다."
+>
   <div class="about-hero">
     <div class="about-hero-overlay"></div>
     <div class="about-hero-content">
@@ -12,33 +15,184 @@ import CTA from '../components/CTA.astro';
     </div>
   </div>
 
-  <div class="about-content">
-    <section class="section">
-      <h2>데크센터 소개</h2>
-      <p>
-        데크센터는 목재, 합성목(WPC), 알루미늄 데크 등 다양한 외장 데크재를
-        취급하는 전문 기업입니다. 현장 여건과 고객 니즈에 맞는 최적의 자재를
-        제안하고, 합리적인 가격으로 공급합니다.
-      </p>
+  <div class="about-container">
+    <!-- 비전/미션 섹션 -->
+    <section class="vision-section">
+      <div class="vision-content">
+        <div class="vision-item">
+          <span class="vision-label">MISSION</span>
+          <h2>"최고 품질의 데크 자재로<br/>공간의 가치를 높입니다"</h2>
+        </div>
+        <div class="vision-item">
+          <span class="vision-label">VISION</span>
+          <p class="vision-text">국내 1위 데크 전문 기업</p>
+        </div>
+      </div>
+
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <h3>품질</h3>
+          <p>엄격한 품질 기준과 검수 과정을 통해 최고의 제품만을 공급합니다.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3>신뢰</h3>
+          <p>투명한 가격 정책과 철저한 A/S로 고객과의 신뢰를 쌓아갑니다.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <h3>혁신</h3>
+          <p>새로운 소재와 기술을 끊임없이 연구하여 최적의 솔루션을 제안합니다.</p>
+        </div>
+      </div>
     </section>
 
-    <section class="section">
+    <!-- 회사 소개 -->
+    <section class="intro-section">
+      <div class="intro-content">
+        <h2>데크센터 소개</h2>
+        <p>
+          데크센터는 2010년 설립 이래 목재, 합성목(WPC), 알루미늄 데크 등 다양한 외장 데크재를
+          전문적으로 취급해온 기업입니다. 15년 이상의 업계 경험을 바탕으로 현장 여건과 고객 니즈에
+          맞는 최적의 자재를 제안하고, 합리적인 가격으로 공급합니다.
+        </p>
+        <p>
+          개인 주택부터 상업시설, 공공기관까지 다양한 프로젝트를 성공적으로 수행하며 축적한
+          노하우를 바탕으로, 시공업자와 일반 소비자 모두에게 신뢰받는 파트너가 되고자 합니다.
+        </p>
+      </div>
+      <div class="intro-stats">
+        <div class="stat-item">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">완료 프로젝트</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">15년</span>
+          <span class="stat-label">업계 경력</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">98%</span>
+          <span class="stat-label">고객 만족도</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 회사 연혁 -->
+    <section class="history-section">
+      <h2>회사 연혁</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">2010</div>
+          <div class="timeline-content">
+            <h3>창립</h3>
+            <p>데크센터 설립, 목재 데크 전문 유통 사업 시작</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2015</div>
+          <div class="timeline-content">
+            <h3>합성목 라인 확대</h3>
+            <p>WPC 합성목 제품 라인업 확장, B2B 시장 본격 진출</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2020</div>
+          <div class="timeline-content">
+            <h3>알루미늄 데크 진출</h3>
+            <p>알루미늄 데크 제품 추가, 공공시설 납품 시작</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2023</div>
+          <div class="timeline-content">
+            <h3>품질 인증 획득</h3>
+            <p>KS 인증, ISO 9001 품질경영시스템 인증 취득</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2025</div>
+          <div class="timeline-content">
+            <h3>온라인 플랫폼 오픈</h3>
+            <p>견적 계산기 및 온라인 상담 시스템 구축</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 인증 및 수상 -->
+    <section class="certifications-section">
+      <h2>인증 및 수상</h2>
+      <p class="section-desc">데크센터는 엄격한 품질 기준을 충족하는 인증된 제품만을 취급합니다.</p>
+
+      <div class="cert-grid">
+        <div class="cert-card">
+          <div class="cert-badge">KS</div>
+          <h3>KS 인증</h3>
+          <p>한국산업표준 품질 인증</p>
+        </div>
+        <div class="cert-card">
+          <div class="cert-badge">ISO</div>
+          <h3>ISO 9001</h3>
+          <p>품질경영시스템 국제 인증</p>
+        </div>
+        <div class="cert-card">
+          <div class="cert-badge eco">ECO</div>
+          <h3>친환경 인증</h3>
+          <p>환경표지 인증 제품 취급</p>
+        </div>
+        <div class="cert-card">
+          <div class="cert-badge award">★</div>
+          <h3>우수 기업 선정</h3>
+          <p>2024 건축자재 우수기업 선정</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 취급 제품 -->
+    <section class="products-section">
       <h2>취급 제품</h2>
-      <ul>
-        <li>목재 데크</li>
-        <li>합성목/WPC</li>
-        <li>알루미늄 데크</li>
-        <li>부자재/난간</li>
-      </ul>
+      <div class="product-list">
+        <a href="/products/wood" class="product-item">
+          <span class="product-name">목재 데크</span>
+          <span class="product-arrow">→</span>
+        </a>
+        <a href="/products/composite" class="product-item">
+          <span class="product-name">합성목/WPC</span>
+          <span class="product-arrow">→</span>
+        </a>
+        <a href="/products/aluminum" class="product-item">
+          <span class="product-name">알루미늄 데크</span>
+          <span class="product-arrow">→</span>
+        </a>
+        <a href="/products/accessories" class="product-item">
+          <span class="product-name">부자재/난간</span>
+          <span class="product-arrow">→</span>
+        </a>
+      </div>
     </section>
 
-    <section class="section">
-      <h2>고객 대상</h2>
-      <p>개인 주택, 상업시설, 오피스텔, 조업사 등 다양한 고객층에게 최적의 솔루션을 제공합니다.</p>
-    </section>
-
+    <!-- CTA -->
     <div class="cta-section">
-      <CTA text="견적 문의하기" link="https://calc.deckctr.com" variant="primary" />
+      <h2>함께 시작하세요</h2>
+      <p>프로젝트에 맞는 최적의 데크 솔루션을 제안해드립니다.</p>
+      <div class="cta-buttons">
+        <CTA text="견적 문의하기" link="https://calc.deckctr.com" variant="primary" />
+        <CTA text="문의하기" link="/contact" variant="secondary" />
+      </div>
     </div>
   </div>
 </BaseLayout>
@@ -46,7 +200,7 @@ import CTA from '../components/CTA.astro';
 <style>
   .about-hero {
     position: relative;
-    height: 300px;
+    height: 320px;
     background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1600');
     background-size: cover;
     background-position: center;
@@ -61,7 +215,7 @@ import CTA from '../components/CTA.astro';
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, rgba(0, 66, 80, 0.85) 0%, rgba(0, 90, 110, 0.75) 100%);
   }
 
   .about-hero-content {
@@ -74,6 +228,7 @@ import CTA from '../components/CTA.astro';
   .about-hero-content h1 {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
+    color: white;
   }
 
   .about-hero-content p {
@@ -81,40 +236,390 @@ import CTA from '../components/CTA.astro';
     opacity: 0.9;
   }
 
-  .about-content {
-    max-width: 800px;
+  .about-container {
+    max-width: var(--max-width);
     margin: 0 auto;
-    padding: 2rem;
+    padding: 4rem 1.5rem;
   }
 
-  .section {
+  section {
+    margin-bottom: 5rem;
+  }
+
+  section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .section-desc {
+    text-align: center;
+    color: var(--color-text-light);
+    margin-bottom: 2rem;
+  }
+
+  /* 비전/미션 섹션 */
+  .vision-section {
+    text-align: center;
+  }
+
+  .vision-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     margin-bottom: 3rem;
   }
 
-  .section h2 {
+  .vision-label {
+    display: inline-block;
+    background: var(--color-accent);
+    color: white;
+    padding: 0.25rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  .vision-item h2 {
+    font-size: 1.75rem;
+    line-height: 1.4;
+    margin-bottom: 0;
+  }
+
+  .vision-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .value-card {
+    background: white;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .value-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .value-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin: 0 auto 1rem;
+  }
+
+  .value-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .value-card p {
+    color: var(--color-text-light);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  /* 회사 소개 */
+  .intro-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    background: var(--color-bg-alt);
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding: 4rem 3rem;
+  }
+
+  .intro-content h2 {
+    text-align: left;
     margin-bottom: 1.5rem;
   }
 
-  .section p {
+  .intro-content p {
     font-size: 1.1rem;
     line-height: 1.8;
-    color: #333;
+    color: var(--color-text);
+    margin-bottom: 1rem;
   }
 
-  ul {
-    list-style: disc;
-    margin-left: 2rem;
+  .intro-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  li {
-    margin-bottom: 0.75rem;
+  .intro-stats .stat-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
   }
 
+  .intro-stats .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-accent);
+  }
+
+  .intro-stats .stat-label {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+  }
+
+  /* 회사 연혁 */
+  .timeline {
+    max-width: 700px;
+    margin: 2rem auto 0;
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 80px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-gray-200);
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .timeline-year {
+    width: 60px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .timeline-content {
+    flex: 1;
+    padding-left: 2rem;
+    position: relative;
+  }
+
+  .timeline-content::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+
+  .timeline-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-content p {
+    color: var(--color-text-light);
+    font-size: 0.95rem;
+  }
+
+  /* 인증 */
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .cert-card {
+    background: white;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+
+  .cert-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .cert-badge {
+    width: 60px;
+    height: 60px;
+    background: var(--color-accent);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0 auto 1rem;
+  }
+
+  .cert-badge.eco {
+    background: #059669;
+  }
+
+  .cert-badge.award {
+    background: #F59E0B;
+  }
+
+  .cert-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .cert-card p {
+    color: var(--color-text-light);
+    font-size: 0.85rem;
+  }
+
+  /* 취급 제품 */
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 600px;
+    margin: 2rem auto 0;
+  }
+
+  .product-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    background: white;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--color-primary);
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .product-item:hover {
+    border-color: var(--color-accent);
+    background: var(--color-bg-alt);
+  }
+
+  .product-arrow {
+    color: var(--color-accent);
+    transition: transform 0.2s ease;
+  }
+
+  .product-item:hover .product-arrow {
+    transform: translateX(4px);
+  }
+
+  /* CTA */
   .cta-section {
     text-align: center;
-    margin-top: 3rem;
-    padding: 2rem;
-    background: var(--color-gray-100);
-    border-radius: 8px;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+    border-radius: 20px;
+    color: white;
+  }
+
+  .cta-section h2 {
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-section p {
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* 반응형 */
+  @media (max-width: 900px) {
+    .values-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .intro-section {
+      grid-template-columns: 1fr;
+    }
+
+    .intro-stats {
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    .cert-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .about-hero {
+      height: 240px;
+    }
+
+    .about-hero-content h1 {
+      font-size: 2rem;
+    }
+
+    .about-container {
+      padding: 2rem 1rem;
+    }
+
+    .intro-section {
+      padding: 2rem 1rem;
+    }
+
+    .intro-stats {
+      flex-direction: column;
+    }
+
+    .timeline::before {
+      left: 60px;
+    }
+
+    .timeline-year {
+      width: 45px;
+      font-size: 0.95rem;
+    }
+
+    .cert-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .product-list {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
