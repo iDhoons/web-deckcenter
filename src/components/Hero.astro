@@ -5,58 +5,161 @@ interface Props {
   ctaText?: string;
   ctaLink?: string;
   image?: string;
+  videoUrl?: string;
   youtubeId?: string;
+  eyebrow?: string;
+  highlights?: string[];
 }
 
-const { title, description, ctaText, ctaLink, image, youtubeId } = Astro.props;
+const {
+  title,
+  description,
+  ctaText,
+  ctaLink,
+  image,
+  videoUrl,
+  youtubeId,
+  eyebrow,
+  highlights,
+} = Astro.props;
 ---
 
-<section class="hero">
-  <div class="hero-content">
+<section class="hero-text">
+  <div class="hero-text-inner">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
     <h1>{title}</h1>
     <p>{description}</p>
     {ctaText && ctaLink && (
       <a href={ctaLink} class="cta">{ctaText}</a>
     )}
+    {highlights && highlights.length > 0 && (
+      <ul class="hero-highlights">
+        {highlights.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    )}
   </div>
+</section>
+
+<section class="hero-media-section">
   <div class="hero-media">
-    {youtubeId ? (
-      <div class="video-container">
-        <iframe
-          src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1`}
-          title={title}
-          frameborder="0"
-          allow="autoplay; encrypted-media"
-          allowfullscreen
-        ></iframe>
-      </div>
+    {videoUrl ? (
+      <video
+        src={videoUrl}
+        poster={image}
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      ></video>
+    ) : youtubeId ? (
+      <iframe
+        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+        title={title}
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+      ></iframe>
     ) : image ? (
       <img src={image} alt={title} loading="eager" />
     ) : null}
   </div>
 </section>
 
+<script>
+  (function() {
+    const heroMedia = document.querySelector('.hero-media');
+    if (!heroMedia) return;
+
+    const INITIAL_MARGIN = 50;
+    const FINAL_MARGIN = 0;
+
+    let ticking = false;
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function updateClipPath() {
+      const rect = heroMedia.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      const progress = Math.min(Math.max(1 - (rect.top / windowHeight), 0), 1);
+      const easedProgress = easeOutCubic(progress);
+      const margin = INITIAL_MARGIN * (1 - easedProgress);
+
+      heroMedia.style.clipPath = `polygon(${margin}% 0%, ${100 - margin}% 0%, ${100 - margin}% 100%, ${margin}% 100%)`;
+
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(updateClipPath);
+        ticking = true;
+      }
+    }
+
+    updateClipPath();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+</script>
+
 <style>
-  .hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    padding: 4rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    align-items: center;
-    min-height: 60vh;
+  .hero-text {
+    background: #f9f6f2;
+    text-align: center;
+    padding: 80px 20px;
   }
 
-  .hero-content h1 {
+  .hero-text-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .hero-text h1 {
     color: var(--color-primary);
     margin-bottom: 1.5rem;
+    font-size: 2.75rem;
   }
 
-  .hero-content p {
+  .hero-text p {
     font-size: 1.25rem;
-    color: #666;
+    color: var(--color-text-light);
     margin-bottom: 2rem;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-highlights {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .hero-highlights li {
+    padding: 0.35rem 0.85rem;
+    background: rgba(139, 90, 43, 0.1);
+    border: 1px solid rgba(139, 90, 43, 0.2);
+    border-radius: 999px;
+    font-size: 0.95rem;
+    color: var(--color-secondary);
   }
 
   .cta {
@@ -73,38 +176,44 @@ const { title, description, ctaText, ctaLink, image, youtubeId } = Astro.props;
     background: #7a4e23;
   }
 
-  .hero-media img {
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
-
-  .video-container {
+  .hero-media-section {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   }
 
-  .video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
+  .hero-media {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    clip-path: polygon(30% 0%, 70% 0%, 70% 100%, 30% 100%);
+    transition: clip-path 0.5s ease-out;
+  }
+
+  .hero-media img,
+  .hero-media iframe,
+  .hero-media video {
     width: 100%;
     height: 100%;
     border: none;
+    object-fit: cover;
   }
 
   @media (max-width: 768px) {
-    .hero {
-      grid-template-columns: 1fr;
-      text-align: center;
-      padding: 2rem 1rem;
+    .hero-text {
+      padding: 60px 16px;
+    }
+
+    .hero-text h1 {
+      font-size: 2rem;
+    }
+
+    .hero-text p {
+      font-size: 1.1rem;
     }
 
     .hero-media {
-      order: -1;
+      aspect-ratio: 4 / 3;
     }
   }
 </style>

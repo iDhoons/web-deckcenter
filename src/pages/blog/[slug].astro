@@ -138,6 +138,61 @@ const { Content } = await post.render();
     font-style: italic;
   }
 
+  .post-content :global(table) {
+    width: 100%;
+    margin: 2rem 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    font-size: 0.95rem;
+  }
+
+  .post-content :global(thead) {
+    background: var(--color-accent);
+    color: white;
+  }
+
+  .post-content :global(th) {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .post-content :global(td) {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--color-gray-200);
+    background: white;
+  }
+
+  .post-content :global(tbody tr:last-child td) {
+    border-bottom: none;
+  }
+
+  .post-content :global(tbody tr:hover td) {
+    background: var(--color-bg-alt);
+  }
+
+  .post-content :global(table) :global(strong) {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 768px) {
+    .post-content :global(table) {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .post-content :global(th),
+    .post-content :global(td) {
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
+
   .post-footer {
     margin-top: 5rem;
     padding-top: 3rem;

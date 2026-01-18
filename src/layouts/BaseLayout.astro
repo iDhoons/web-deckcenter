@@ -1,6 +1,8 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Splash from '../components/Splash.astro';
 
 interface Props {
   title?: string;
@@ -39,9 +41,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image.startsWith('http') ? image : new URL(image, Astro.site)} />
 
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/niceplugin/Paperlogy/Paperlogy.css" />
+    <ViewTransitions />
   </head>
   <body>
+    <Splash />
     <Header />
     <main>
       <slot />
@@ -50,15 +54,51 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
   </body>
 </html>
 
+<script>
+  import Lenis from 'lenis';
+
+  let lenis: Lenis | null = null;
+  let rafId: number | null = null;
+
+  function initLenis() {
+    // 기존 인스턴스 정리
+    if (lenis) {
+      lenis.destroy();
+    }
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+
+    lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    function raf(time: number) {
+      lenis?.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+  }
+
+  // 첫 로드
+  initLenis();
+
+  // View Transitions 후 재초기화
+  document.addEventListener('astro:page-load', initLenis);
+</script>
+
 <style is:global>
   :root {
     --color-primary: #1a1a1a;
     --color-secondary: #404040;
-    --color-accent: #8B5A2B;
-    --color-accent-light: #A67C52;
+    --color-accent: #004250;
+    --color-accent-light: #005a6e;
     --color-text: #333333;
     --color-text-light: #666666;
     --color-bg: #ffffff;
+    --color-bg-alt: #F8FAFB;
     --color-gray-50: #fafafa;
     --color-gray-100: #f5f5f5;
     --color-gray-200: #eeeeee;
@@ -76,11 +116,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     scroll-behavior: smooth;
   }
 
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+
   body {
-    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    font-family: "Paperlogy", -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-weight: 400;
     color: var(--color-text);
     background: var(--color-bg);
-    line-height: 1.6;
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -96,8 +141,32 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
 
   h1, h2, h3, h4 {
     color: var(--color-primary);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+  }
+
+  h2 {
+    font-size: 2.5rem;
     font-weight: 700;
-    line-height: 1.2;
+  }
+
+  h3 {
+    font-size: 1.35rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2.25rem;
+    }
+    h2 {
+      font-size: 1.75rem;
+    }
   }
 
   .container {
@@ -118,16 +187,22 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
   }
 
   .btn-primary {
-    background: var(--color-accent);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
     color: white;
+    box-shadow: 0 4px 14px rgba(0, 66, 80, 0.3);
   }
 
   .btn-primary:hover {
-    background: var(--color-accent-light);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 66, 80, 0.4);
   }
 
   section {
-    padding: 5rem 0;
+    padding: 6rem 0;
+  }
+
+  section.section-alt {
+    background: linear-gradient(180deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
   }
 </style>

@@ -1,0 +1,35 @@
+{
+  "name": "codex-notify",
+  "displayName": "Codex Notify",
+  "description": "Show VS Code notifications when Codex outputs tags.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["*"],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Codex Notify",
+      "properties": {
+        "codexNotify.logPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional absolute path to the log file. Defaults to .codex-notify.log in the first workspace folder."
+        },
+        "codexNotify.decisionTag": {
+          "type": "string",
+          "default": "[NEED_DECISION]",
+          "description": "Tag that triggers a decision notification."
+        },
+        "codexNotify.doneTag": {
+          "type": "string",
+          "default": "[DONE]",
+          "description": "Tag that triggers a completion notification."
+        }
+      }
+    }
+  }
+}
