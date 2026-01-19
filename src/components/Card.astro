@@ -60,4 +60,15 @@ const { title, description, image, link } = Astro.props;
     font-size: 0.95rem;
     line-height: 1.6;
   }
+
+  /* Dark mode card */
+  :global([data-theme="dark"]) .card {
+    background: var(--color-bg-alt);
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  :global([data-theme="dark"]) .card:hover {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
 </style>

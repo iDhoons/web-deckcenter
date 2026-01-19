@@ -35,6 +35,9 @@ const { Content } = await caseItem.render();
 
     <div class="case-meta">
       <div class="meta-item">
+        <strong>시공일:</strong> {caseItem.data.date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' })}
+      </div>
+      <div class="meta-item">
         <strong>위치:</strong> {caseItem.data.location}
       </div>
       <div class="meta-item">
@@ -115,6 +118,56 @@ const { Content } = await caseItem.render();
     display: block;
     margin-bottom: 0.25rem;
     color: var(--color-primary);
+  }
+
+  /* MDX Content Readability Styles */
+  .case-content :global(p) {
+    font-size: 1.1rem;
+    line-height: 1.85;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+
+  .case-content :global(h2) {
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .case-content :global(h3) {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .case-content :global(ul),
+  .case-content :global(ol) {
+    font-size: 1.1rem;
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .case-content :global(li) {
+    margin-bottom: 0.625rem;
+  }
+
+  .case-content :global(blockquote) {
+    margin: 2.5rem 0;
+    padding: 1.5rem;
+    background: var(--color-gray-100);
+    border-left: 4px solid var(--color-accent);
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.85;
+  }
+
+  .case-content :global(img) {
+    margin: 2.5rem 0;
+    border-radius: 8px;
+    max-width: 100%;
   }
 
   .gallery {

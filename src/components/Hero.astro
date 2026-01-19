@@ -109,7 +109,7 @@ const {
 
 <style>
   .hero-text {
-    background: #f9f6f2;
+    background: var(--color-bg-alt);
     text-align: center;
     padding: 80px 20px;
   }
@@ -173,7 +173,13 @@ const {
   }
 
   .cta:hover {
-    background: #7a4e23;
+    background: var(--color-accent-light);
+  }
+
+  /* Dark mode hero */
+  :global([data-theme="dark"]) .hero-highlights li {
+    background: rgba(0, 163, 204, 0.15);
+    border-color: rgba(0, 163, 204, 0.3);
   }
 
   .hero-media-section {

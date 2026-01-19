@@ -23,6 +23,7 @@ const cases = defineCollection({
     area: z.string(),
     material: z.string(),
     duration: z.string(),
+    date: z.date(),
     gallery: z.array(z.string()).optional(),
   }),
 });

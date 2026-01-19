@@ -3,6 +3,7 @@ import { ViewTransitions } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Splash from '../components/Splash.astro';
+import ChatButton from '../components/ChatButton.astro';
 
 interface Props {
   title?: string;
@@ -20,7 +21,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
 ---
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -52,6 +53,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
       <slot />
     </main>
     <Footer />
+    <ChatButton />
   </body>
 </html>
 
@@ -88,6 +90,65 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
 
   // View Transitions 후 재초기화
   document.addEventListener('astro:page-load', initLenis);
+</script>
+
+<script>
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeToggleButton();
+  }
+
+  function updateThemeToggleButton() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const buttons = document.querySelectorAll('.theme-toggle');
+    buttons.forEach((btn) => {
+      const sunIcon = btn.querySelector('.sun-icon');
+      const moonIcon = btn.querySelector('.moon-icon');
+      if (sunIcon && moonIcon) {
+        sunIcon.style.display = isDark ? 'none' : 'block';
+        moonIcon.style.display = isDark ? 'block' : 'none';
+      }
+      btn.setAttribute('aria-label', isDark ? '라이트 모드로 전환' : '다크 모드로 전환');
+    });
+  }
+
+  // 초기화
+  initTheme();
+
+  // 페이지 로드 시
+  document.addEventListener('DOMContentLoaded', () => {
+    updateThemeToggleButton();
+    document.querySelectorAll('.theme-toggle').forEach((btn) => {
+      btn.addEventListener('click', toggleTheme);
+    });
+  });
+
+  // View Transitions 후
+  document.addEventListener('astro:page-load', () => {
+    initTheme();
+    updateThemeToggleButton();
+    document.querySelectorAll('.theme-toggle').forEach((btn) => {
+      btn.addEventListener('click', toggleTheme);
+    });
+  });
+
+  // 시스템 테마 변경 감지
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      updateThemeToggleButton();
+    }
+  });
 </script>
 
 <style is:global>
@@ -141,6 +202,35 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     /* Layout */
     --max-width: 1200px;
     --transition: all 0.3s ease;
+
+    /* Breakpoints (for reference in documentation) */
+    /* --bp-xs: 480px;   Small mobile */
+    /* --bp-sm: 640px;   Mobile landscape */
+    /* --bp-md: 768px;   Tablet */
+    /* --bp-lg: 900px;   Small desktop */
+    /* --bp-xl: 1024px;  Desktop */
+    /* --bp-2xl: 1280px; Large desktop */
+    /* --bp-3xl: 1440px; Extra large desktop */
+  }
+
+  /* Dark Theme */
+  [data-theme="dark"] {
+    --color-primary: #f5f5f5;
+    --color-secondary: #d4d4d4;
+    --color-accent: #00a3cc;
+    --color-accent-light: #00c4f0;
+    --color-text: #e5e5e5;
+    --color-text-light: #a3a3a3;
+    --color-bg: #0f0f0f;
+    --color-bg-alt: #1a1a1a;
+    --color-gray-50: #171717;
+    --color-gray-100: #262626;
+    --color-gray-200: #404040;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+    --shadow-xl: 0 12px 32px rgba(0,0,0,0.6);
   }
 
   * {
@@ -176,6 +266,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     display: block;
   }
 
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
   h1, h2, h3, h4 {
     color: var(--color-primary);
     font-weight: 800;
@@ -197,12 +296,98 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     font-weight: 600;
   }
 
+  /* Extra large screens */
+  @media (min-width: 1440px) {
+    :root {
+      --font-size-5xl: 4rem;
+      --font-size-4xl: 3rem;
+    }
+
+    h1 {
+      font-size: var(--font-size-5xl);
+    }
+
+    h2 {
+      font-size: var(--font-size-4xl);
+    }
+
+    .container {
+      max-width: 1400px;
+    }
+  }
+
+  /* Large desktop */
+  @media (max-width: 1280px) {
+    h1 {
+      font-size: 3rem;
+    }
+  }
+
+  /* Desktop */
+  @media (max-width: 1024px) {
+    h1 {
+      font-size: 2.75rem;
+    }
+
+    section {
+      padding: 5rem 0;
+    }
+  }
+
+  /* Tablet */
   @media (max-width: 768px) {
     h1 {
       font-size: 2.25rem;
     }
     h2 {
       font-size: 1.75rem;
+    }
+
+    section {
+      padding: 4rem 0;
+    }
+  }
+
+  /* Mobile landscape */
+  @media (max-width: 640px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    section {
+      padding: 3rem 0;
+    }
+
+    .container {
+      padding: 0 1rem;
+    }
+  }
+
+  /* Small mobile */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.75rem;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+    }
+
+    section {
+      padding: 2.5rem 0;
+    }
+
+    .btn {
+      padding: 0.7rem 1.5rem;
+      font-size: 0.9rem;
     }
   }
 

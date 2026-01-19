@@ -4,7 +4,8 @@ import Card from '../../components/Card.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
-const posts: CollectionEntry<'blog'>[] = await getCollection('blog');
+const posts: CollectionEntry<'blog'>[] = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
 <BaseLayout title="블로그 | 데크센터">

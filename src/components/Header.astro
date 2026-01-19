@@ -17,13 +17,49 @@
           견적내기
         </a>
       </li>
+      <li>
+        <button class="theme-toggle" aria-label="다크 모드로 전환">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </li>
     </ul>
 
-    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="메뉴 열기" aria-expanded="false">
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-    </button>
+    <div class="header-actions">
+      <button class="theme-toggle mobile-theme-toggle" aria-label="다크 모드로 전환">
+        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="메뉴 열기" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
   </nav>
 
   <div class="mobile-menu-overlay" id="mobileOverlay"></div>
@@ -107,6 +143,48 @@
   .cta:hover {
     background: var(--color-accent-light);
     transform: translateY(-2px);
+  }
+
+  /* Header Actions */
+  .header-actions {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Theme Toggle Button */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--color-primary);
+    transition: all 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    background: var(--color-gray-100);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .mobile-theme-toggle {
+    display: none;
+  }
+
+  /* Dark mode header styles */
+  :global([data-theme="dark"]) header {
+    background: var(--color-bg);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  :global([data-theme="dark"]) .mobile-menu {
+    background: var(--color-bg);
   }
 
   /* Mobile Menu Button */
@@ -259,6 +337,12 @@
     box-shadow: 0 4px 12px rgba(0, 66, 80, 0.3);
   }
 
+  /* Dark mode mobile menu */
+  :global([data-theme="dark"]) .mobile-menu {
+    background: var(--color-bg);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
+  }
+
   /* Body scroll lock when menu is open */
   :global(body.menu-open) {
     overflow: hidden;
@@ -268,6 +352,14 @@
   @media (max-width: 900px) {
     .nav-links {
       display: none;
+    }
+
+    .header-actions {
+      display: flex;
+    }
+
+    .mobile-theme-toggle {
+      display: flex;
     }
 
     .mobile-menu-btn {
