@@ -1,63 +1,80 @@
 ---
-// Splash screen component - displays logo on initial load only
+// 홈페이지에서만 스플래시 렌더링
+const isHomePage = Astro.url.pathname === '/';
 ---
-<div class="splash" id="splash" transition:persist>
-  <img src="/images/Logo_Urizen.svg" alt="Urizen" class="logo" />
-</div>
+
+{isHomePage && (
+  <div class="splash" id="splash" aria-hidden="true">
+    <img src="/images/Logo_Urizen.svg" alt="" class="logo" />
+  </div>
+)}
 
 <style>
   .splash {
     position: fixed;
     inset: 0;
-    z-index: 10000;
+    z-index: var(--z-splash, 10000);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #FCFBF8;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-  }
-
-  .splash.visible {
+    background: #ffffff;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+  }
+
+  .splash.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .splash.removed {
+    display: none;
   }
 
   .logo {
     width: min(280px, 70vw);
-    opacity: 0;
-    transform: scale(0.9);
   }
 
-  .splash.visible .logo {
-    animation: fadeInScale 1.5s ease-out forwards;
-  }
-
-  @keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
+  @media (prefers-reduced-motion: reduce) {
+    .splash {
+      transition: none;
     }
   }
 </style>
 
 <script>
-  const splash = document.getElementById('splash');
-  const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+  const SPLASH_KEY = 'deckctr_splash_shown';
+  const SPLASH_DELAY = 1500;
+  const FADE_DURATION = 800;
 
-  if (!hasSeenSplash) {
-    // 첫 방문이면 스플래시 표시
-    splash?.classList.add('visible');
-    sessionStorage.setItem('hasSeenSplash', 'true');
+  function initSplash() {
+    const splash = document.getElementById('splash');
+    if (!splash) return;
+
+    // 이미 본 경우 즉시 숨김
+    if (sessionStorage.getItem(SPLASH_KEY)) {
+      splash.classList.add('hidden', 'removed');
+      window.dispatchEvent(new CustomEvent('splash:complete'));
+      return;
+    }
+
+    // 첫 방문: 스플래시 표시 후 페이드아웃
+    document.body.style.overflow = 'hidden';
+
     setTimeout(() => {
-      splash?.classList.remove('visible');
-    }, 3000);
+      splash.classList.add('hidden');
+      sessionStorage.setItem(SPLASH_KEY, 'true');
+
+      setTimeout(() => {
+        splash.classList.add('removed');
+        document.body.style.overflow = '';
+        window.dispatchEvent(new CustomEvent('splash:complete'));
+      }, FADE_DURATION);
+    }, SPLASH_DELAY);
   }
+
+  document.addEventListener('astro:page-load', initSplash);
 </script>

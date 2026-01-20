@@ -69,29 +69,24 @@ const {
 </section>
 
 <script>
-  (function() {
+  function initHeroAnimation() {
     const heroMedia = document.querySelector('.hero-media');
     if (!heroMedia) return;
 
     const INITIAL_MARGIN = 50;
-    const FINAL_MARGIN = 0;
-
     let ticking = false;
 
-    function easeOutCubic(t) {
+    function easeOutCubic(t: number) {
       return 1 - Math.pow(1 - t, 3);
     }
 
     function updateClipPath() {
       const rect = heroMedia.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-
       const progress = Math.min(Math.max(1 - (rect.top / windowHeight), 0), 1);
       const easedProgress = easeOutCubic(progress);
       const margin = INITIAL_MARGIN * (1 - easedProgress);
-
-      heroMedia.style.clipPath = `polygon(${margin}% 0%, ${100 - margin}% 0%, ${100 - margin}% 100%, ${margin}% 100%)`;
-
+      (heroMedia as HTMLElement).style.clipPath = `polygon(${margin}% 0%, ${100 - margin}% 0%, ${100 - margin}% 100%, ${margin}% 100%)`;
       ticking = false;
     }
 
@@ -102,9 +97,28 @@ const {
       }
     }
 
-    updateClipPath();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  })();
+    function enableAnimation() {
+      // 이전 리스너 제거 후 새로 등록
+      if ((window as any).__heroScrollHandler) {
+        window.removeEventListener('scroll', (window as any).__heroScrollHandler);
+      }
+      (window as any).__heroScrollHandler = onScroll;
+
+      updateClipPath();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    // 스플래시가 있으면 완료 후 시작, 없으면 즉시 시작
+    const splash = document.getElementById('splash');
+    if (splash && !splash.classList.contains('removed')) {
+      window.addEventListener('splash:complete', enableAnimation, { once: true });
+    } else {
+      enableAnimation();
+    }
+  }
+
+  // 초기 로드 및 View Transitions 후 모두 실행
+  document.addEventListener('astro:page-load', initHeroAnimation);
 </script>
 
 <style>

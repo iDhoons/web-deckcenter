@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> AI 에이전트 상세 규칙은 [AGENTS.md](./AGENTS.md)를 참조하세요.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
