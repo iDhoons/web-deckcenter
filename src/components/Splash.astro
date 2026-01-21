@@ -3,6 +3,84 @@
 const isHomePage = Astro.url.pathname === '/';
 ---
 
+<script is:inline>
+  const SPLASH_KEY = 'deckctr_splash_shown';
+  const FORCE_KEY = 'deckctr_splash_force';
+  const SPLASH_DELAY = 1500;
+  const FADE_DURATION = 800;
+
+  function safeGet(key) {
+    try {
+      return sessionStorage.getItem(key);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function safeSet(key, value) {
+    try {
+      sessionStorage.setItem(key, value);
+    } catch (error) {
+      // Storage may be unavailable in private modes.
+    }
+  }
+
+  function safeRemove(key) {
+    try {
+      sessionStorage.removeItem(key);
+    } catch (error) {
+      // Storage may be unavailable in private modes.
+    }
+  }
+
+  const shouldSkipSplash = safeGet(SPLASH_KEY) && !safeGet(FORCE_KEY);
+  if (shouldSkipSplash) {
+    document.documentElement.classList.add('splash-skip');
+  }
+
+  function markForceSplash(event) {
+    const key = event.key ? event.key.toLowerCase() : '';
+    const isReloadShortcut = event.shiftKey && (event.metaKey || event.ctrlKey) && key === 'r';
+    if (!isReloadShortcut) return;
+    safeSet(FORCE_KEY, 'true');
+  }
+
+  document.addEventListener('keydown', markForceSplash);
+
+  function initSplash() {
+    const splash = document.getElementById('splash');
+    const forceSplash = safeGet(FORCE_KEY) === 'true';
+
+    if (forceSplash) {
+      safeRemove(FORCE_KEY);
+      safeRemove(SPLASH_KEY);
+    }
+
+    if (!splash) return;
+
+    if (!forceSplash && safeGet(SPLASH_KEY)) {
+      splash.classList.add('hidden', 'removed');
+      window.dispatchEvent(new CustomEvent('splash:complete'));
+      return;
+    }
+
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(() => {
+      splash.classList.add('hidden');
+      safeSet(SPLASH_KEY, 'true');
+
+      setTimeout(() => {
+        splash.classList.add('removed');
+        document.body.style.overflow = '';
+        window.dispatchEvent(new CustomEvent('splash:complete'));
+      }, FADE_DURATION);
+    }, SPLASH_DELAY);
+  }
+
+  document.addEventListener('astro:page-load', initSplash);
+</script>
+
 {isHomePage && (
   <div class="splash" id="splash" aria-hidden="true">
     <img src="/images/Logo_Urizen.svg" alt="" class="logo" />
@@ -34,42 +112,12 @@ const isHomePage = Astro.url.pathname === '/';
     display: none;
   }
 
+  :global(html.splash-skip) .splash {
+    display: none;
+  }
+
   .logo {
     width: min(280px, 70vw);
   }
 
 </style>
-
-<script>
-  const SPLASH_KEY = 'deckctr_splash_shown';
-  const SPLASH_DELAY = 1500;
-  const FADE_DURATION = 800;
-
-  function initSplash() {
-    const splash = document.getElementById('splash');
-    if (!splash) return;
-
-    // 이미 본 경우 즉시 숨김
-    if (sessionStorage.getItem(SPLASH_KEY)) {
-      splash.classList.add('hidden', 'removed');
-      window.dispatchEvent(new CustomEvent('splash:complete'));
-      return;
-    }
-
-    // 첫 방문: 스플래시 표시 후 페이드아웃
-    document.body.style.overflow = 'hidden';
-
-    setTimeout(() => {
-      splash.classList.add('hidden');
-      sessionStorage.setItem(SPLASH_KEY, 'true');
-
-      setTimeout(() => {
-        splash.classList.add('removed');
-        document.body.style.overflow = '';
-        window.dispatchEvent(new CustomEvent('splash:complete'));
-      }, FADE_DURATION);
-    }, SPLASH_DELAY);
-  }
-
-  document.addEventListener('astro:page-load', initSplash);
-</script>
