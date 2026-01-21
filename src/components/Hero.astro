@@ -73,47 +73,24 @@ const {
     const heroMedia = document.querySelector('.hero-media');
     if (!heroMedia) return;
 
-    const INITIAL_MARGIN = 50;
-    let ticking = false;
+    // 이미 revealed 상태면 스킵
+    if (heroMedia.classList.contains('revealed')) return;
 
-    function easeOutCubic(t: number) {
-      return 1 - Math.pow(1 - t, 3);
+    function revealHero() {
+      // 스플래시 완료 후 1초 딜레이
+      setTimeout(() => {
+        heroMedia.classList.add('revealed');
+      }, 1000);
     }
 
-    function updateClipPath() {
-      const rect = heroMedia.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const progress = Math.min(Math.max(1 - (rect.top / windowHeight), 0), 1);
-      const easedProgress = easeOutCubic(progress);
-      const margin = INITIAL_MARGIN * (1 - easedProgress);
-      (heroMedia as HTMLElement).style.clipPath = `polygon(${margin}% 0%, ${100 - margin}% 0%, ${100 - margin}% 100%, ${margin}% 100%)`;
-      ticking = false;
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        requestAnimationFrame(updateClipPath);
-        ticking = true;
-      }
-    }
-
-    function enableAnimation() {
-      // 이전 리스너 제거 후 새로 등록
-      if ((window as any).__heroScrollHandler) {
-        window.removeEventListener('scroll', (window as any).__heroScrollHandler);
-      }
-      (window as any).__heroScrollHandler = onScroll;
-
-      updateClipPath();
-      window.addEventListener('scroll', onScroll, { passive: true });
-    }
-
-    // 스플래시가 있으면 완료 후 시작, 없으면 즉시 시작
+    // 스플래시가 있으면 완료 후 시작, 없으면 1초 후 열림
     const splash = document.getElementById('splash');
     if (splash && !splash.classList.contains('removed')) {
-      window.addEventListener('splash:complete', enableAnimation, { once: true });
+      window.addEventListener('splash:complete', revealHero, { once: true });
     } else {
-      enableAnimation();
+      setTimeout(() => {
+        heroMedia.classList.add('revealed');
+      }, 1000);
     }
   }
 
@@ -206,8 +183,14 @@ const {
     overflow: hidden;
     width: 100%;
     aspect-ratio: 16 / 9;
-    clip-path: polygon(30% 0%, 70% 0%, 70% 100%, 30% 100%);
-    transition: clip-path 0.5s ease-out;
+    /* 완전히 닫힌 상태로 시작 */
+    clip-path: polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%);
+    transition: clip-path 3.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hero-media.revealed {
+    /* 열린 상태 */
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
   }
 
   .hero-media img,

@@ -100,11 +100,27 @@
   }
 
   nav {
-    max-width: 1200px;
+    width: 100%;
+    max-width: 1600px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  @media (min-width: 1441px) {
+    header {
+      padding: 1.25rem 4rem;
+    }
+  }
+
+  @media (min-width: 1921px) {
+    header {
+      padding: 1.25rem 6rem;
+    }
+    nav {
+      max-width: 1800px;
+    }
   }
 
   .logo {

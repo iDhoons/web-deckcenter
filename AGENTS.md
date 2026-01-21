@@ -51,7 +51,7 @@ pnpm preview      # 빌드 미리보기
 
 ```
 src/
-├── components/     # 재사용 UI 컴포넌트
+├── components/     # Header, Footer, Hero, Section, Card, CTA, Testimonial, ChatButton, Splash
 ├── layouts/        # 페이지 레이아웃 (BaseLayout만 존재)
 ├── pages/          # 파일 기반 라우팅
 │   ├── [slug].astro    # 동적 라우트
@@ -207,7 +207,6 @@ Breakpoints (참조용):
 - 480px: Small mobile
 - 640px: Mobile landscape
 - 768px: Tablet (주요)
-- 900px: Small desktop
 - 1024px: Desktop
 - 1280px: Large desktop
 
