@@ -1,253 +1,146 @@
 ---
 ---
 
-<header role="banner">
-  <nav aria-label="주 메뉴">
-    <a href="/" class="logo" aria-label="데크센터 홈">데크센터</a>
+<header
+  role="banner"
+  class="header sticky top-0 z-header border-b border-border/60 backdrop-blur-md bg-bg/85 supports-[backdrop-filter]:bg-bg/60"
+>
+  <nav
+    aria-label="주 메뉴"
+    class="mx-auto flex h-16 max-w-DEFAULT items-center justify-between"
+  >
+    <a href="/" class="logo text-xl font-bold tracking-tight text-text" aria-label="데크센터 홈"
+      >데크센터</a
+    >
 
-    <ul class="nav-links" id="navLinks">
-      <li><a href="/products">제품</a></li>
-      <li><a href="/guides">비교/가이드</a></li>
-      <li><a href="/cases">시공사례</a></li>
-      <li><a href="/blog">블로그</a></li>
-      <li><a href="/about">회사소개</a></li>
-      <li><a href="/contact">문의</a></li>
-      <li>
-        <a href="https://calc.deckctr.com" target="_blank" rel="noopener noreferrer" class="cta">
-          견적내기
-        </a>
-      </li>
-      <li>
-        <button class="theme-toggle" aria-label="다크 모드로 전환">
-          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
-      </li>
+    <ul class="hidden list-none items-center gap-8 md:flex" id="navLinks">
+      <li><a href="/features" class="nav-link text-[0.9375rem] font-medium text-text-secondary transition-colors duration-fast hover:text-text">기능</a></li>
+      <li><a href="/pricing" class="nav-link text-[0.9375rem] font-medium text-text-secondary transition-colors duration-fast hover:text-text">가격</a></li>
+      <li><a href="/gallery" class="nav-link text-[0.9375rem] font-medium text-text-secondary transition-colors duration-fast hover:text-text">갤러리</a></li>
+      <li><a href="/blog" class="nav-link text-[0.9375rem] font-medium text-text-secondary transition-colors duration-fast hover:text-text">블로그</a></li>
     </ul>
 
-    <div class="header-actions">
-      <button class="theme-toggle mobile-theme-toggle" aria-label="다크 모드로 전환">
-        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-      </button>
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="메뉴 열기" aria-expanded="false">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
+    <div class="hidden items-center gap-4 md:flex">
+      <a href="/app" class="cta-button btn btn-primary text-[0.9375rem] py-2.5 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-base">시작하기</a>
     </div>
+
+    <button
+      class="mobile-menu-btn flex h-11 w-11 cursor-pointer flex-col items-center justify-center gap-[6px] border-none bg-transparent p-3 md:hidden"
+      id="mobileMenuBtn"
+      aria-label="메뉴 열기"
+      aria-expanded="false"
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
   </nav>
 
-  <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+  <div
+    class="mobile-menu-overlay"
+    id="mobileOverlay"
+  >
+  </div>
 
-  <div class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-header">
-      <span class="mobile-logo">데크센터</span>
-      <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="메뉴 닫기">
+  <div
+    class="mobile-menu fixed top-0 right-0 z-[1001] flex h-screen w-[min(320px,85vw)] transform flex-col bg-white p-6 transition-transform duration-slow shadow-2xl"
+    id="mobileMenu"
+    role="dialog"
+    aria-modal="true"
+    aria-label="주 메뉴"
+  >
+    <div
+      class="flex items-center justify-between border-b border-warm-200 pb-6 mb-6"
+    >
+      <span class="text-lg font-bold text-text">데크센터</span>
+      <button
+        class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-text transition-colors duration-fast hover:bg-warm-100"
+        id="mobileCloseBtn"
+        aria-label="메뉴 닫기"
+      >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
     </div>
-    <ul class="mobile-nav-links">
-      <li><a href="/products">제품</a></li>
-      <li><a href="/guides">비교/가이드</a></li>
-      <li><a href="/cases">시공사례</a></li>
-      <li><a href="/blog">블로그</a></li>
-      <li><a href="/about">회사소개</a></li>
-      <li><a href="/contact">문의하기</a></li>
+    <ul class="flex flex-col list-none gap-2">
+      <li><a href="/features" class="mobile-link block py-4 px-4 rounded-lg font-medium text-text transition-all duration-fast hover:bg-warm-50 hover:text-text-secondary">기능</a></li>
+      <li><a href="/pricing" class="mobile-link block py-4 px-4 rounded-lg font-medium text-text transition-all duration-fast hover:bg-warm-50 hover:text-text-secondary">가격</a></li>
+      <li><a href="/gallery" class="mobile-link block py-4 px-4 rounded-lg font-medium text-text transition-all duration-fast hover:bg-warm-50 hover:text-text-secondary">갤러리</a></li>
+      <li><a href="/blog" class="mobile-link block py-4 px-4 rounded-lg font-medium text-text transition-all duration-fast hover:bg-warm-50 hover:text-text-secondary">블로그</a></li>
     </ul>
-    <a href="https://calc.deckctr.com" target="_blank" rel="noopener noreferrer" class="mobile-cta">
-      무료 견적내기
-    </a>
+    <a href="/app" class="mt-auto block rounded-xl bg-primary p-4 text-center font-semibold text-white shadow-lg transition-all duration-base hover:bg-primary-soft hover:shadow-xl">시작하기</a>
   </div>
 </header>
 
 <style>
-  header {
-    background: white;
-    color: var(--color-primary);
-    padding: 1.25rem 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  /* Glassmorphism Header */
+  .header {
+    transition: background var(--transition-base), backdrop-filter var(--transition-base);
   }
 
-  nav {
-    width: 100%;
-    max-width: 1600px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  @media (min-width: 1441px) {
-    header {
-      padding: 1.25rem 4rem;
-    }
-  }
-
-  @media (min-width: 1921px) {
-    header {
-      padding: 1.25rem 6rem;
-    }
-    nav {
-      max-width: 1800px;
-    }
-  }
-
-  .logo {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--color-primary);
-    letter-spacing: -0.02em;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-    align-items: center;
-  }
-
-  .nav-links a {
-    color: var(--color-primary);
-    font-size: 1rem;
-    font-weight: 500;
-    transition: var(--transition);
-  }
-
-  .nav-links a:hover {
+  /* Logo hover effect */
+  .logo:hover {
     color: var(--color-accent);
   }
 
-  .cta {
+  /* Nav link with underline animation */
+  .nav-link {
+    position: relative;
+    transition: color var(--transition-fast);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
     background: var(--color-accent);
-    color: white !important;
-    padding: 0.6rem 1.4rem;
-    border-radius: 6px;
-    font-weight: 600;
+    transition: width var(--transition-base);
+    border-radius: 1px;
   }
 
-  .cta:hover {
-    background: var(--color-accent-light);
-    transform: translateY(-2px);
+  .nav-link:hover::after {
+    width: 100%;
   }
 
-  /* Header Actions */
-  .header-actions {
-    display: none;
-    align-items: center;
-    gap: 0.5rem;
+  /* Enhanced CTA button */
+  .cta-button {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   }
 
-  /* Theme Toggle Button */
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: transparent;
-    border: 1px solid var(--color-gray-200);
-    border-radius: 8px;
-    cursor: pointer;
-    color: var(--color-primary);
-    transition: all 0.2s ease;
-  }
-
-  .theme-toggle:hover {
-    background: var(--color-gray-100);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  .mobile-theme-toggle {
-    display: none;
-  }
-
-  /* Dark mode header styles */
-  :global([data-theme="dark"]) header {
-    background: var(--color-bg);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-  }
-
-  :global([data-theme="dark"]) .mobile-menu {
-    background: var(--color-bg);
-  }
-
-  /* Mobile Menu Button */
-  .mobile-menu-btn {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 44px;
-    height: 44px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    z-index: 1002;
+  .cta-button:hover {
+    transform: translateY(-1px);
   }
 
   .hamburger-line {
-    width: 24px;
+    width: 20px;
     height: 2px;
-    background: var(--color-primary);
-    border-radius: 2px;
-    transition: all 0.3s ease;
+    background: var(--color-text);
+    border-radius: 1px;
+    transition: all var(--transition-base);
   }
 
-  .mobile-menu-btn[aria-expanded="true"] .hamburger-line:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+  .mobile-menu-btn[aria-expanded="true"] .hamburger-line:first-child {
+    transform: rotate(45deg) translate(3px, 3px);
   }
 
-  .mobile-menu-btn[aria-expanded="true"] .hamburger-line:nth-child(2) {
-    opacity: 0;
-  }
-
-  .mobile-menu-btn[aria-expanded="true"] .hamburger-line:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
+  .mobile-menu-btn[aria-expanded="true"] .hamburger-line:last-child {
+    transform: rotate(-45deg) translate(3px, -3px);
   }
 
   /* Mobile Menu Overlay */
   .mobile-menu-overlay {
-    display: none;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity var(--transition-slow), visibility var(--transition-slow);
   }
 
   .mobile-menu-overlay.active {
@@ -257,145 +150,40 @@
 
   /* Mobile Menu Panel */
   .mobile-menu {
-    display: none;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: min(320px, 85vw);
-    height: 100vh;
-    background: white;
-    z-index: 1001;
     transform: translateX(100%);
-    transition: transform 0.3s ease;
-    flex-direction: column;
-    padding: 1.5rem;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
   }
 
   .mobile-menu.active {
     transform: translateX(0);
   }
 
-  .mobile-menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-gray-200);
-    margin-bottom: 1.5rem;
-  }
-
-  .mobile-logo {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--color-primary);
-  }
-
-  .mobile-close-btn {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--color-primary);
-    border-radius: 8px;
-    transition: background 0.2s ease;
-  }
-
-  .mobile-close-btn:hover {
-    background: var(--color-gray-100);
-  }
-
-  .mobile-nav-links {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .mobile-nav-links li {
-    border-bottom: 1px solid var(--color-gray-100);
-  }
-
-  .mobile-nav-links a {
-    display: block;
-    padding: 1rem 0;
-    color: var(--color-primary);
-    font-size: 1.1rem;
-    font-weight: 500;
-    transition: color 0.2s ease;
-  }
-
-  .mobile-nav-links a:hover {
-    color: var(--color-accent);
-  }
-
-  .mobile-cta {
-    display: block;
-    margin-top: auto;
-    padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
-    color: white;
-    text-align: center;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    margin-top: 2rem;
-  }
-
-  .mobile-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 66, 80, 0.3);
-  }
-
-  /* Dark mode mobile menu */
-  :global([data-theme="dark"]) .mobile-menu {
-    background: var(--color-bg);
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Body scroll lock when menu is open */
+  /* Body scroll lock */
   :global(body.menu-open) {
     overflow: hidden;
   }
 
+  /* Dark mode adjustments */
+  [data-theme="dark"] .header {
+    background: rgba(12, 10, 9, 0.85);
+    border-color: rgba(41, 37, 36, 0.6);
+  }
+
+  [data-theme="dark"] .mobile-menu {
+    background: var(--color-bg-secondary);
+  }
+
+  [data-theme="dark"] .mobile-link:hover {
+    background: var(--color-warm-100);
+  }
+
   /* Responsive */
-  @media (max-width: 900px) {
-    .nav-links {
-      display: none;
-    }
-
-    .header-actions {
-      display: flex;
-    }
-
-    .mobile-theme-toggle {
-      display: flex;
-    }
-
-    .mobile-menu-btn {
-      display: flex;
-    }
-
+  @media (max-width: 768px) {
     .mobile-menu-overlay {
       display: block;
-    }
-
-    .mobile-menu {
-      display: flex;
     }
   }
 
   @media (max-width: 480px) {
-    header {
-      padding: 1rem 1rem;
-    }
-
     .mobile-menu {
       width: 100vw;
     }
@@ -429,13 +217,11 @@
     mobileCloseBtn?.addEventListener('click', closeMenu);
     mobileOverlay.addEventListener('click', closeMenu);
 
-    // Close menu on link click
     const mobileLinks = mobileMenu.querySelectorAll('a');
     mobileLinks.forEach(link => {
       link.addEventListener('click', closeMenu);
     });
 
-    // Close menu on Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
         closeMenu();
@@ -443,9 +229,6 @@
     });
   }
 
-  // Initialize on first load
   initMobileMenu();
-
-  // Reinitialize after View Transitions
   document.addEventListener('astro:page-load', initMobileMenu);
 </script>

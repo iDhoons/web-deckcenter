@@ -1,6 +1,6 @@
 ---
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
   variant?: 'default' | 'alt';
 }
@@ -10,7 +10,7 @@ const { title, description, variant = 'default' } = Astro.props;
 
 <section class:list={["section", variant === 'alt' && "section-alt"]}>
   <div class="section-content">
-    <h2>{title}</h2>
+    {title && <h2>{title}</h2>}
     {description && <p class="section-description">{description}</p>}
     <slot />
   </div>
@@ -18,22 +18,27 @@ const { title, description, variant = 'default' } = Astro.props;
 
 <style>
   .section {
-    padding: 6rem 2rem;
+    padding: var(--section-spacing) var(--container-padding);
+  }
+
+  .section-alt {
+    background: var(--color-bg-secondary);
   }
 
   .section-content {
-    max-width: 1200px;
+    max-width: var(--max-width);
     margin: 0 auto;
   }
 
   .section h2 {
     margin-bottom: 1rem;
+    font-size: var(--font-size-3xl);
   }
 
   .section-description {
     max-width: 720px;
     margin-bottom: 3rem;
-    font-size: 1.15rem;
+    font-size: var(--font-size-lg);
     color: var(--color-text-light);
     line-height: 1.7;
   }

@@ -1,0 +1,212 @@
+---
+// Hero3D - Three.js 3D 데크 시각화 (성능 최적화)
+---
+
+<div class="hero-3d-container" id="hero3d"></div>
+
+<style>
+  .hero-3d-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    max-height: 700px;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, #f0f7fc 0%, #ffffff 50%, #e0eef5 100%);
+  }
+
+  /* 미세한 CAD 격자 배경 */
+  .hero-3d-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(30, 58, 95, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30, 58, 95, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    .hero-3d-container {
+      min-height: 350px;
+      max-height: 500px;
+    }
+  }
+</style>
+
+<script>
+  import * as THREE from 'three';
+
+  let scene: THREE.Scene | null = null;
+  let camera: THREE.PerspectiveCamera | null = null;
+  let renderer: THREE.WebGLRenderer | null = null;
+  let deckMesh: THREE.InstancedMesh | null = null;
+  let frameId: number | null = null;
+
+  // 성능 최적화 설정
+  const CONFIG = {
+    deckSegments: 12,        // 저폴리
+    boardCount: 16,          // 보드 개수
+    deckWidth: 8,
+    deckDepth: 1,
+    gap: 0.05,
+    pixelRatioCap: 2,        // 성능 캡
+    shadows: true,
+    antialias: false,        // 성능 우선
+  };
+
+  function initHero3D() {
+    const container = document.getElementById('hero3d');
+    if (!container) return;
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    // Scene
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0f7fc);
+    scene.fog = new THREE.Fog(0xf0f7fc, 10, 30);
+
+    // Camera
+    const aspect = width / height;
+    camera = new THREE.PerspectiveCamera(45, aspect, 0.5, 100);
+    camera.position.set(8, 6, 8);
+    camera.lookAt(0, 0, 0);
+
+    // Renderer
+    renderer = new THREE.WebGLRenderer({ antialias: CONFIG.antialias });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(CONFIG.pixelRatioCap, window.devicePixelRatio));
+    renderer.shadowMap.enabled = CONFIG.shadows;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(5, 10, 5);
+    directionalLight.castShadow = CONFIG.shadows;
+    directionalLight.shadow.mapSize.width = 1024;
+    directionalLight.shadow.mapSize.height = 1024;
+    scene.add(directionalLight);
+
+    // Deck Geometry (InstancedMesh for performance)
+    const geometry = new THREE.BoxGeometry(CONFIG.deckWidth, 0.2, CONFIG.deckDepth);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x8B7355,  // 우드 톤
+      roughness: 0.8,
+      metalness: 0.1,
+    });
+
+    deckMesh = new THREE.InstancedMesh(geometry, material, CONFIG.boardCount);
+    deckMesh.castShadow = true;
+    deckMesh.receiveShadow = true;
+
+    const matrix = new THREE.Matrix4();
+    const position = new THREE.Vector3();
+
+    // 데크 보드 배치
+    for (let i = 0; i < CONFIG.boardCount; i++) {
+      const x = (i - CONFIG.boardCount / 2) * (CONFIG.deckWidth + CONFIG.gap);
+      position.set(x, 0, 0);
+      matrix.setPosition(position);
+      deckMesh.setMatrixAt(i, matrix);
+    }
+
+    scene.add(deckMesh);
+
+    // Animation loop
+    let time = 0;
+    function animate() {
+      frameId = requestAnimationFrame(animate);
+      time += 0.005;
+
+      // 미세한 데크 회전
+      if (deckMesh) {
+        deckMesh.rotation.y = Math.sin(time) * 0.1;
+      }
+
+      // 카메라 parallax (마우스 인터랙티브)
+      camera.position.x = 8 + Math.sin(time * 0.5) * 0.5;
+      camera.position.z = 8 + Math.cos(time * 0.5) * 0.5;
+      camera.lookAt(0, 0, 0);
+
+      renderer.render(scene as THREE.Scene, camera as THREE.Camera);
+    }
+
+    animate();
+
+    // Resize handler
+    function handleResize() {
+      if (!container || !camera || !renderer) return;
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
+    }
+
+    window.addEventListener('resize', handleResize);
+  }
+
+  // Init on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHero3D);
+  } else {
+    initHero3D();
+  }
+
+  // Cleanup on page unload
+  document.addEventListener('astro:page-load', () => {
+    // Cleanup previous instance
+    if (frameId !== null) {
+      cancelAnimationFrame(frameId);
+      frameId = null;
+    }
+
+    if (deckMesh) {
+      deckMesh.geometry?.dispose();
+      (deckMesh.material as THREE.Material)?.dispose();
+    }
+
+    if (renderer) {
+      renderer.dispose();
+    }
+
+    // Re-init
+    initHero3D();
+  });
+
+  // Export cleanup for view transitions
+  export function cleanup() {
+    if (frameId !== null) {
+      cancelAnimationFrame(frameId);
+      frameId = null;
+    }
+
+    if (scene) {
+      scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          object.geometry?.dispose();
+          if (Array.isArray(object.material)) {
+            object.material.forEach((m) => m.dispose());
+          } else {
+            object.material?.dispose();
+          }
+        }
+      });
+      scene.clear();
+    }
+
+    if (renderer) {
+      renderer.dispose();
+    }
+  }
+</script>

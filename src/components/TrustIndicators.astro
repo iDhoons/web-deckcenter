@@ -1,0 +1,141 @@
+---
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  stats: Stat[];
+  title?: string;
+}
+
+const { stats, title = "신뢰할 수 있는 결과" } = Astro.props;
+---
+
+<section class="trust-indicators py-16 bg-gradient-to-b from-warm-50 to-bg">
+  <div class="mx-auto max-w-DEFAULT px-container">
+    <h2 class="text-center text-3xl md:text-4xl font-bold text-text mb-4">{title}</h2>
+    <p class="text-center text-text-secondary mb-12">수천 명의 고객이 신뢰하는 데크 설계 플랫폼</p>
+
+    <div class="stats-grid grid grid-cols-2 md:grid-cols-4 gap-8">
+      {stats.map((stat, index) => (
+        <div class={`stat-item text-center delay-${index * 100}`} id={`stat-${index}`}>
+          <div class="stat-value text-4xl md:text-5xl font-bold text-accent mb-2" data-value={stat.value}>
+            0
+          </div>
+          <div class="stat-label text-sm md:text-base text-text-secondary font-medium">
+            {stat.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .trust-indicators {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle grid pattern */
+  .trust-indicators::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--color-warm-200) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-warm-200) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .stat-item {
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .stat-value {
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    line-height: 1.5;
+  }
+
+  /* Staggered animation delays */
+  .delay-0 { animation-delay: 0s; }
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+
+  /* Dark mode */
+  [data-theme="dark"] .trust-indicators {
+    background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
+  }
+
+  [data-theme="dark"] .trust-indicators::before {
+    background-image:
+      linear-gradient(var(--color-warm-200) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-warm-200) 1px, transparent 1px);
+  }
+</style>
+
+<script>
+  function animateStats() {
+    const statItems = document.querySelectorAll('.stat-value');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const target = entry.target as HTMLElement;
+          const endValue = target.dataset.value || '0';
+
+          // Parse the value (handle numbers with suffixes like "+" or "%")
+          const match = endValue.match(/^([\d,]+)([^0-9]*)$/);
+          if (match) {
+            const numericValue = parseInt(match[1].replace(/,/g, ''), 10);
+            const suffix = match[2] || '';
+            let current = 0;
+            const increment = numericValue / 60; // 60 frames for ~1 second animation
+            const duration = 1000;
+            const stepTime = duration / 60;
+
+            const counter = setInterval(() => {
+              current += increment;
+              if (current >= numericValue) {
+                current = numericValue;
+                clearInterval(counter);
+              }
+              target.textContent = Math.floor(current).toLocaleString() + suffix;
+            }, stepTime);
+          } else {
+            target.textContent = endValue;
+          }
+
+          observer.unobserve(target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    statItems.forEach((item) => observer.observe(item));
+  }
+
+  // Run on initial load and page navigation
+  animateStats();
+  document.addEventListener('astro:page-load', animateStats);
+</script>

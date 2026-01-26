@@ -1,0 +1,108 @@
+---
+---
+<section class="steps" aria-labelledby="steps-heading">
+  <div class="steps-inner">
+    <div class="section-header">
+      <h2 id="steps-heading">간단한 3단계</h2>
+      <p>누구나 쉽게 시작할 수 있습니다</p>
+    </div>
+    <div class="steps-grid">
+      <article class="step-card">
+        <div class="step-number">1</div>
+        <h3>공간 입력</h3>
+        <p>데크를 설치할 공간의 크기와 형태를 입력하세요.</p>
+      </article>
+      <article class="step-card">
+        <div class="step-number">2</div>
+        <h3>자재 선택</h3>
+        <p>원하는 자재와 패턴을 선택하고 3D로 미리 확인하세요.</p>
+      </article>
+      <article class="step-card">
+        <div class="step-number">3</div>
+        <h3>견적 확인</h3>
+        <p>자동 계산된 자재 수량과 예상 비용을 확인하세요.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .steps {
+    background: var(--color-bg-secondary);
+  }
+
+  .steps-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .section-header h2 {
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .section-header p {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .step-card {
+    background: var(--color-white);
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .step-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .step-number {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-black);
+    color: var(--color-white);
+    border-radius: 12px;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .step-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .step-card p {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 900px) {
+    .steps-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

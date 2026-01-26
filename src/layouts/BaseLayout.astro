@@ -2,8 +2,6 @@
 import { ViewTransitions } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import Splash from '../components/Splash.astro';
-import ChatButton from '../components/ChatButton.astro';
 
 interface Props {
   title?: string;
@@ -12,8 +10,8 @@ interface Props {
 }
 
 const {
-  title = '데크센터 | 외장 데크재 전문',
-  description = '목재·합성목·알루미늄 데크까지, 현장에 맞는 최적 솔루션 제안',
+  title = '데크센터 | 3D 데크 설계 시뮬레이터',
+  description = '드래그 앤 드롭으로 쉽게 데크를 설계하고, 실시간 견적을 확인하세요.',
   image = 'https://images.unsplash.com/photo-1590059392209-799446d3283c?auto=format&fit=crop&q=80&w=1200',
 } = Astro.props;
 
@@ -21,16 +19,23 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
 ---
 
 <!DOCTYPE html>
-<html lang="ko" data-theme="light">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 
+    <title>{title}</title>
     <link rel="canonical" href={canonicalURL} />
     <meta name="description" content={description} />
 
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preload" href="https://cdn.jsdelivr.net/gh/niceplugin/Paperlogy/Paperlogy.css" as="style" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/niceplugin/Paperlogy/Paperlogy.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/niceplugin/Paperlogy/Paperlogy.css"></noscript>
+    
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
@@ -42,18 +47,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image.startsWith('http') ? image : new URL(image, Astro.site)} />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/niceplugin/Paperlogy/Paperlogy.css" />
     <ViewTransitions />
   </head>
-  <body>
+  <body class="bg-bg font-sans text-text antialiased leading-loose">
     <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
-    <Splash />
     <Header />
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
     <Footer />
-    <ChatButton />
   </body>
 </html>
 
@@ -64,7 +66,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
   let rafId: number | null = null;
 
   function initLenis() {
-    // 기존 인스턴스 정리
     if (lenis) {
       lenis.destroy();
     }
@@ -85,110 +86,69 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     rafId = requestAnimationFrame(raf);
   }
 
-  // 첫 로드
-  initLenis();
-
-  // View Transitions 후 재초기화
+  // 페이지 로드 후 Lenis 초기화 (FCP 개선)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLenis);
+  } else {
+    initLenis();
+  }
   document.addEventListener('astro:page-load', initLenis);
-</script>
-
-<script>
-  function initTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  }
-
-  function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeToggleButton();
-  }
-
-  function updateThemeToggleButton() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const buttons = document.querySelectorAll('.theme-toggle');
-    buttons.forEach((btn) => {
-      const sunIcon = btn.querySelector('.sun-icon');
-      const moonIcon = btn.querySelector('.moon-icon');
-      if (sunIcon && moonIcon) {
-        sunIcon.style.display = isDark ? 'none' : 'block';
-        moonIcon.style.display = isDark ? 'block' : 'none';
-      }
-      btn.setAttribute('aria-label', isDark ? '라이트 모드로 전환' : '다크 모드로 전환');
-    });
-  }
-
-  // 초기화
-  initTheme();
-
-  // 페이지 로드 시
-  document.addEventListener('DOMContentLoaded', () => {
-    updateThemeToggleButton();
-    document.querySelectorAll('.theme-toggle').forEach((btn) => {
-      btn.addEventListener('click', toggleTheme);
-    });
-  });
-
-  // View Transitions 후
-  document.addEventListener('astro:page-load', () => {
-    initTheme();
-    updateThemeToggleButton();
-    document.querySelectorAll('.theme-toggle').forEach((btn) => {
-      btn.addEventListener('click', toggleTheme);
-    });
-  });
-
-  // 시스템 테마 변경 감지
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    if (!localStorage.getItem('theme')) {
-      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-      updateThemeToggleButton();
-    }
-  });
 </script>
 
 <style is:global>
   :root {
-    /* Colors */
-    --color-primary: #1a1a1a;
-    --color-secondary: #404040;
-    --color-accent: #004250;
-    --color-accent-light: #005a6e;
-    --color-text: #333333;
-    --color-text-light: #595959; /* WCAG AA 준수로 변경 */
-    --color-bg: #ffffff;
-    --color-bg-alt: #F8FAFB;
-    --color-gray-50: #fafafa;
-    --color-gray-100: #f5f5f5;
-    --color-gray-200: #eeeeee;
+    /* Colors - Premium Teal + Warm Stone System */
 
-    /* Spacing Scale */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-2xl: 3rem;
-    --spacing-3xl: 4rem;
+    /* Neutral Base */
+    --color-black: #000000;
+    --color-white: #ffffff;
 
-    /* Shadow Scale */
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-    --shadow-xl: 0 12px 32px rgba(0,0,0,0.15);
+    /* Primary - Deep Charcoal with Warm Undertone */
+    --color-primary: #0f1419;
+    --color-primary-soft: #1a2228;
 
-    /* Z-index Scale */
-    --z-base: 1;
-    --z-dropdown: 100;
-    --z-sticky: 1000;
-    --z-modal: 2000;
-    --z-splash: 10000;
+    /* Accent - Premium Teal */
+    --color-accent: #0d9488;
+    --color-accent-light: #14b8a6;
+    --color-accent-dark: #0f766e;
 
-    /* Typography Scale */
+    /* Warm Stone Background System */
+    --color-warm-50: #fafaf9;
+    --color-warm-100: #f5f5f4;
+    --color-warm-200: #e7e5e4;
+    --color-warm-300: #d6d3d1;
+
+    /* Semantic Colors */
+    --color-text: #1a1a1a;
+    --color-text-secondary: #4a5568;
+    --color-text-tertiary: #718096;
+    --color-text-light: #a0aec0;
+    --color-bg: #fafafa;
+    --color-bg-secondary: #f5f5f4;
+    --color-bg-alt: #e7e5e4;
+    --color-border: #e7e5e4;
+    --color-link: #0d9488;
+
+    /* Deck Material Accents */
+    --color-wood-cedar: #a47e3b;
+    --color-wood-oak: #8b6914;
+    --color-aluminum: #9ca3af;
+
+    /* Technical Colors (Legacy Support) */
+    --color-tech-blue: #0066cc;
+    --color-tech-cyan: #00a3cc;
+    --color-grid: #e7e5e4;
+    --color-measure: #94a3b8;
+
+    /* Border Radius Scale - Modern */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --radius-full: 999px;
+
+    /* Typography Scale - Enhanced */
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
     --font-size-base: 1rem;
@@ -197,40 +157,85 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     --font-size-2xl: 1.5rem;
     --font-size-3xl: 2rem;
     --font-size-4xl: 2.5rem;
-    --font-size-5xl: 3.5rem;
+    --font-size-5xl: 3rem;
+    --font-size-h1: clamp(2.5rem, 5vw, 3.75rem);
+    --font-size-h2: clamp(2rem, 3.5vw, 2.5rem);
+    --font-size-h3: 1.5rem;
+    --font-size-h4: 1.25rem;
+
+    /* Line Heights - Optimized for Korean */
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.6;
+    --line-height-relaxed: 1.75;
+
+    /* Letter Spacing */
+    --letter-spacing-tight: -0.02em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.02em;
+
+    /* Font Weights */
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
 
     /* Layout */
     --max-width: 1200px;
-    --transition: all 0.3s ease;
+    --section-spacing: 120px;
+    --container-padding: 24px;
 
-    /* Breakpoints (for reference in documentation) */
-    /* --bp-xs: 480px;   Small mobile */
-    /* --bp-sm: 640px;   Mobile landscape */
-    /* --bp-md: 768px;   Tablet */
-    /* --bp-lg: 900px;   Small desktop */
-    /* --bp-xl: 1024px;  Desktop */
-    /* --bp-2xl: 1280px; Large desktop */
-    /* --bp-3xl: 1440px; Extra large desktop */
+    /* Shadows - Layered Depth */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.12);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.2s ease;
+    --transition-slow: 0.3s ease;
+
+    /* Z-index */
+    --z-header: 1000;
+    --z-modal: 2000;
   }
 
-  /* Dark Theme */
+  /* Dark Mode - Premium Dark */
   [data-theme="dark"] {
-    --color-primary: #f5f5f5;
-    --color-secondary: #d4d4d4;
-    --color-accent: #00a3cc;
-    --color-accent-light: #00c4f0;
-    --color-text: #e5e5e5;
-    --color-text-light: #a3a3a3;
-    --color-bg: #0f0f0f;
-    --color-bg-alt: #1a1a1a;
-    --color-gray-50: #171717;
-    --color-gray-100: #262626;
-    --color-gray-200: #404040;
+    /* Semantic Colors */
+    --color-text: #f5f5f4;
+    --color-text-secondary: #d6d3d1;
+    --color-text-tertiary: #a8a29e;
+    --color-text-light: #78716c;
 
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
-    --shadow-xl: 0 12px 32px rgba(0,0,0,0.6);
+    /* Stone Dark Background System */
+    --color-bg: #0c0a09;
+    --color-bg-secondary: #1c1917;
+    --color-bg-alt: #292524;
+
+    --color-border: #292524;
+    --color-link: #2dd4bf;
+
+    /* Accent - Bright Teal for Dark Mode */
+    --color-accent: #2dd4bf;
+    --color-accent-light: #5eead4;
+    --color-accent-dark: #14b8a6;
+
+    /* Warm Stone in Dark Mode */
+    --color-warm-50: #1c1917;
+    --color-warm-100: #292524;
+    --color-warm-200: #44403c;
+    --color-warm-300: #57534e;
+
+    /* Primary Colors */
+    --color-primary: #f5f5f4;
+    --color-primary-soft: #e7e5e4;
+
+    /* Deck Material Accents - Adjusted for Dark */
+    --color-wood-cedar: #c9a86c;
+    --color-wood-oak: #a89040;
+    --color-aluminum: #d6d3d1;
   }
 
   * {
@@ -248,15 +253,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     height: auto;
   }
 
-  body {
-    font-family: "Paperlogy", -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
-    font-weight: 400;
-    color: var(--color-text);
-    background: var(--color-bg);
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-  }
-
   main {
     min-height: 70vh;
   }
@@ -272,177 +268,71 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     color: inherit;
   }
 
-  a:hover {
-    text-decoration: none;
-  }
-
-  h1, h2, h3, h4 {
-    color: var(--color-primary);
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-  }
-
-  h1 {
-    font-size: 3.5rem;
-  }
-
-  h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-  }
-
-  h3 {
-    font-size: 1.35rem;
-    font-weight: 600;
-  }
-
-  /* Extra large screens */
-  @media (min-width: 1440px) {
-    :root {
-      --font-size-5xl: 4rem;
-      --font-size-4xl: 3rem;
-    }
-
-    h1 {
-      font-size: var(--font-size-5xl);
-    }
-
-    h2 {
-      font-size: var(--font-size-4xl);
-    }
-
-    .container {
-      max-width: 1400px;
-    }
-  }
-
-  /* Large desktop */
-  @media (max-width: 1280px) {
-    h1 {
-      font-size: 3rem;
-    }
-  }
-
-  /* Desktop */
-  @media (max-width: 1024px) {
-    h1 {
-      font-size: 2.75rem;
-    }
-
-    section {
-      padding: 5rem 0;
-    }
-  }
-
-  /* Tablet */
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 2.25rem;
-    }
-    h2 {
-      font-size: 1.75rem;
-    }
-
-    section {
-      padding: 4rem 0;
-    }
-  }
-
-  /* Mobile landscape */
-  @media (max-width: 640px) {
-    h1 {
-      font-size: 2rem;
-    }
-
-    h2 {
-      font-size: 1.5rem;
-    }
-
-    section {
-      padding: 3rem 0;
-    }
-
-    .container {
-      padding: 0 1rem;
-    }
-  }
-
-  /* Small mobile */
-  @media (max-width: 480px) {
-    h1 {
-      font-size: 1.75rem;
-    }
-
-    h2 {
-      font-size: 1.35rem;
-    }
-
-    h3 {
-      font-size: 1.15rem;
-    }
-
-    section {
-      padding: 2.5rem 0;
-    }
-
-    .btn {
-      padding: 0.7rem 1.5rem;
-      font-size: 0.9rem;
-    }
-  }
-
-  .container {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
-
+  /* Buttons */
   .btn {
-    display: inline-block;
-    padding: 0.8rem 2rem;
-    border-radius: 6px;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1.75rem;
     text-align: center;
+    font-size: var(--font-size-base);
+    font-weight: 600;
     cursor: pointer;
-    transition: var(--transition);
     text-decoration: none;
+    transition: var(--transition-base);
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
-    color: white;
-    box-shadow: 0 4px 14px rgba(0, 66, 80, 0.3);
+    border: none;
+    background: var(--color-accent);
+    color: var(--color-white);
   }
-
   .btn-primary:hover {
-    background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 66, 80, 0.4);
+    background: var(--color-accent-dark);
   }
 
-  section {
-    padding: 6rem 0;
+  .btn-secondary {
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text);
+  }
+  .btn-secondary:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
-  section.section-alt {
-    background: linear-gradient(180deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
+  /* Dark mode button adjustments */
+  [data-theme="dark"] .btn-primary {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+  [data-theme="dark"] .btn-primary:hover {
+    background: var(--color-accent-dark);
+  }
+  [data-theme="dark"] .btn-secondary {
+    border-color: var(--color-warm-200);
+    color: var(--color-text);
+  }
+  [data-theme="dark"] .btn-secondary:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
-  /* Skip Link - 접근성 */
+  /* Skip Link */
   .skip-link {
     position: absolute;
     top: -100%;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--color-accent);
-    color: white;
+    background: var(--color-black);
+    color: var(--color-white);
     padding: 1rem 2rem;
     border-radius: 0 0 8px 8px;
-    font-weight: 600;
-    text-decoration: none;
-    z-index: var(--z-splash);
-    transition: top 0.2s ease;
+    font-weight: 500;
+    z-index: 9999;
+    transition: top var(--transition-base);
   }
 
   .skip-link:focus {
@@ -450,24 +340,57 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     outline: none;
   }
 
-  /* Focus Indicators - 접근성 */
+  /* Focus - Enhanced for Accessibility */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
   }
 
-  a:focus-visible,
-  button:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
-    outline: 2px solid var(--color-accent);
+  /* Button focus styles */
+  .btn:focus-visible,
+  .cta:focus-visible {
+    outline: 3px solid var(--color-accent);
     outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.2);
   }
 
-  /* main 포커스 시 outline 제거 (skip link 대상) */
+  /* Link focus styles */
+  a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    text-decoration: underline;
+  }
+
   main:focus {
     outline: none;
   }
 
+  /* Responsive */
+  @media (min-width: 1440px) {
+    :root {
+      --container-padding: 48px;
+      --section-spacing: 160px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    :root {
+      --section-spacing: 100px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --section-spacing: 80px;
+      --container-padding: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :root {
+      --section-spacing: 64px;
+      --container-padding: 16px;
+    }
+  }
 </style>

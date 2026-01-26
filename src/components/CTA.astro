@@ -14,30 +14,47 @@ const { text, link, variant = 'primary' } = Astro.props;
 
 <style>
   .cta {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     text-align: center;
-    transition: all 0.2s;
+    text-decoration: none;
+    transition: var(--transition-base);
+    cursor: pointer;
   }
 
   .cta-primary {
     background: var(--color-accent);
-    color: white;
+    color: var(--color-white);
+    border: none;
   }
 
   .cta-primary:hover {
-    background: #7a4e23;
+    background: var(--color-accent-dark);
   }
 
   .cta-secondary {
-    background: var(--color-primary);
-    color: white;
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
   }
 
   .cta-secondary:hover {
-    background: #1a1a1a;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  /* Dark mode */
+  :global([data-theme="dark"]) .cta-primary {
+    background: var(--color-accent);
+    color: var(--color-black);
+  }
+
+  :global([data-theme="dark"]) .cta-primary:hover {
+    background: var(--color-accent-light);
   }
 </style>

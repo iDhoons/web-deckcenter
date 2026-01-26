@@ -1,0 +1,230 @@
+---
+---
+<section class="pricing" aria-labelledby="pricing-heading">
+  <div class="pricing-inner">
+    <div class="section-header">
+      <h2 id="pricing-heading" class="text-h2 font-bold text-text mb-3">합리적인 가격</h2>
+      <p class="text-lg text-text-secondary">필요한 만큼만, 기본 기능은 무료</p>
+    </div>
+    <div class="pricing-grid">
+      <article class="pricing-card">
+        <div class="pricing-header">
+          <h3 class="text-xl font-semibold text-text">Free</h3>
+          <div class="pricing-price text-4xl font-bold text-text">무료</div>
+          <p class="text-text-secondary">개인 사용자를 위한 기본 기능</p>
+        </div>
+        <ul class="pricing-features">
+          <li><span class="pricing-check" aria-hidden="true"></span>기본 3D 설계</li>
+          <li><span class="pricing-check" aria-hidden="true"></span>20종 자재 라이브러리</li>
+          <li><span class="pricing-check" aria-hidden="true"></span>워터마크 포함 내보내기</li>
+        </ul>
+        <a href="/app" class="btn btn-secondary pricing-cta">무료로 시작</a>
+      </article>
+
+      <article class="pricing-card featured">
+        <div class="pricing-badge">인기</div>
+        <div class="pricing-header">
+          <h3 class="text-xl font-semibold text-text">Pro</h3>
+          <div class="pricing-price text-4xl font-bold text-accent">월 29,000원</div>
+          <p class="text-text-secondary">시공업체 및 전문가용</p>
+        </div>
+        <ul class="pricing-features">
+          <li><span class="pricing-check" aria-hidden="true"></span>전체 자재 라이브러리</li>
+          <li><span class="pricing-check" aria-hidden="true"></span>고해상도 내보내기</li>
+          <li><span class="pricing-check" aria-hidden="true"></span>견적서 PDF 생성</li>
+          <li><span class="pricing-check" aria-hidden="true"></span>우선 지원</li>
+        </ul>
+        <a href="/app" class="btn btn-primary pricing-cta">Pro 시작</a>
+      </article>
+
+      <article class="pricing-card">
+        <div class="pricing-header">
+          <h3 class="text-xl font-semibold text-text">Enterprise</h3>
+          <div class="pricing-price text-4xl font-bold text-text">문의</div>
+          <p class="text-text-secondary">대규모 팀 및 기업용</p>
+        </div>
+        <ul class="pricing-features">
+          <li><span class="pricing-check" aria-hidden="true"></span>화이트라벨 지원</li>
+          <li><span class="pricing-check" aria-hidden="true"></span>API 접근</li>
+          <li><span class="pricing-check" aria-hidden="true"></span>전담 지원</li>
+          <li><span class="pricing-check" aria-hidden="true"></span>맞춤 기능</li>
+        </ul>
+        <a href="/contact" class="btn btn-secondary pricing-cta">문의하기</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing {
+    background: var(--color-bg);
+  }
+
+  .pricing-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* Enhanced Pricing Card */
+  .pricing-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-warm-200);
+    border-radius: var(--radius-2xl);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+  }
+
+  .pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* Featured Plan Elevation */
+  .pricing-card.featured {
+    border-color: var(--color-accent);
+    box-shadow:
+      0 0 0 1px var(--color-accent-light),
+      var(--shadow-xl);
+    transform: scale(1.05);
+    z-index: 1;
+  }
+
+  .pricing-card.featured:hover {
+    transform: scale(1.05) translateY(-8px);
+    box-shadow:
+      0 0 0 1px var(--color-accent-light),
+      var(--shadow-xl);
+  }
+
+  /* Enhanced Popular Badge */
+  .pricing-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg,
+      var(--color-accent) 0%,
+      var(--color-accent-light) 100%
+    );
+    color: var(--color-white);
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+  }
+
+  .pricing-header {
+    text-align: center;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--color-warm-200);
+  }
+
+  .pricing-price {
+    margin-bottom: 8px;
+  }
+
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex: 1;
+  }
+
+  .pricing-features li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+  }
+
+  /* Enhanced Checkmark */
+  .pricing-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--color-accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: var(--color-warm-50);
+    flex-shrink: 0;
+  }
+
+  .pricing-check::after {
+    content: '';
+    width: 8px;
+    height: 4px;
+    border-left: 2px solid var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
+    transform: rotate(-45deg);
+    margin-top: -2px;
+  }
+
+  .pricing-cta {
+    width: 100%;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .pricing-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pricing-card.featured {
+      transform: none;
+    }
+
+    .pricing-card.featured:hover {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* Dark mode */
+  [data-theme="dark"] .pricing-card {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-warm-200);
+  }
+
+  [data-theme="dark"] .pricing-card.featured {
+    border-color: var(--color-accent);
+    box-shadow:
+      0 0 0 1px var(--color-accent-dark),
+      var(--shadow-xl);
+  }
+
+  [data-theme="dark"] .pricing-check {
+    background: var(--color-warm-50);
+    border-color: var(--color-accent);
+  }
+
+  [data-theme="dark"] .pricing-check::after {
+    border-color: var(--color-accent);
+  }
+
+  [data-theme="dark"] .pricing-header {
+    border-color: var(--color-warm-200);
+  }
+</style>

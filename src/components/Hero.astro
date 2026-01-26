@@ -1,222 +1,136 @@
 ---
-interface Props {
-  title: string;
-  description: string;
-  ctaText?: string;
-  ctaLink?: string;
-  image?: string;
-  videoUrl?: string;
-  youtubeId?: string;
-  eyebrow?: string;
-  highlights?: string[];
-}
-
-const {
-  title,
-  description,
-  ctaText,
-  ctaLink,
-  image,
-  videoUrl,
-  youtubeId,
-  eyebrow,
-  highlights,
-} = Astro.props;
 ---
-
-<section class="hero-text">
-  <div class="hero-text-inner">
-    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-    <h1>{title}</h1>
-    <p>{description}</p>
-    {ctaText && ctaLink && (
-      <a href={ctaLink} class="cta">{ctaText}</a>
-    )}
-    {highlights && highlights.length > 0 && (
-      <ul class="hero-highlights">
-        {highlights.map((item) => (
-          <li>{item}</li>
-        ))}
-      </ul>
-    )}
+<section class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <h1>
+        설계부터 견적까지,<br />
+        <span class="hero-light">한 번에 끝내세요</span>
+      </h1>
+      <p class="hero-description">
+        복잡한 CAD 없이 직관적인 3D 인터페이스로 데크를 설계하고,
+        실시간으로 자재와 비용을 확인하세요.
+      </p>
+      <div class="hero-cta">
+        <a href="/app" class="btn btn-primary">무료로 시작하기</a>
+        <a href="/features" class="btn btn-secondary">기능 둘러보기</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <svg class="hero-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="1" fill="var(--color-grid)" opacity="0.5"></circle>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+        <path class="hero-svg-path" d="M 80 80 L 240 80 L 320 160 L 320 320 L 160 320" stroke="var(--color-tech-cyan)" stroke-width="3" fill="none" />
+        <path class="hero-svg-path" d="M 80 120 L 80 280 L 160 320" stroke="var(--color-tech-cyan)" stroke-width="3" fill="none" />
+        <circle cx="80" cy="80" r="4" fill="var(--color-tech-blue)"></circle>
+        <circle cx="240" cy="80" r="4" fill="var(--color-tech-blue)"></circle>
+        <circle cx="320" cy="160" r="4" fill="var(--color-tech-blue)"></circle>
+        <circle cx="160" cy="320" r="4" fill="var(--color-tech-blue)"></circle>
+        <circle cx="80" cy="120" r="4" fill="var(--color-tech-blue)"></circle>
+        <circle cx="80" cy="280" r="4" fill="var(--color-tech-blue)"></circle>
+        <circle cx="320" cy="320" r="4" fill="var(--color-tech-blue)"></circle>
+      </svg>
+    </div>
   </div>
 </section>
-
-<section class="hero-media-section">
-  <div class="hero-media">
-    {videoUrl ? (
-      <video
-        src={videoUrl}
-        poster={image}
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-      ></video>
-    ) : youtubeId ? (
-      <iframe
-        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1`}
-        title={title}
-        frameborder="0"
-        allow="autoplay; encrypted-media"
-        allowfullscreen
-      ></iframe>
-    ) : image ? (
-      <img src={image} alt={title} loading="eager" />
-    ) : null}
-  </div>
-</section>
-
-<script>
-  function initHeroAnimation() {
-    const heroMedia = document.querySelector('.hero-media');
-    if (!heroMedia) return;
-
-    // 이미 revealed 상태면 스킵
-    if (heroMedia.classList.contains('revealed')) return;
-
-    function revealHero() {
-      // 스플래시 완료 후 1초 딜레이
-      setTimeout(() => {
-        heroMedia.classList.add('revealed');
-      }, 1000);
-    }
-
-    // 스플래시가 있으면 완료 후 시작, 없으면 1초 후 열림
-    const splash = document.getElementById('splash');
-    if (splash && !splash.classList.contains('removed')) {
-      window.addEventListener('splash:complete', revealHero, { once: true });
-    } else {
-      setTimeout(() => {
-        heroMedia.classList.add('revealed');
-      }, 1000);
-    }
-  }
-
-  // 초기 로드 및 View Transitions 후 모두 실행
-  document.addEventListener('astro:page-load', initHeroAnimation);
-</script>
 
 <style>
-  .hero-text {
-    background: var(--color-bg-alt);
-    text-align: center;
-    padding: 80px 20px;
+  .hero {
+    padding: calc(var(--section-spacing) + 40px) 0 var(--section-spacing);
+    background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-bg-secondary) 100%);
   }
-
-  .hero-text-inner {
+  .hero-inner {
     max-width: var(--max-width);
     margin: 0 auto;
+    padding: 0 var(--container-padding);
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: 56px;
   }
-
-  .eyebrow {
-    display: inline-block;
-    font-size: 0.9rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    margin-bottom: 1rem;
+  .hero-copy {
+    text-align: left;
+  }
+  .hero h1 {
+    font-size: clamp(2.75rem, 6vw, 4.5rem);
     font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: var(--color-text);
   }
-
-  .hero-text h1 {
-    color: var(--color-primary);
-    margin-bottom: 1.5rem;
-    font-size: 2.75rem;
+  .hero-light {
+    color: var(--color-text-tertiary);
   }
-
-  .hero-text p {
-    font-size: 1.25rem;
-    color: var(--color-text-light);
-    margin-bottom: 2rem;
-    max-width: 640px;
-    margin-left: auto;
-    margin-right: auto;
+  .hero-description {
+    font-size: clamp(1.125rem, 2vw, 1.25rem);
+    line-height: 1.6;
+    margin-bottom: 32px;
+    color: var(--color-text-secondary);
   }
-
-  .hero-highlights {
-    list-style: none;
+  .hero-cta {
     display: flex;
+    gap: 16px;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
   }
-
-  .hero-highlights li {
-    padding: 0.35rem 0.85rem;
-    background: rgba(139, 90, 43, 0.1);
-    border: 1px solid rgba(139, 90, 43, 0.2);
-    border-radius: 999px;
-    font-size: 0.95rem;
-    color: var(--color-secondary);
+  .hero-visual {
+    perspective: 1500px;
   }
-
-  .cta {
-    display: inline-block;
-    background: var(--color-accent);
-    color: white;
-    padding: 0.75rem 2rem;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 1rem;
-  }
-
-  .cta:hover {
-    background: var(--color-accent-light);
-  }
-
-  /* Dark mode hero */
-  :global([data-theme="dark"]) .hero-highlights li {
-    background: rgba(0, 163, 204, 0.15);
-    border-color: rgba(0, 163, 204, 0.3);
-  }
-
-  .hero-media-section {
-    position: relative;
+  .hero-svg {
     width: 100%;
+    height: auto;
+    opacity: 0;
+    transform: rotateY(-20deg) rotateX(10deg) scale(0.9);
+    animation: fadeInRotate 1.5s 0.5s ease-out forwards;
+  }
+  .hero-svg-path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw 3s 1s ease-out forwards;
   }
 
-  .hero-media {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    /* 완전히 닫힌 상태로 시작 */
-    clip-path: polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%);
-    transition: clip-path 3.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .hero-media.revealed {
-    /* 열린 상태 */
-    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-  }
-
-  .hero-media img,
-  .hero-media iframe,
-  .hero-media video {
-    width: 100%;
-    height: 100%;
-    border: none;
-    object-fit: cover;
-  }
-
-  @media (max-width: 768px) {
-    .hero-text {
-      padding: 60px 16px;
+  @keyframes fadeInRotate {
+    to {
+      opacity: 1;
+      transform: rotateY(0) rotateX(0) scale(1);
     }
+  }
 
-    .hero-text h1 {
-      font-size: 2rem;
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
     }
-
-    .hero-text p {
-      font-size: 1.1rem;
+  }
+  
+  @media (max-width: 1024px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
     }
+    .hero-copy {
+      text-align: center;
+    }
+    .hero-cta {
+      justify-content: center;
+    }
+    .hero-visual {
+      display: none;
+    }
+  }
 
-    .hero-media {
-      aspect-ratio: 4 / 3;
+  @media (max-width: 480px) {
+    .hero {
+      padding: 80px 0 60px;
+    }
+    .hero-cta {
+      flex-direction: column;
+    }
+    .hero-cta .btn {
+      width: 100%;
     }
   }
 </style>

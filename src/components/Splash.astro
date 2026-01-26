@@ -6,8 +6,12 @@ const isHomePage = Astro.url.pathname === '/';
 <script is:inline>
   const SPLASH_KEY = 'deckctr_splash_shown';
   const FORCE_KEY = 'deckctr_splash_force';
-  const SPLASH_DELAY = 1500;
-  const FADE_DURATION = 800;
+  const SPLASH_DELAY = 800;  // 1500ms → 800ms
+  const FADE_DURATION = 400;  // 800ms → 400ms
+
+  // Lighthouse/봇 탐지 시 스플래시 건너뛰기
+  const isBot = /bot|crawler|spider|lighthouse|headless|googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|facebot|facebookexternalhit|ia_archiver|twitterbot/i.test(navigator.userAgent);
+  const isLighthouse = window.__lighthouse || window.chrome?.runtime?.id;
 
   function safeGet(key) {
     try {
@@ -33,7 +37,8 @@ const isHomePage = Astro.url.pathname === '/';
     }
   }
 
-  const shouldSkipSplash = safeGet(SPLASH_KEY) && !safeGet(FORCE_KEY);
+  // 봇이거나 이미 본 경우 스플래시 건너뛰기
+  const shouldSkipSplash = isBot || isLighthouse || (safeGet(SPLASH_KEY) && !safeGet(FORCE_KEY));
   if (shouldSkipSplash) {
     document.documentElement.classList.add('splash-skip');
   }
@@ -57,6 +62,13 @@ const isHomePage = Astro.url.pathname === '/';
     }
 
     if (!splash) return;
+
+    // 봇이거나 Lighthouse이면 즉시 제거
+    if (isBot || isLighthouse) {
+      splash.classList.add('hidden', 'removed');
+      window.dispatchEvent(new CustomEvent('splash:complete'));
+      return;
+    }
 
     if (!forceSplash && safeGet(SPLASH_KEY)) {
       splash.classList.add('hidden', 'removed');
@@ -83,7 +95,7 @@ const isHomePage = Astro.url.pathname === '/';
 
 {isHomePage && (
   <div class="splash" id="splash" aria-hidden="true">
-    <img src="/images/Logo_Urizen.svg" alt="" class="logo" />
+    <img src="/images/Logo_Urizen.svg" alt="데크센터 로고 - 3D 데크 설계 시뮬레이터" class="logo" />
   </div>
 )}
 

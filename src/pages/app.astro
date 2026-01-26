@@ -1,0 +1,258 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTA from '../components/CTA.astro';
+---
+
+<BaseLayout title="데크 설계 시작하기 | 데크센터">
+  <section class="app-launch">
+    <div class="app-content">
+      <div class="app-badge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <span>Coming Soon</span>
+      </div>
+
+      <h1>데크 설계 앱 준비 중</h1>
+      <p class="description">
+        3D 데크 설계 시뮬레이터가 곧 출시됩니다.<br>
+        출시 알림을 받아보세요.
+      </p>
+
+      <form class="notify-form" id="notifyForm">
+        <input
+          type="email"
+          placeholder="이메일 주소를 입력하세요"
+          required
+          aria-label="이메일 주소"
+        />
+        <button type="submit">알림 받기</button>
+      </form>
+
+      <p class="form-note">스팸 없이, 출시 소식만 보내드립니다.</p>
+
+      <div class="features-preview">
+        <h2>출시 예정 기능</h2>
+        <div class="features-grid">
+          <div class="feature">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            </svg>
+            <span>3D 실시간 설계</span>
+          </div>
+          <div class="feature">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+              <line x1="8" y1="6" x2="16" y2="6"></line>
+            </svg>
+            <span>자동 견적 계산</span>
+          </div>
+          <div class="feature">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>100+ 자재 라이브러리</span>
+          </div>
+          <div class="feature">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>PDF 도면 내보내기</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="back-link">
+        <a href="/">← 홈으로 돌아가기</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('notifyForm');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = form.querySelector('input[type="email"]')?.value;
+    if (email) {
+      // TODO: 실제 이메일 수집 로직 추가
+      alert('감사합니다! 출시 알림을 보내드리겠습니다.');
+      form.reset();
+    }
+  });
+</script>
+
+<style>
+  .app-launch {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(180deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
+  }
+
+  .app-content {
+    max-width: 600px;
+    text-align: center;
+  }
+
+  .app-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .app-badge svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  h1 {
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+  }
+
+  .description {
+    font-size: 1.25rem;
+    color: var(--color-text-light);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  .notify-form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 450px;
+    margin: 0 auto 1rem;
+  }
+
+  .notify-form input {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--color-gray-200);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+  }
+
+  .notify-form input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .notify-form button {
+    padding: 1rem 1.5rem;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .notify-form button:hover {
+    background: var(--color-accent-light);
+  }
+
+  .form-note {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: 4rem;
+  }
+
+  .features-preview {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    margin-bottom: 2rem;
+  }
+
+  .features-preview h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-primary);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--color-bg-alt);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: var(--color-text);
+  }
+
+  .feature svg {
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .back-link a {
+    color: var(--color-accent);
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+  }
+
+  .back-link a:hover {
+    opacity: 0.8;
+  }
+
+  /* Dark mode */
+  :global([data-theme="dark"]) .notify-form input {
+    background: var(--color-bg-alt);
+    border-color: rgba(255,255,255,0.1);
+    color: var(--color-text);
+  }
+
+  :global([data-theme="dark"]) .features-preview {
+    background: var(--color-bg-alt);
+  }
+
+  :global([data-theme="dark"]) .feature {
+    background: var(--color-bg);
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .description {
+      font-size: 1.1rem;
+    }
+
+    .notify-form {
+      flex-direction: column;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

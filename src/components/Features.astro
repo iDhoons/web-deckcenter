@@ -1,0 +1,187 @@
+---
+---
+<section id="features" class="features" aria-labelledby="features-heading">
+  <div class="features-inner">
+    <div class="section-header">
+      <h2 id="features-heading" class="text-h2 font-bold text-text mb-3">강력한 기능</h2>
+      <p class="text-lg text-text-secondary">전문가 수준의 도구를 누구나 쉽게</p>
+    </div>
+    <div class="features-grid">
+      <article class="feature-card group">
+        <div class="feature-icon-wrapper">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-xl font-semibold text-text mb-2">3D 실시간 설계</h3>
+        <p class="text-base text-text-secondary leading-relaxed">드래그 앤 드롭으로 직관적인 3D 데크 레이아웃을 만드세요.</p>
+      </article>
+      <article class="feature-card group">
+        <div class="feature-icon-wrapper">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+              <line x1="8" y1="6" x2="16" y2="6"></line>
+              <line x1="8" y1="10" x2="16" y2="10"></line>
+              <line x1="8" y1="14" x2="12" y2="14"></line>
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-xl font-semibold text-text mb-2">자동 견적 산출</h3>
+        <p class="text-base text-text-secondary leading-relaxed">설계와 동시에 자재 수량과 예상 비용을 바로 확인하세요.</p>
+      </article>
+      <article class="feature-card group">
+        <div class="feature-icon-wrapper">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-xl font-semibold text-text mb-2">100+ 자재 라이브러리</h3>
+        <p class="text-base text-text-secondary leading-relaxed">목재, 합성목, 알루미늄 등 다양한 자재를 시뮬레이션하세요.</p>
+      </article>
+      <article class="feature-card group">
+        <div class="feature-icon-wrapper">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-xl font-semibold text-text mb-2">도면 내보내기</h3>
+        <p class="text-base text-text-secondary leading-relaxed">완성된 설계를 PDF 도면과 자재 리스트로 다운로드하세요.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .features {
+    background: var(--color-bg);
+  }
+
+  .features-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  /* Enhanced Feature Card */
+  .feature-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 40px 32px;
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-warm-200);
+    text-align: left;
+    overflow: hidden;
+    transition: all var(--transition-base);
+  }
+
+  /* Gradient accent bar on top */
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,
+      var(--color-accent) 0%,
+      var(--color-accent-light) 100%
+    );
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-slow);
+  }
+
+  .feature-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--color-accent-light);
+  }
+
+  /* Enhanced Icon */
+  .feature-icon-wrapper {
+    margin-bottom: 8px;
+  }
+
+  .feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg,
+      var(--color-warm-50) 0%,
+      var(--color-warm-100) 100%
+    );
+    border: 1px solid var(--color-warm-200);
+    color: var(--color-accent);
+    transition: all var(--transition-base);
+  }
+
+  .feature-card:hover .feature-icon {
+    background: linear-gradient(135deg,
+      var(--color-accent) 0%,
+      var(--color-accent-light) 100%
+    );
+    color: var(--color-white);
+    border-color: var(--color-accent);
+    transform: scale(1.05);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-header {
+      margin-bottom: 48px;
+    }
+  }
+
+  /* Dark mode */
+  [data-theme="dark"] .feature-card {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-warm-200);
+  }
+
+  [data-theme="dark"] .feature-icon {
+    background: var(--color-warm-50);
+    border-color: var(--color-warm-200);
+  }
+
+  [data-theme="dark"] .feature-card:hover .feature-icon {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+</style>

@@ -1,0 +1,305 @@
+---
+interface Material {
+  id: string;
+  name: string;
+  nameEn: string;
+  category: 'wood' | 'composite' | 'aluminum';
+  price: string;
+  image: string;
+}
+
+interface Props {
+  materials: Material[];
+}
+
+const { materials } = Astro.props;
+
+const categories = [
+  { id: 'all', name: '전체' },
+  { id: 'wood', name: '목재' },
+  { id: 'composite', name: '합성목' },
+  { id: 'aluminum', name: '알루미늄' },
+];
+---
+
+<section class="material-showcase" aria-labelledby="materials-heading">
+  <div class="showcase-inner">
+    <div class="section-header">
+      <h2 id="materials-heading" class="text-h2 font-bold text-text mb-3">데크 자재 둘러보기</h2>
+      <p class="text-lg text-text-secondary">다양한 자재를 비교하고 프로젝트에 맞는 소재를 선택하세요</p>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="category-filters" role="tablist">
+      {categories.map((category) => (
+        <button
+          class={`category-filter ${category.id === 'all' ? 'active' : ''}`}
+          data-category={category.id}
+          role="tab"
+          aria-selected={category.id === 'all' ? 'true' : 'false'}
+        >
+          {category.name}
+        </button>
+      ))}
+    </div>
+
+    <!-- Materials Grid -->
+    <div class="materials-grid" id="materialsGrid">
+      {materials.map((material) => (
+        <article
+          class={`material-card ${material.category}`}
+          data-category={material.category}
+        >
+          <div class="material-image-wrapper">
+            <img
+              src={material.image}
+              alt={material.name}
+              loading="lazy"
+              class="material-image"
+            />
+            <div class="material-badge">
+              {material.category === 'wood' && '목재'}
+              {material.category === 'composite' && '합성목'}
+              {material.category === 'aluminum' && '알루미늄'}
+            </div>
+          </div>
+          <div class="material-content">
+            <h3 class="material-name">{material.name}</h3>
+            <p class="material-name-en">{material.nameEn}</p>
+            <div class="material-price">{material.price}</div>
+            <button class="material-cta" aria-label={`3D로 보기: ${material.name}`}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              3D로 보기
+            </button>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .material-showcase {
+    background: var(--color-bg-secondary);
+    padding: var(--section-spacing) 0;
+  }
+
+  .showcase-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  /* Category Filters */
+  .category-filters {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+
+  .category-filter {
+    padding: 10px 24px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-warm-200);
+    background: var(--color-white);
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+
+  .category-filter:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .category-filter.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  /* Materials Grid */
+  .materials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  /* Material Card */
+  .material-card {
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--color-warm-200);
+    transition: all var(--transition-base);
+  }
+
+  .material-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-accent-light);
+  }
+
+  .material-card.hidden {
+    display: none;
+  }
+
+  .material-image-wrapper {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .material-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .material-card:hover .material-image {
+    transform: scale(1.05);
+  }
+
+  .material-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .material-content {
+    padding: 20px;
+  }
+
+  .material-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 4px;
+  }
+
+  .material-name-en {
+    font-size: 0.875rem;
+    color: var(--color-text-tertiary);
+    margin-bottom: 12px;
+  }
+
+  .material-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    margin-bottom: 16px;
+  }
+
+  .material-cta {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-accent);
+    background: transparent;
+    color: var(--color-accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+
+  .material-cta:hover {
+    background: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .materials-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .category-filters {
+      gap: 8px;
+    }
+
+    .category-filter {
+      padding: 8px 16px;
+      font-size: 0.875rem;
+    }
+  }
+
+  /* Dark mode */
+  [data-theme="dark"] .material-showcase {
+    background: var(--color-bg);
+  }
+
+  [data-theme="dark"] .material-card {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-warm-200);
+  }
+
+  [data-theme="dark"] .category-filter {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-warm-200);
+    color: var(--color-text-secondary);
+  }
+
+  [data-theme="dark"] .material-badge {
+    background: rgba(28, 25, 23, 0.95);
+  }
+</style>
+
+<script>
+  function initMaterialFilters() {
+    const filters = document.querySelectorAll('.category-filter');
+    const cards = document.querySelectorAll('.material-card');
+
+    filters.forEach((filter) => {
+      filter.addEventListener('click', () => {
+        const category = filter.getAttribute('data-category');
+
+        // Update active filter
+        filters.forEach((f) => {
+          f.classList.remove('active');
+          f.setAttribute('aria-selected', 'false');
+        });
+        filter.classList.add('active');
+        filter.setAttribute('aria-selected', 'true');
+
+        // Filter cards
+        cards.forEach((card) => {
+          if (category === 'all' || card.getAttribute('data-category') === category) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+  }
+
+  initMaterialFilters();
+  document.addEventListener('astro:page-load', initMaterialFilters);
+</script>
