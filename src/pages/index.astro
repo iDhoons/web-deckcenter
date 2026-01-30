@@ -131,7 +131,7 @@ const testimonials = [
           <div class="final-cta-actions flex flex-col sm:flex-row gap-4 justify-center">
             <a href="/app" class="btn-primary inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-accent-light text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-base">
               무료로 시작하기
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </a>
@@ -151,8 +151,13 @@ const testimonials = [
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // Reduced motion 체크
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // Hero 애니메이션
   function initHeroAnimations() {
+    if (prefersReducedMotion) return;
+
     const heroCopy = document.querySelector('.hero-copy');
     if (!heroCopy) return;
 
@@ -168,6 +173,8 @@ const testimonials = [
 
   // Feature cards 애니메이션
   function initFeatureAnimations() {
+    if (prefersReducedMotion) return;
+
     const featureCards = document.querySelectorAll('#features article');
 
     featureCards.forEach((card, index) => {
@@ -188,6 +195,8 @@ const testimonials = [
 
   // Testimonials 애니메이션
   function initTestimonialAnimations() {
+    if (prefersReducedMotion) return;
+
     const testimonialCards = document.querySelectorAll('.testimonial-card');
 
     testimonialCards.forEach((card, index) => {
@@ -208,6 +217,8 @@ const testimonials = [
 
   // Section headers 애니메이션
   function initHeaderAnimations() {
+    if (prefersReducedMotion) return;
+
     const headers = document.querySelectorAll('.section-header h2, .section-header p');
 
     headers.forEach((header) => {
