@@ -27,3 +27,4 @@ pnpm-debug.log*
 
 # agent reports (runtime)
 .agent-reports/*.last
+.vercel
