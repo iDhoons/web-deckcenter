@@ -1,0 +1,1068 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { supabase } from '../../lib/supabase';
+
+// 모든 입찰 공고 (active + closed)
+const { data: allBids } = await supabase
+  .from('bid_notices')
+  .select('*')
+  .order('reg_date', { ascending: false })
+  .limit(200);
+
+// 모든 낙찰 결과
+const { data: allResults } = await supabase
+  .from('bid_results')
+  .select('*, bid_notices(title, org_name, source, region, estimated_price)')
+  .order('award_date', { ascending: false })
+  .limit(200);
+
+const bids = allBids || [];
+const results = allResults || [];
+
+// 통계
+const activeBids = bids.filter(b => b.status === 'active');
+const closedBids = bids.filter(b => b.status === 'closed');
+const totalEstimated = bids.reduce((sum, b) => sum + (b.estimated_price || 0), 0);
+
+// 지역 추출 (첫 단어 = 광역시/도 약칭)
+const regionMap: Record<string, string> = {};
+bids.forEach(b => {
+  if (!b.region) return;
+  const parts = b.region.split(' ');
+  if (parts.length >= 2) {
+    const key = parts[0];
+    const label = parts[1]?.replace(/특별자치도|특별자치시|광역시|특별시/, '') || key;
+    regionMap[key] = parts[1] || key;
+  }
+});
+const regions = Object.entries(regionMap).sort((a, b) => a[1].localeCompare(b[1], 'ko'));
+
+// 출처 목록
+const sources = [...new Set(bids.map(b => b.source))].sort();
+
+// 상위 수주 업체
+const companyStats: Record<string, { count: number; totalPrice: number }> = {};
+results.forEach(r => {
+  const name = r.company_name;
+  if (!companyStats[name]) companyStats[name] = { count: 0, totalPrice: 0 };
+  companyStats[name].count++;
+  companyStats[name].totalPrice += (r.award_price || 0);
+});
+const topCompanies = Object.entries(companyStats)
+  .sort((a, b) => b[1].count - a[1].count || b[1].totalPrice - a[1].totalPrice)
+  .slice(0, 10);
+
+// 유틸리티
+const formatPrice = (price: number | null) => {
+  if (!price) return '-';
+  if (price >= 100000000) return `${(price / 100000000).toFixed(1)}억`;
+  if (price >= 10000) return `${Math.round(price / 10000).toLocaleString()}만`;
+  return `${price.toLocaleString()}원`;
+};
+
+const formatFullPrice = (price: number | null) => {
+  if (!price) return '-';
+  return `${price.toLocaleString()}원`;
+};
+
+const formatDate = (dateStr: string | null) => {
+  if (!dateStr) return '-';
+  return new Date(dateStr).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+};
+
+const getDday = (deadline: string | null) => {
+  if (!deadline) return null;
+  const diff = Math.ceil((new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  if (diff < 0) return null;
+  if (diff === 0) return 'D-Day';
+  return `D-${diff}`;
+};
+
+const sourceLabels: Record<string, string> = {
+  g2b: '나라장터', kapt: 'K-APT', d2b: '국방조달', lofin: '지자체', alio: 'ALIO'
+};
+
+const getRegionShort = (region: string | null) => {
+  if (!region) return '';
+  const parts = region.split(' ');
+  return parts.length >= 3 ? parts[parts.length - 1] : parts[0];
+};
+
+const getRegionProvince = (region: string | null) => {
+  if (!region) return '';
+  return region.split(' ')[0] || '';
+};
+---
+
+<BaseLayout
+  title="데크 입찰정보 | 데크센터"
+  description="데크, 목재, 조경 관련 공공 입찰 공고와 낙찰 결과를 실시간으로 확인하세요."
+>
+  <!-- 페이지 헤더 -->
+  <div class="page-header">
+    <h1>데크 입찰정보</h1>
+    <p>나라장터 · K-APT · 지방재정365에서 수집한 데크 관련 공공 입찰 공고</p>
+  </div>
+
+  <!-- 통계 대시보드 -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <span class="stat-value">{activeBids.length}</span>
+      <span class="stat-label">진행중 공고</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{closedBids.length}</span>
+      <span class="stat-label">완료된 계약</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{results.length}</span>
+      <span class="stat-label">낙찰 결과</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{formatPrice(totalEstimated)}</span>
+      <span class="stat-label">총 추정가</span>
+    </div>
+  </div>
+
+  <!-- 필터 바 -->
+  <div class="filter-section">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label class="filter-label">검색</label>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="공사명, 기관명으로 검색..."
+        />
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">출처</label>
+        <div class="source-tabs" id="sourceTabs">
+          <button class="source-tab active" data-source="all">전체</button>
+          {sources.map(s => (
+            <button class={`source-tab src-${s}`} data-source={s}>{sourceLabels[s] || s}</button>
+          ))}
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">지역</label>
+        <select id="regionFilter" class="region-select">
+          <option value="all">전체 지역</option>
+          {regions.map(([key, label]) => (
+            <option value={key}>{label}</option>
+          ))}
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">상태</label>
+        <select id="statusFilter" class="region-select">
+          <option value="all">전체</option>
+          <option value="active">진행중</option>
+          <option value="closed">마감</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-result" id="filterResult">
+      총 <strong>{bids.length}</strong>건의 공고
+    </div>
+  </div>
+
+  <!-- 입찰 공고 목록 -->
+  <section class="bid-section" id="bidSection">
+    {bids.length === 0 ? (
+      <div class="empty">
+        <p>수집된 데크 관련 입찰 공고가 없습니다.</p>
+        <p class="sub">매일 자동으로 수집되며, 새 공고가 등록되면 여기에 표시됩니다.</p>
+      </div>
+    ) : (
+      <div class="bid-list" id="bidList">
+        {bids.map((bid) => {
+          const dday = getDday(bid.deadline);
+          const regionShort = getRegionShort(bid.region);
+          const regionProvince = getRegionProvince(bid.region);
+          return (
+            <article
+              class={`bid-card ${bid.status === 'closed' ? 'is-closed' : 'is-active'}`}
+              data-source={bid.source}
+              data-region={regionProvince}
+              data-status={bid.status}
+              data-title={bid.title?.toLowerCase() || ''}
+              data-org={bid.org_name?.toLowerCase() || ''}
+            >
+              <div class="bid-top">
+                <div class="bid-badges">
+                  <span class={`source-badge src-${bid.source}`}>{sourceLabels[bid.source] || bid.source}</span>
+                  {bid.status === 'active' && <span class="status-badge active">진행중</span>}
+                  {bid.status === 'closed' && <span class="status-badge closed">마감</span>}
+                </div>
+                {dday && <span class={`dday ${dday === 'D-Day' ? 'today' : ''}`}>{dday}</span>}
+                {bid.status === 'closed' && !dday && bid.reg_date && (
+                  <span class="reg-date">{formatDate(bid.reg_date)}</span>
+                )}
+              </div>
+
+              <h3 class="bid-title">
+                <a href={bid.detail_url || '#'} target="_blank" rel="noopener">{bid.title}</a>
+              </h3>
+
+              <div class="bid-info">
+                {bid.org_name && (
+                  <div class="info-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v14m18-14v14M6 11h.01M6 15h.01M12 11h.01M12 15h.01M18 11h.01M18 15h.01M6 7V3h12v4"/></svg>
+                    <span>{bid.org_name}</span>
+                  </div>
+                )}
+                {regionShort && (
+                  <div class="info-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>{regionShort}</span>
+                  </div>
+                )}
+                {bid.bid_method && (
+                  <div class="info-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>{bid.bid_method}</span>
+                  </div>
+                )}
+              </div>
+
+              {bid.estimated_price && (
+                <div class="bid-price">
+                  <span class="price-label">추정가</span>
+                  <span class="price-value">{formatFullPrice(bid.estimated_price)}</span>
+                  <span class="price-short">({formatPrice(bid.estimated_price)})</span>
+                </div>
+              )}
+
+              {bid.matched_keywords && bid.matched_keywords.length > 0 && (
+                <div class="bid-keywords">
+                  {bid.matched_keywords.map((kw: string) => (
+                    <span class="kw-tag">{kw}</span>
+                  ))}
+                </div>
+              )}
+
+              <div class="bid-footer">
+                {bid.deadline && (
+                  <span class="footer-date">마감 {formatDate(bid.deadline)}</span>
+                )}
+                {!bid.deadline && bid.reg_date && (
+                  <span class="footer-date">등록 {formatDate(bid.reg_date)}</span>
+                )}
+                <div class="bid-links">
+                  {bid.file_url && <a href={bid.file_url} class="link-file" target="_blank" rel="noopener">첨부파일</a>}
+                  {bid.detail_url && <a href={bid.detail_url} class="link-detail" target="_blank" rel="noopener">상세보기 →</a>}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    )}
+  </section>
+
+  <!-- 낙찰 결과 -->
+  <section class="bid-section">
+    <h2 class="section-heading">
+      <span class="heading-icon result-icon"></span>
+      최근 낙찰 결과
+      <span class="heading-count">{results.length}건</span>
+    </h2>
+
+    {results.length === 0 ? (
+      <div class="empty">
+        <p>아직 수집된 낙찰 결과가 없습니다.</p>
+      </div>
+    ) : (
+      <div class="result-grid">
+        {results.slice(0, 30).map((r) => {
+          const notice = (r as any).bid_notices;
+          return (
+            <article class="result-card">
+              <div class="result-top">
+                <span class="result-company">{r.company_name}</span>
+                {r.award_date && <time class="result-date">{formatDate(r.award_date)}</time>}
+              </div>
+              <p class="result-title">{notice?.title || `공고 ${r.bid_num}`}</p>
+              <div class="result-details">
+                {notice?.org_name && <span class="result-org">{notice.org_name}</span>}
+                {notice?.region && <span class="result-region">{getRegionShort(notice.region)}</span>}
+              </div>
+              <div class="result-numbers">
+                {r.award_price && (
+                  <div class="result-price">
+                    <span class="rp-label">낙찰가</span>
+                    <span class="rp-value">{formatPrice(r.award_price)}</span>
+                  </div>
+                )}
+                {r.award_rate && (
+                  <div class="result-rate">
+                    <span class="rp-label">낙찰률</span>
+                    <span class="rp-value">{r.award_rate}%</span>
+                  </div>
+                )}
+                {r.award_price && notice?.estimated_price && notice.estimated_price > 0 && (
+                  <div class="result-ratio">
+                    <span class="rp-label">예가대비</span>
+                    <span class="rp-value">{((r.award_price / notice.estimated_price) * 100).toFixed(1)}%</span>
+                  </div>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    )}
+  </section>
+
+  <!-- 주요 수주 업체 -->
+  {topCompanies.length > 0 && (
+    <section class="bid-section">
+      <h2 class="section-heading">
+        <span class="heading-icon company-icon"></span>
+        주요 수주 업체
+        <span class="heading-count">최근 수주 기준</span>
+      </h2>
+      <div class="company-grid">
+        {topCompanies.map(([name, stats], i) => (
+          <div class="company-card">
+            <div class="company-rank">#{i + 1}</div>
+            <div class="company-info">
+              <span class="company-name">{name}</span>
+              <div class="company-stats">
+                <span>{stats.count}건 수주</span>
+                {stats.totalPrice > 0 && <span>총 {formatPrice(stats.totalPrice)}</span>}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>입찰 알림을 받아보세요</h2>
+    <p>데크 관련 새 입찰 공고가 등록되면 카카오톡으로 알려드립니다.</p>
+    <a href="/contact" class="cta-btn">알림 신청하기</a>
+  </section>
+</BaseLayout>
+
+<!-- 클라이언트 사이드 필터링 -->
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    const sourceTabs = document.getElementById('sourceTabs');
+    const regionFilter = document.getElementById('regionFilter') as HTMLSelectElement;
+    const statusFilter = document.getElementById('statusFilter') as HTMLSelectElement;
+    const filterResult = document.getElementById('filterResult');
+    const bidList = document.getElementById('bidList');
+
+    if (!bidList) return;
+
+    const cards = Array.from(bidList.querySelectorAll('.bid-card')) as HTMLElement[];
+    let activeSource = 'all';
+
+    function applyFilters() {
+      const query = searchInput?.value.toLowerCase().trim() || '';
+      const region = regionFilter?.value || 'all';
+      const status = statusFilter?.value || 'all';
+      let visible = 0;
+
+      cards.forEach(card => {
+        const cardSource = card.dataset.source || '';
+        const cardRegion = card.dataset.region || '';
+        const cardStatus = card.dataset.status || '';
+        const cardTitle = card.dataset.title || '';
+        const cardOrg = card.dataset.org || '';
+
+        let show = true;
+
+        if (activeSource !== 'all' && cardSource !== activeSource) show = false;
+        if (region !== 'all' && cardRegion !== region) show = false;
+        if (status !== 'all' && cardStatus !== status) show = false;
+        if (query && !cardTitle.includes(query) && !cardOrg.includes(query)) show = false;
+
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      if (filterResult) {
+        filterResult.innerHTML = `총 <strong>${visible}</strong>건의 공고`;
+      }
+    }
+
+    // 출처 탭 클릭
+    sourceTabs?.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.source-tab') as HTMLElement;
+      if (!btn) return;
+      sourceTabs.querySelectorAll('.source-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      activeSource = btn.dataset.source || 'all';
+      applyFilters();
+    });
+
+    // 필터 변경
+    searchInput?.addEventListener('input', applyFilters);
+    regionFilter?.addEventListener('change', applyFilters);
+    statusFilter?.addEventListener('change', applyFilters);
+  });
+</script>
+
+<style>
+  /* ===== 페이지 헤더 ===== */
+  .page-header {
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    padding: 3rem 1.5rem 1rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary, #0f1419);
+  }
+
+  .page-header p {
+    font-size: 1.05rem;
+    color: var(--color-text-secondary, #4a5568);
+  }
+
+  /* ===== 통계 바 ===== */
+  .stats-bar {
+    max-width: var(--max-width, 1200px);
+    margin: 1.5rem auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: var(--color-bg, #fff);
+    border: 1px solid var(--color-border, #e7e5e4);
+    border-radius: 10px;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-accent, #0d9488);
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #4a5568);
+    font-weight: 500;
+  }
+
+  /* ===== 필터 ===== */
+  .filter-section {
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .filter-bar {
+    background: var(--color-bg, #fff);
+    border: 1px solid var(--color-border, #e7e5e4);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .filter-group:first-child {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary, #4a5568);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .search-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border, #e7e5e4);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: var(--color-bg, #fff);
+    color: var(--color-text, #1a1a1a);
+    width: 100%;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-accent, #0d9488);
+    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+  }
+
+  .source-tabs {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .source-tab {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--color-border, #e7e5e4);
+    border-radius: 6px;
+    background: transparent;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--color-text-secondary, #4a5568);
+    transition: all 0.15s;
+  }
+
+  .source-tab:hover {
+    border-color: var(--color-accent, #0d9488);
+    color: var(--color-accent, #0d9488);
+  }
+
+  .source-tab.active {
+    background: var(--color-accent, #0d9488);
+    border-color: var(--color-accent, #0d9488);
+    color: #fff;
+  }
+
+  .region-select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border, #e7e5e4);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background: var(--color-bg, #fff);
+    color: var(--color-text, #1a1a1a);
+    cursor: pointer;
+    min-width: 120px;
+  }
+
+  .region-select:focus {
+    outline: none;
+    border-color: var(--color-accent, #0d9488);
+  }
+
+  .filter-result {
+    padding: 0.75rem 0 0;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #4a5568);
+  }
+
+  /* ===== 공통 섹션 ===== */
+  .bid-section {
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-border, #e7e5e4);
+    color: var(--color-primary, #0f1419);
+  }
+
+  .heading-icon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .result-icon { background: #3b82f6; }
+  .company-icon { background: #f59e0b; }
+
+  .heading-count {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--color-text-secondary, #4a5568);
+    margin-left: auto;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: var(--color-surface, #f5f5f4);
+    border-radius: 10px;
+  }
+
+  .empty p { color: var(--color-text-secondary, #4a5568); }
+  .empty .sub { font-size: 0.9rem; margin-top: 0.5rem; }
+
+  /* ===== 입찰 카드 ===== */
+  .bid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1rem;
+  }
+
+  .bid-card {
+    background: var(--color-bg, #fff);
+    border: 1px solid var(--color-border, #e7e5e4);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+
+  .bid-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    border-color: var(--color-accent, #0d9488);
+  }
+
+  .bid-card.is-active {
+    border-left: 3px solid #22c55e;
+  }
+
+  .bid-card.is-closed {
+    opacity: 0.7;
+  }
+
+  .bid-card.is-closed:hover {
+    opacity: 1;
+  }
+
+  .bid-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bid-badges {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .source-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .source-badge.src-g2b { background: #dbeafe; color: #1d4ed8; }
+  .source-badge.src-kapt { background: #dcfce7; color: #15803d; }
+  .source-badge.src-d2b { background: #fce7f3; color: #9d174d; }
+  .source-badge.src-lofin { background: #e0e7ff; color: #3730a3; }
+  .source-badge.src-alio { background: #fef3c7; color: #92400e; }
+
+  .status-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+  }
+
+  .status-badge.active { background: #dcfce7; color: #15803d; }
+  .status-badge.closed { background: #f3f4f6; color: #6b7280; }
+
+  .dday {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #dc2626;
+    background: #fef2f2;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .dday.today {
+    background: #dc2626;
+    color: #fff;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .reg-date {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #4a5568);
+  }
+
+  .bid-title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .bid-title a {
+    color: var(--color-primary, #0f1419);
+    text-decoration: none;
+  }
+
+  .bid-title a:hover {
+    color: var(--color-accent, #0d9488);
+  }
+
+  .bid-info {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #4a5568);
+  }
+
+  .info-item svg {
+    flex-shrink: 0;
+    color: var(--color-text-secondary, #9ca3af);
+  }
+
+  .bid-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.5rem 0.65rem;
+    background: var(--color-surface, #f5f5f4);
+    border-radius: 6px;
+  }
+
+  .price-label {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary, #4a5568);
+  }
+
+  .price-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-accent, #0d9488);
+  }
+
+  .price-short {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #9ca3af);
+  }
+
+  .bid-keywords {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+  }
+
+  .kw-tag {
+    font-size: 0.7rem;
+    background: var(--color-accent, #0d9488);
+    color: #fff;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .bid-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--color-border, #e7e5e4);
+    margin-top: auto;
+  }
+
+  .footer-date {
+    font-size: 0.78rem;
+    color: var(--color-text-secondary, #9ca3af);
+  }
+
+  .bid-links {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .link-file,
+  .link-detail {
+    font-size: 0.8rem;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .link-file { color: var(--color-text-secondary, #6b7280); }
+  .link-detail { color: var(--color-accent, #0d9488); }
+  .link-detail:hover { text-decoration: underline; }
+
+  /* ===== 낙찰 결과 ===== */
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+  }
+
+  .result-card {
+    background: var(--color-bg, #fff);
+    border: 1px solid var(--color-border, #e7e5e4);
+    border-left: 3px solid #3b82f6;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .result-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .result-company {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-primary, #0f1419);
+  }
+
+  .result-date {
+    font-size: 0.78rem;
+    color: var(--color-text-secondary, #9ca3af);
+  }
+
+  .result-title {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #4a5568);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .result-details {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    color: var(--color-text-secondary, #9ca3af);
+  }
+
+  .result-numbers {
+    display: flex;
+    gap: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-border, #e7e5e4);
+    margin-top: 0.25rem;
+  }
+
+  .result-price, .result-rate, .result-ratio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .rp-label {
+    font-size: 0.7rem;
+    color: var(--color-text-secondary, #9ca3af);
+  }
+
+  .rp-value {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #2563eb;
+  }
+
+  .result-rate .rp-value,
+  .result-ratio .rp-value {
+    color: var(--color-text-secondary, #4a5568);
+  }
+
+  /* ===== 주요 수주 업체 ===== */
+  .company-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .company-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--color-bg, #fff);
+    border: 1px solid var(--color-border, #e7e5e4);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+  }
+
+  .company-rank {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-accent, #0d9488);
+    min-width: 2rem;
+  }
+
+  .company-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .company-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-primary, #0f1419);
+  }
+
+  .company-stats {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    color: var(--color-text-secondary, #4a5568);
+  }
+
+  /* ===== CTA ===== */
+  .cta-section {
+    max-width: var(--max-width, 1200px);
+    margin: 2rem auto 4rem;
+    padding: 3rem 2rem;
+    background: var(--color-accent, #0d9488);
+    color: white;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .cta-section h2 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .cta-section p {
+    opacity: 0.85;
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: white;
+    color: var(--color-accent, #0d9488);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s;
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  /* ===== 반응형 ===== */
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.65rem; }
+    .page-header { padding: 2rem 1rem 0.75rem; }
+
+    .stats-bar {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 0 1rem;
+    }
+
+    .stat-value { font-size: 1.35rem; }
+
+    .filter-section { padding: 0 1rem; }
+    .filter-bar { padding: 1rem; flex-direction: column; }
+    .filter-group:first-child { min-width: auto; }
+
+    .source-tabs { gap: 0.25rem; }
+    .source-tab { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
+
+    .bid-section { padding: 1rem; }
+    .bid-list { grid-template-columns: 1fr; }
+    .result-grid { grid-template-columns: 1fr; }
+    .company-grid { grid-template-columns: 1fr; }
+
+    .cta-section { margin: 2rem 1rem; padding: 2rem 1.25rem; }
+    .cta-section h2 { font-size: 1.35rem; }
+  }
+
+  @media (max-width: 480px) {
+    .stats-bar { gap: 0.5rem; }
+    .stat-card { padding: 0.85rem 0.5rem; }
+    .stat-value { font-size: 1.15rem; }
+    .stat-label { font-size: 0.7rem; }
+
+    .bid-price {
+      flex-wrap: wrap;
+    }
+
+    .result-numbers {
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+  }
+
+  /* ===== 다크모드 ===== */
+  :global([data-theme="dark"]) .stat-card,
+  :global([data-theme="dark"]) .bid-card,
+  :global([data-theme="dark"]) .result-card,
+  :global([data-theme="dark"]) .company-card,
+  :global([data-theme="dark"]) .filter-bar {
+    background: var(--color-surface, #1a1a1a);
+    border-color: var(--color-border, #2a2a2a);
+  }
+
+  :global([data-theme="dark"]) .search-input,
+  :global([data-theme="dark"]) .region-select {
+    background: var(--color-surface, #1a1a1a);
+    border-color: var(--color-border, #2a2a2a);
+    color: var(--color-text, #e5e5e5);
+  }
+
+  :global([data-theme="dark"]) .source-tab {
+    border-color: var(--color-border, #2a2a2a);
+    color: var(--color-text-secondary, #9ca3af);
+  }
+
+  :global([data-theme="dark"]) .source-tab.active {
+    background: var(--color-accent, #0d9488);
+    border-color: var(--color-accent, #0d9488);
+    color: #fff;
+  }
+
+  :global([data-theme="dark"]) .bid-price {
+    background: rgba(13, 148, 136, 0.1);
+  }
+
+  :global([data-theme="dark"]) .bid-card.is-closed {
+    opacity: 0.5;
+  }
+
+  :global([data-theme="dark"]) .empty {
+    background: var(--color-surface, #1a1a1a);
+  }
+
+  :global([data-theme="dark"]) .dday {
+    background: #451a1a;
+  }
+
+  :global([data-theme="dark"]) .dday.today {
+    background: #dc2626;
+  }
+</style>
