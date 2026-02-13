@@ -23,7 +23,7 @@ pnpm preview   # Preview production build locally
 ### Tech Stack
 - **Framework:** Astro 5.16 with TypeScript (strict mode)
 - **Content:** MDX with Zod-validated content collections
-- **Styling:** Scoped CSS with CSS variables (no external framework)
+- **Styling:** Scoped CSS with CSS variables + Tailwind CSS utilities (imported in `src/styles/global.css`)
 - **Font:** Paperlogy (Korean) via CDN
 - **Smooth Scroll:** Lenis library
 - **Transitions:** Astro View Transitions
@@ -47,19 +47,18 @@ File-based routing in `/src/pages/`:
 **Static pages:**
 - `index.astro` - Homepage
 - `about.astro` - About page
-- `contact.astro` - Contact form
+- `app.astro` - App landing
+- `features.astro` - Features
+- `pricing.astro` - Pricing
+- `gallery.astro` - Gallery
 - `faq.astro` - FAQ
-- `resources.astro` - Resources
-- `warranty.astro` - Warranty information
-- `wholesale.astro` - Wholesale inquiries
-- `guides.astro` - Guides listing
+- `contact.astro` - Contact form
+- `bids/index.astro` - Bids dashboard (Supabase)
 
 **Dynamic routes:**
-- `products/index.astro`, `products/[slug].astro` - Product listing & detail
-- `cases/index.astro`, `cases/[slug].astro` - Case study listing & detail
 - `blog/index.astro`, `blog/[slug].astro` - Blog listing & detail
 
-**SEO:** `/robots.txt.ts`, `/rss.xml.js` auto-generated
+**SEO:** `robots.txt.ts`, `rss.xml.js` auto-generated
 
 ### Components
 
@@ -69,36 +68,35 @@ File-based routing in `/src/pages/`:
 **Components** (`/src/components/`):
 - **Header** - Global navigation with mobile menu, theme toggle
 - **Footer** - Global footer with links and contact info
-- **Hero** - Full-width hero with video/image support, scroll-triggered animation
-- **Section** - Container wrapper with title/description
-- **Card** - Product/case display cards
-- **CTA** - Call-to-action buttons (primary/secondary variants)
-- **Testimonial** - Customer testimonial display
+- **Hero** - Homepage hero
+- **Hero3D** - 3D hero section
+- **TrustIndicators** - Stats row
+- **Features**, **HowItWorks**, **MaterialShowcase**, **Pricing** - Homepage sections
+- **Section**, **Card**, **CTA**, **Testimonial** - Reusable UI
 - **ChatButton** - Floating chat widget button
 - **Splash** - Initial splash screen animation
+- **Skeleton** - Loading placeholder
 
 ### CSS Variables
 
 Defined in `BaseLayout.astro`:
 
 **Colors (Light theme):**
-- `--color-accent: #004250` (primary teal)
-- `--color-accent-light: #005a6e`
-- `--color-primary: #1a1a1a`
-- `--color-text: #333333`
-- `--color-bg: #ffffff`
+- `--color-accent: #0d9488` (premium teal)
+- `--color-accent-light: #14b8a6`
+- `--color-primary: #0f1419`
+- `--color-text: #1a1a1a`
+- `--color-bg: #fafafa`
 
 **Colors (Dark theme):**
-- `--color-accent: #00a3cc` (bright cyan)
-- `--color-accent-light: #00c4f0`
-- `--color-bg: #0f0f0f`
+- `--color-accent: #2dd4bf`
+- `--color-accent-light: #5eead4`
+- `--color-bg: #0c0a09`
 
 **Layout:**
 - `--max-width: 1200px`
 
-**Responsive breakpoints:** 1440px, 1280px, 1024px, 768px, 640px, 480px
-
-**Design tokens:** Spacing scale (xs~3xl), Shadow scale (sm~xl), Z-index scale, Typography scale (xs~5xl)
+**Design tokens:** Warm stone background system, spacing scale (xs~3xl), shadow scale (sm~xl), z-index scale, typography scale (xs~5xl)
 
 ## Adding Content
 

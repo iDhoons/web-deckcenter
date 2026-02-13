@@ -1,0 +1,31 @@
+{
+  "reportDir": ".agent-reports",
+  "maxAgeSec": 3600,
+  "triggers": [
+    {
+      "pattern": "src/**/*.astro",
+      "agents": ["build-validator", "style-guardian"],
+      "description": "Astro 컴포넌트/페이지 변경 시 빌드 검증 + 스타일 규칙 확인"
+    },
+    {
+      "pattern": "src/**/*.ts",
+      "agents": ["build-validator"],
+      "description": "TypeScript 소스 변경 시 빌드 검증"
+    },
+    {
+      "pattern": "src/content/**/*.mdx",
+      "agents": ["build-validator", "seo-content-auditor"],
+      "description": "MDX 콘텐츠 변경 시 빌드 검증 + SEO/콘텐츠 품질 확인"
+    },
+    {
+      "pattern": "src/pages/**/*.astro",
+      "agents": ["seo-content-auditor"],
+      "description": "페이지 변경 시 SEO 메타데이터 확인"
+    },
+    {
+      "pattern": "src/layouts/**/*.astro",
+      "agents": ["style-guardian"],
+      "description": "레이아웃 변경 시 CSS 변수/디자인 토큰 규칙 확인"
+    }
+  ]
+}

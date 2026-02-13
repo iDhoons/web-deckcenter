@@ -7,9 +7,9 @@
 데크센터(Deckctr) - B2B/B2C 데크 자재 공급업체 마케팅 웹사이트
 
 - Site: https://www.deckctr.com
-- Stack: Astro 5.16, TypeScript (strict), MDX, Scoped CSS
+- Stack: Astro 5.16, TypeScript (strict), MDX, Scoped CSS, Tailwind CSS (유틸리티 클래스 사용)
 - Package Manager: pnpm
-- No frameworks: Tailwind, React, Vue 미사용
+- No frameworks: React, Vue 미사용
 
 ## Operational Commands
 
@@ -26,7 +26,7 @@ pnpm preview      # 빌드 미리보기
 ### Immutable (절대 변경 금지)
 
 - TypeScript strict 모드 유지
-- Scoped CSS 원칙 유지 (Tailwind 도입 금지)
+- Scoped CSS 원칙 유지 (Tailwind 유틸리티 클래스 병행 사용 가능)
 - CSS 변수는 BaseLayout.astro에서만 정의
 - 콘텐츠 컬렉션 스키마 변경 시 기존 MDX 파일 호환성 필수 확인
 
@@ -45,7 +45,7 @@ pnpm preview      # 빌드 미리보기
 - 하드코딩된 색상값 금지 (var(--color-*) 사용)
 - 컴포넌트 내 글로벌 CSS 정의 금지 (:global() 최소화)
 - MDX frontmatter에 스키마 미정의 필드 추가 금지
-- 외부 CSS 프레임워크/라이브러리 설치 금지
+- 외부 CSS 프레임워크/라이브러리 신규 설치 금지 (Tailwind는 기존 사용)
 
 ## Architecture Overview
 
@@ -54,13 +54,15 @@ src/
 ├── components/     # Header, Footer, Hero, Section, Card, CTA, Testimonial, ChatButton, Splash
 ├── layouts/        # 페이지 레이아웃 (BaseLayout만 존재)
 ├── pages/          # 파일 기반 라우팅
-│   ├── [slug].astro    # 동적 라우트
-│   └── *.astro         # 정적 페이지
+│   ├── blog/            # blog index + [slug] 동적 라우트
+│   ├── bids/            # 입찰정보 페이지
+│   ├── *.astro          # 정적 페이지
+│   └── robots.txt.ts / rss.xml.js
 └── content/        # MDX 콘텐츠 컬렉션
     ├── config.ts       # Zod 스키마 정의
     ├── products/       # 제품 (4개)
     ├── cases/          # 시공사례 (8개)
-    └── blog/           # 블로그 (15개+)
+    └── blog/           # 블로그
 ```
 
 ## Context Map
