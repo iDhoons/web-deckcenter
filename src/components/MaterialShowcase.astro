@@ -79,6 +79,15 @@ const categories = [
         </article>
       ))}
     </div>
+
+    <div class="showcase-footer">
+      <a href="/materials" class="guide-link">
+        자재 가이드 더보기
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -232,6 +241,28 @@ const categories = [
   .material-cta:hover {
     background: var(--color-accent);
     color: var(--color-white);
+  }
+
+  /* Showcase Footer */
+  .showcase-footer {
+    text-align: center;
+    margin-top: 48px;
+  }
+
+  .guide-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-accent);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .guide-link:hover {
+    gap: 12px;
+    color: var(--color-accent-light);
   }
 
   /* Responsive */

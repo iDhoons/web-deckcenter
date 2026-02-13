@@ -2,19 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import Hero3D from '../components/Hero3D.astro';
-import TrustIndicators from '../components/TrustIndicators.astro';
 import Features from '../components/Features.astro';
-import HowItWorks from '../components/HowItWorks.astro';
 import MaterialShowcase from '../components/MaterialShowcase.astro';
+import CaseHighlight from '../components/CaseHighlight.astro';
+import SavingsShowcase from '../components/SavingsShowcase.astro';
 import Testimonial from '../components/Testimonial.astro';
-import Pricing from '../components/Pricing.astro';
-
-const trustStats = [
-  { value: '10,000+', label: '설계 완료' },
-  { value: '5,000+', label: '활성 사용자' },
-  { value: '98%', label: '만족도' },
-  { value: '24/7', label: '지원' },
-];
+import BidsPreview from '../components/BidsPreview.astro';
 
 const materials = [
   {
@@ -85,17 +78,17 @@ const testimonials = [
     </div>
   </section>
 
-  <!-- Trust Indicators -->
-  <TrustIndicators stats={trustStats} />
-
   <!-- Features -->
   <Features />
 
-  <!-- How It Works -->
-  <HowItWorks />
-
   <!-- Material Showcase -->
   <MaterialShowcase materials={materials} />
+
+  <!-- Case Highlight -->
+  <CaseHighlight />
+
+  <!-- Savings Showcase -->
+  <SavingsShowcase />
 
   <!-- Testimonials -->
   <section class="testimonials-section bg-bg-secondary py-section-spacing" aria-labelledby="testimonials-heading">
@@ -113,8 +106,8 @@ const testimonials = [
     </div>
   </section>
 
-  <!-- Pricing -->
-  <Pricing />
+  <!-- Bids Preview -->
+  <BidsPreview />
 
   <!-- Final CTA -->
   <section class="final-cta">
@@ -126,17 +119,17 @@ const testimonials = [
           </span>
           <h2>지금 바로 시작하세요</h2>
           <p>
-            무료로 데크 설계를 체험해 보세요. 3D 설계부터 실시간 견적까지 한 번에 확인할 수 있습니다.
+            AI가 분석한 최적의 자재 조합으로 비용을 절감하세요. 3D 설계부터 견적까지 3분이면 끝납니다.
           </p>
           <div class="final-cta-actions">
-            <a href="/app" class="btn-primary">
+            <a href="/simulator" class="btn-primary">
               무료로 시작하기
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </a>
-            <a href="/features" class="btn-secondary">
-              기능 더 알아보기
+            <a href="#savings" class="btn-secondary">
+              절감 사례 보기
             </a>
           </div>
         </div>

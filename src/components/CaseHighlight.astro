@@ -1,0 +1,190 @@
+---
+import { getCollection } from 'astro:content';
+
+const cases = await getCollection('cases');
+const latestCases = cases
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<section class="case-highlight" aria-labelledby="cases-heading">
+  <div class="case-inner">
+    <div class="section-header">
+      <h2 id="cases-heading" class="text-h2 font-bold text-text mb-3">실제 시공 사례</h2>
+      <p class="text-lg text-text-secondary">데크센터와 함께한 시공 현장을 확인하세요</p>
+    </div>
+
+    <div class="cases-grid">
+      {latestCases.map((c) => (
+        <article class="case-card">
+          <div class="case-image-wrapper">
+            <img
+              src={c.data.cover}
+              alt={c.data.title}
+              loading="lazy"
+              class="case-image"
+            />
+          </div>
+          <div class="case-content">
+            <h3 class="case-title">{c.data.title}</h3>
+            <div class="case-meta">
+              <span class="case-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                {c.data.location}
+              </span>
+              <span class="case-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <path d="M3 9h18"/>
+                </svg>
+                {c.data.area}
+              </span>
+              <span class="case-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                </svg>
+                {c.data.material}
+              </span>
+            </div>
+            <p class="case-excerpt">{c.data.excerpt}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="case-footer">
+      <a href="/gallery" class="guide-link">
+        시공 사례 더보기
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .case-highlight {
+    background: var(--color-bg);
+    padding: var(--section-spacing) 0;
+  }
+
+  .case-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .case-card {
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--color-warm-200);
+    transition: all var(--transition-base);
+  }
+
+  .case-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-accent-light);
+  }
+
+  .case-image-wrapper {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+
+  .case-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .case-card:hover .case-image {
+    transform: scale(1.05);
+  }
+
+  .case-content {
+    padding: 20px;
+  }
+
+  .case-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 12px;
+  }
+
+  .case-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .case-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+  }
+
+  .case-excerpt {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .case-footer {
+    text-align: center;
+    margin-top: 48px;
+  }
+
+  .guide-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-accent);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-base);
+  }
+
+  .guide-link:hover {
+    gap: 12px;
+    color: var(--color-accent-light);
+  }
+
+  @media (max-width: 900px) {
+    .cases-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .cases-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
