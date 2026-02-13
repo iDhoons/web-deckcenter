@@ -1,0 +1,315 @@
+---
+import { supabase } from '../lib/supabase';
+
+// 통계 데이터 조회
+const [monthlyRes, regionalRes, awardRes, contractorRes, priceRes] = await Promise.all([
+  supabase.from('bid_monthly_stats').select('*').limit(24),
+  supabase.from('bid_regional_stats').select('*').limit(17),
+  supabase.from('bid_award_stats').select('*').limit(12),
+  supabase.from('bid_top_contractors').select('*').limit(10),
+  supabase.from('bid_price_distribution').select('*'),
+]);
+
+const analyticsData = {
+  monthly: monthlyRes.data || [],
+  regional: regionalRes.data || [],
+  award: awardRes.data || [],
+  contractors: contractorRes.data || [],
+  price: priceRes.data || [],
+};
+
+const hasData = analyticsData.monthly.length > 0 || analyticsData.regional.length > 0;
+---
+
+<section class="analytics-section" id="analyticsSection" hidden>
+  {hasData ? (
+    <script type="application/json" id="analyticsData">
+      {JSON.stringify(analyticsData)}
+    </script>
+
+    <div class="analytics-grid">
+      <div class="chart-card chart-wide">
+        <h3>월별 입찰 추이</h3>
+        <canvas id="chartMonthly"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>지역별 분포</h3>
+        <canvas id="chartRegional"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>평균 낙찰률</h3>
+        <canvas id="chartAward"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>상위 수주 업체</h3>
+        <canvas id="chartContractors"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>예정가격 분포</h3>
+        <canvas id="chartPrice"></canvas>
+      </div>
+    </div>
+  ) : (
+    <div class="no-data">
+      <p>통계를 표시할 데이터가 아직 부족합니다.</p>
+    </div>
+  )}
+</section>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const dataEl = document.getElementById('analyticsData');
+    if (!dataEl) return;
+
+    let chartsInitialized = false;
+    const section = document.getElementById('analyticsSection');
+    const toggleBtn = document.getElementById('analyticsToggle');
+
+    toggleBtn?.addEventListener('click', async () => {
+      const isHidden = section?.hidden;
+      if (section) section.hidden = !isHidden;
+
+      if (toggleBtn) {
+        toggleBtn.textContent = isHidden ? '통계 닫기' : '통계 보기';
+        toggleBtn.classList.toggle('active', !!isHidden);
+      }
+
+      if (isHidden && !chartsInitialized) {
+        chartsInitialized = true;
+        await initCharts();
+      }
+    });
+
+    async function initCharts() {
+      const { Chart, registerables } = await import('chart.js');
+      Chart.register(...registerables);
+
+      const data = JSON.parse(dataEl!.textContent || '{}');
+      const accent = '#0d9488';
+      const accentLight = '#14b8a6';
+      const blue = '#3b82f6';
+      const amber = '#f59e0b';
+      const green = '#22c55e';
+      const red = '#dc2626';
+      const purple = '#8b5cf6';
+
+      const chartDefaults = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+        },
+      };
+
+      // 1. 월별 입찰 추이
+      if (data.monthly?.length > 0) {
+        // source별로 그룹화
+        const monthMap = new Map<string, Record<string, number>>();
+        for (const row of data.monthly) {
+          const month = new Date(row.month).toLocaleDateString('ko-KR', { month: 'short' });
+          if (!monthMap.has(month)) monthMap.set(month, {});
+          monthMap.get(month)![row.source] = (monthMap.get(month)![row.source] || 0) + row.total_count;
+        }
+        const months = [...monthMap.keys()].reverse();
+        const sourceColors: Record<string, string> = { g2b: accent, kapt: blue, d2b: amber, lofin: green };
+        const sourceNames: Record<string, string> = { g2b: '나라장터', kapt: 'K-APT', d2b: '국방조달', lofin: '지자체' };
+        const sources = Object.keys(sourceColors);
+
+        const datasets = sources.map(src => ({
+          label: sourceNames[src] || src,
+          data: months.map(m => monthMap.get(m)?.[src] || 0),
+          borderColor: sourceColors[src],
+          backgroundColor: sourceColors[src] + '20',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 3,
+        }));
+
+        new Chart(document.getElementById('chartMonthly') as HTMLCanvasElement, {
+          type: 'line',
+          data: { labels: months, datasets },
+          options: {
+            ...chartDefaults,
+            plugins: { legend: { display: true, position: 'bottom' as const } },
+          },
+        });
+      }
+
+      // 2. 지역별 분포 (Doughnut)
+      if (data.regional?.length > 0) {
+        const top8 = data.regional.slice(0, 8);
+        const others = data.regional.slice(8);
+        const labels = [...top8.map((r: any) => r.province)];
+        const values = [...top8.map((r: any) => r.bid_count)];
+
+        if (others.length > 0) {
+          labels.push('기타');
+          values.push(others.reduce((sum: number, r: any) => sum + r.bid_count, 0));
+        }
+
+        const colors = [accent, blue, amber, green, red, purple, '#ec4899', '#06b6d4', '#94a3b8'];
+
+        new Chart(document.getElementById('chartRegional') as HTMLCanvasElement, {
+          type: 'doughnut',
+          data: {
+            labels,
+            datasets: [{
+              data: values,
+              backgroundColor: colors.slice(0, labels.length),
+              borderWidth: 2,
+              borderColor: '#fff',
+            }],
+          },
+          options: {
+            ...chartDefaults,
+            plugins: {
+              legend: { display: true, position: 'right' as const, labels: { font: { size: 11 } } },
+            },
+          },
+        });
+      }
+
+      // 3. 평균 낙찰률
+      if (data.award?.length > 0) {
+        const sorted = [...data.award].reverse();
+        const labels = sorted.map((r: any) => new Date(r.month).toLocaleDateString('ko-KR', { month: 'short' }));
+
+        new Chart(document.getElementById('chartAward') as HTMLCanvasElement, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              {
+                type: 'line' as const,
+                label: '평균 낙찰률 (%)',
+                data: sorted.map((r: any) => r.avg_rate ? Number(r.avg_rate).toFixed(1) : null),
+                borderColor: accent,
+                backgroundColor: accent,
+                borderWidth: 2,
+                pointRadius: 4,
+                yAxisID: 'y1',
+              },
+              {
+                label: '낙찰 건수',
+                data: sorted.map((r: any) => r.result_count),
+                backgroundColor: blue + '60',
+                borderRadius: 4,
+                yAxisID: 'y',
+              },
+            ],
+          },
+          options: {
+            ...chartDefaults,
+            plugins: { legend: { display: true, position: 'bottom' as const } },
+            scales: {
+              y: { position: 'left' as const, title: { display: true, text: '건수' } },
+              y1: { position: 'right' as const, title: { display: true, text: '낙찰률(%)' }, grid: { drawOnChartArea: false } },
+            },
+          },
+        });
+      }
+
+      // 4. 상위 수주 업체
+      if (data.contractors?.length > 0) {
+        const labels = data.contractors.map((c: any) =>
+          c.company_name.length > 10 ? c.company_name.slice(0, 10) + '…' : c.company_name
+        );
+
+        new Chart(document.getElementById('chartContractors') as HTMLCanvasElement, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: '수주 건수',
+              data: data.contractors.map((c: any) => c.win_count),
+              backgroundColor: accent + 'cc',
+              borderRadius: 4,
+            }],
+          },
+          options: {
+            ...chartDefaults,
+            indexAxis: 'y' as const,
+            scales: {
+              x: { title: { display: true, text: '건수' } },
+            },
+          },
+        });
+      }
+
+      // 5. 예정가격 분포
+      if (data.price?.length > 0) {
+        new Chart(document.getElementById('chartPrice') as HTMLCanvasElement, {
+          type: 'bar',
+          data: {
+            labels: data.price.map((p: any) => p.price_range),
+            datasets: [{
+              label: '공고 수',
+              data: data.price.map((p: any) => p.bid_count),
+              backgroundColor: [
+                green + 'cc', accentLight + 'cc', accent + 'cc',
+                blue + 'cc', amber + 'cc', red + 'cc',
+              ],
+              borderRadius: 4,
+            }],
+          },
+          options: chartDefaults,
+        });
+      }
+    }
+  });
+</script>
+
+<style>
+  .analytics-section {
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto 1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .chart-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .chart-card h3 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .chart-card canvas {
+    width: 100% !important;
+    height: 220px !important;
+  }
+
+  .chart-wide {
+    grid-column: 1 / -1;
+  }
+
+  .chart-wide canvas {
+    height: 260px !important;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-text-tertiary);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .analytics-section { padding: 0 1rem; }
+    .analytics-grid { grid-template-columns: 1fr; }
+    .chart-card canvas { height: 200px !important; }
+  }
+</style>

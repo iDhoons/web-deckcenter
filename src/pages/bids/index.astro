@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import BidAnalytics from '../../components/BidAnalytics.astro';
 import { supabase } from '../../lib/supabase';
 
 // 모든 입찰 공고 (active + closed)
@@ -15,6 +16,15 @@ const { data: allResults } = await supabase
   .select('*, bid_notices(title, org_name, source, region, estimated_price)')
   .order('award_date', { ascending: false })
   .limit(200);
+
+// AI 요약 데이터
+const { data: allSummaries } = await supabase
+  .from('bid_summaries_public')
+  .select('*');
+
+const summaryMap = new Map(
+  (allSummaries || []).map((s: any) => [s.bid_notice_id, s])
+);
 
 const bids = allBids || [];
 const results = allResults || [];
@@ -82,6 +92,8 @@ const sourceLabels: Record<string, string> = {
   g2b: '나라장터', kapt: 'K-APT', d2b: '국방조달', lofin: '지자체', alio: 'ALIO'
 };
 
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+
 const getRegionShort = (region: string | null) => {
   if (!region) return '';
   const parts = region.split(' ');
@@ -123,6 +135,18 @@ const getRegionProvince = (region: string | null) => {
       <span class="stat-label">총 추정가</span>
     </div>
   </div>
+
+  <!-- 통계 차트 토글 -->
+  <div class="analytics-toggle-wrap">
+    <button class="analytics-toggle-btn" id="analyticsToggle">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 20V10M12 20V4M6 20v-6"/>
+      </svg>
+      통계 보기
+    </button>
+  </div>
+
+  <BidAnalytics />
 
   <!-- 필터 바 -->
   <div class="filter-section">
@@ -247,6 +271,45 @@ const getRegionProvince = (region: string | null) => {
                   {bid.matched_keywords.map((kw: string) => (
                     <span class="kw-tag">{kw}</span>
                   ))}
+                </div>
+              )}
+
+              {summaryMap.has(bid.id) && (
+                <div class="ai-summary">
+                  <button class="summary-toggle" aria-expanded="false">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4c0 1.7-1 3-2.4 3.7L14 10v1h-4v-1l-.4-.3A4 4 0 0112 2zM9 14h6M10 18h4"/></svg>
+                    AI 요약
+                  </button>
+                  <div class="summary-content" hidden>
+                    {summaryMap.get(bid.id).key_summary && (
+                      <div class="sf-row">
+                        <span class="sf-label">핵심</span>
+                        <p class="sf-value">{summaryMap.get(bid.id).key_summary}</p>
+                      </div>
+                    )}
+                    {summaryMap.get(bid.id).material_types?.length > 0 && (
+                      <div class="sf-row">
+                        <span class="sf-label">자재</span>
+                        <div class="sf-tags">
+                          {summaryMap.get(bid.id).material_types.map((m: string) => (
+                            <span class="sf-tag">{m}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {summaryMap.get(bid.id).qualifications?.length > 0 && (
+                      <div class="sf-row">
+                        <span class="sf-label">자격</span>
+                        <p class="sf-value">{summaryMap.get(bid.id).qualifications.join(', ')}</p>
+                      </div>
+                    )}
+                    {summaryMap.get(bid.id).project_scale && (
+                      <div class="sf-row">
+                        <span class="sf-label">규모</span>
+                        <p class="sf-value">{summaryMap.get(bid.id).project_scale}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -404,8 +467,28 @@ const getRegionProvince = (region: string | null) => {
         </svg>
       </div>
       <h2>새 입찰 공고를 이메일로 받아보세요</h2>
-      <p>데크 관련 새 입찰 공고가 등록되면 매일 아침 이메일로 알려드립니다. 놓치는 공고 없이 빠르게 대응하세요.</p>
-      <form class="subscribe-form" id="subscribeForm">
+      <p>관심 키워드와 지역을 선택하면, 매칭되는 새 입찰 공고가 등록될 때 이메일로 알려드립니다.</p>
+      <form class="subscribe-form" id="subscribeForm" data-api-url={`${supabaseUrl}/functions/v1/subscribe`}>
+        <div class="keyword-options">
+          <span class="keyword-label">관심 키워드</span>
+          <div class="keyword-chips">
+            <label class="kw-chip"><input type="checkbox" name="keywords" value="데크" checked /> 데크</label>
+            <label class="kw-chip"><input type="checkbox" name="keywords" value="합성목" checked /> 합성목</label>
+            <label class="kw-chip"><input type="checkbox" name="keywords" value="방부목" /> 방부목</label>
+            <label class="kw-chip"><input type="checkbox" name="keywords" value="조경시설" /> 조경시설</label>
+            <label class="kw-chip"><input type="checkbox" name="keywords" value="파고라" /> 파고라</label>
+            <label class="kw-chip"><input type="checkbox" name="keywords" value="수변데크" /> 수변데크</label>
+          </div>
+        </div>
+        <div class="region-row">
+          <span class="keyword-label">관심 지역</span>
+          <select id="subscribeRegion" class="subscribe-select">
+            <option value="">전국 (전체)</option>
+            {regions.map(([key, label]) => (
+              <option value={key}>{label}</option>
+            ))}
+          </select>
+        </div>
         <div class="form-row">
           <input
             type="email"
@@ -431,6 +514,9 @@ const getRegionProvince = (region: string | null) => {
           <polyline points="22 4 12 14.01 9 11.01"/>
         </svg>
         <span>구독이 완료되었습니다! 새 입찰 공고가 등록되면 알려드리겠습니다.</span>
+      </div>
+      <div class="subscribe-error" id="subscribeError">
+        <span>구독 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</span>
       </div>
     </div>
   </section>
@@ -498,24 +584,61 @@ const getRegionProvince = (region: string | null) => {
     // 이메일 구독 폼
     const subscribeForm = document.getElementById('subscribeForm') as HTMLFormElement;
     const subscribeSuccess = document.getElementById('subscribeSuccess');
+    const subscribeError = document.getElementById('subscribeError');
 
     subscribeForm?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const emailInput = document.getElementById('subscribeEmail') as HTMLInputElement;
       const submitButton = subscribeForm.querySelector('.subscribe-btn') as HTMLButtonElement;
+      const regionSelect = document.getElementById('subscribeRegion') as HTMLSelectElement;
 
       if (!emailInput?.value) return;
 
-      // 로딩 상태
       submitButton?.classList.add('is-loading');
+      subscribeError?.classList.remove('is-visible');
 
-      // 구독 처리 (향후 실제 API 연결)
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const keywords = Array.from(
+        subscribeForm.querySelectorAll<HTMLInputElement>('input[name="keywords"]:checked')
+      ).map(cb => cb.value);
 
-      // 성공 표시
-      subscribeForm.classList.add('is-hidden');
-      subscribeSuccess?.classList.add('is-visible');
+      const regions = regionSelect?.value ? [regionSelect.value] : [];
+
+      try {
+        const apiUrl = subscribeForm.dataset.apiUrl;
+        const res = await fetch(apiUrl!, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailInput.value, keywords, regions }),
+        });
+
+        if (!res.ok) throw new Error('Failed');
+
+        subscribeForm.classList.add('is-hidden');
+        subscribeSuccess?.classList.add('is-visible');
+      } catch {
+        subscribeError?.classList.add('is-visible');
+      } finally {
+        submitButton?.classList.remove('is-loading');
+      }
     });
+
+    // AI 요약 토글
+    document.querySelectorAll('.summary-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const content = btn.nextElementSibling as HTMLElement;
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!expanded));
+        if (content) content.hidden = expanded;
+      });
+    });
+
+    // URL에 unsubscribe 토큰이 있으면 처리
+    const urlParams = new URLSearchParams(window.location.search);
+    const unsubToken = urlParams.get('unsubscribed');
+    if (unsubToken === 'true') {
+      const banner = document.getElementById('unsubscribeBanner');
+      banner?.classList.add('is-visible');
+    }
   });
 </script>
 
@@ -1229,6 +1352,181 @@ const getRegionProvince = (region: string | null) => {
     color: var(--color-text-secondary);
     line-height: 1.6;
     margin-bottom: 1.5rem;
+  }
+
+  .ai-summary {
+    border-top: 1px dashed var(--color-border);
+    padding-top: 0.5rem;
+    margin-top: 0.35rem;
+  }
+
+  .summary-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    padding: 0.2rem 0;
+    transition: opacity 0.15s;
+  }
+
+  .summary-toggle:hover { opacity: 0.8; }
+
+  .summary-toggle[aria-expanded="true"] { margin-bottom: 0.4rem; }
+
+  .summary-content {
+    padding: 0.65rem;
+    background: var(--color-accent-soft, #f0fdfa);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sf-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .sf-label {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    background: var(--color-white);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-accent);
+    line-height: 1.4;
+    margin-top: 0.05rem;
+  }
+
+  .sf-value {
+    font-size: 0.8rem;
+    color: var(--color-text);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .sf-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .sf-tag {
+    font-size: 0.72rem;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  .analytics-toggle-wrap {
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
+
+  .analytics-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 1rem;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .analytics-toggle-btn:hover,
+  .analytics-toggle-btn.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  .keyword-options, .region-row {
+    text-align: left;
+    margin-bottom: 0.75rem;
+  }
+
+  .keyword-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.4rem;
+  }
+
+  .keyword-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .kw-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .kw-chip:has(input:checked) {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  .kw-chip input {
+    display: none;
+  }
+
+  .subscribe-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: var(--color-white);
+    color: var(--color-text);
+  }
+
+  .subscribe-error {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #dc2626;
+    margin-top: 0.5rem;
+  }
+
+  .subscribe-error.is-visible {
+    display: flex;
   }
 
   .subscribe-form {

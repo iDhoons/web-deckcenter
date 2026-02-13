@@ -835,6 +835,27 @@ Deno.serve(async (req: Request) => {
     console.error('Processing errors:', JSON.stringify(stats.errors));
   }
 
+  // 8. 후속 작업 체이닝 (비동기 — 응답 대기하지 않음)
+  if (FETCH_BIDS_SECRET && SUPABASE_URL) {
+    // 알림 발송
+    fetch(`${SUPABASE_URL}/functions/v1/send-bid-alerts`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${FETCH_BIDS_SECRET}`,
+        'Content-Type': 'application/json',
+      },
+    }).catch(e => console.error('Alert chain error:', e.message));
+
+    // AI 요약 배치 처리
+    fetch(`${SUPABASE_URL}/functions/v1/batch-summarize`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${FETCH_BIDS_SECRET}`,
+        'Content-Type': 'application/json',
+      },
+    }).catch(e => console.error('Summarize chain error:', e.message));
+  }
+
   return new Response(JSON.stringify({
     success: stats.errors.length === 0,
     fetched: {
