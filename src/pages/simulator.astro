@@ -1,0 +1,800 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import CTA from '../components/CTA.astro';
+
+const simulatorLink = 'https://calc.deckctr.com';
+
+const highlights = [
+  { value: '3분', label: '설계부터 견적까지' },
+  { value: '100+종', label: '자재 라이브러리' },
+  { value: 'PDF', label: '도면·리스트 내보내기' },
+];
+
+const features = [
+  {
+    title: '3D 실시간 설계',
+    description: '공간 크기 입력 → 자재 배치 → 완성까지 드래그 한 번으로 끝.',
+    icon: 'cube',
+    points: ['실시간 뷰', '자유로운 크기 조절', '다양한 형태 지원'],
+  },
+  {
+    title: '100+ 자재 라이브러리',
+    description: '목재, 합성목, 알루미늄까지 실제 텍스처로 미리 확인.',
+    icon: 'library',
+    points: ['실제 텍스처', '색상·패턴 변경', '자재별 스펙'],
+  },
+  {
+    title: '자동 견적 산출',
+    description: '자재 수량과 예상 비용을 실시간 계산하여 최적의 조합을 제안.',
+    icon: 'calculator',
+    points: ['실시간 비용 업데이트', '자재별 가격 비교', '할인 단가 적용'],
+  },
+  {
+    title: '도면 내보내기',
+    description: 'PDF 도면과 자재 리스트를 즉시 다운로드해 제안서 품질을 높이세요.',
+    icon: 'download',
+    points: ['PDF 도면', '자재 리스트', '견적서 자동 생성'],
+  },
+  {
+    title: '스마트 자재 추천',
+    description: '같은 설계, 다른 가격. TCO 기준으로 가장 합리적인 자재를 추천합니다.',
+    icon: 'spark',
+    points: ['유지비 포함 총소유비용 계산', '자재 조합별 비용 비교', '절감 효과 안내'],
+  },
+];
+
+const steps = [
+  {
+    title: '공간 입력',
+    description: '가로·세로·높이를 입력하면 시뮬레이터가 자동으로 기초를 구성합니다.',
+  },
+  {
+    title: '자재 선택',
+    description: '목재·합성목·알루미늄 중 원하는 자재를 선택해 배치합니다.',
+  },
+  {
+    title: '견적 확인 & 내보내기',
+    description: '실시간 견적을 확인하고 PDF 도면과 자재 리스트를 다운로드합니다.',
+  },
+];
+
+const galleryItems = [
+  {
+    title: '모던 루프탑 테라스',
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800',
+    style: '모던',
+    template: '루프탑',
+  },
+  {
+    title: '숲속 힐링 데크',
+    image: 'https://images.unsplash.com/photo-1590059392209-799446d3283c?auto=format&fit=crop&q=80&w=800',
+    style: '내추럴',
+    template: '가든',
+  },
+  {
+    title: '미니멀 발코니',
+    image: 'https://images.unsplash.com/photo-1544033333-722a4667469a?auto=format&fit=crop&q=80&w=800',
+    style: '미니멀',
+    template: '발코니',
+  },
+  {
+    title: '펜트하우스 프라이빗 덱',
+    image: 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&q=80&w=800',
+    style: '럭셔리',
+    template: '테라스',
+  },
+  {
+    title: '카페 테라스',
+    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=800',
+    style: '인더스트리얼',
+    template: '상업',
+  },
+  {
+    title: '옥상 정원 데크',
+    image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&q=80&w=800',
+    style: '내추럴',
+    template: '루프탑',
+  },
+];
+
+const plans = [
+  {
+    name: 'Free',
+    price: '무료',
+    period: '',
+    description: '개인 사용자용 기본 기능',
+    features: ['기본 3D 설계', '20종 자재 라이브러리', '워터마크 내보내기', '프로젝트 1개 저장'],
+    ctaText: '무료로 시작하기',
+    ctaLink: simulatorLink,
+    highlighted: false,
+  },
+  {
+    name: 'Pro',
+    price: '29,000',
+    period: '월',
+    description: '시공업체 및 전문가용',
+    features: ['전체 자재 라이브러리', '고해상도 내보내기', '무제한 프로젝트', '견적서 PDF 생성'],
+    ctaText: 'Pro 시작하기',
+    ctaLink: simulatorLink,
+    highlighted: true,
+  },
+  {
+    name: 'Enterprise',
+    price: '문의',
+    period: '',
+    description: '대규모 팀 및 기업용',
+    features: ['화이트라벨 지원', '맞춤 기능 개발', '전담 지원', 'SLA 보장'],
+    ctaText: '파트너 문의',
+    ctaLink: '/partner',
+    highlighted: false,
+  },
+];
+---
+
+<BaseLayout
+  title="시뮬레이터 | 데크센터"
+  description="3D 설계부터 자동 견적까지 3분이면 끝나는 데크센터 시뮬레이터를 만나보세요."
+>
+  <section class="sim-hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="hero-eyebrow">Simulator</span>
+        <h1>드래그 한 번으로 데크가 완성됩니다</h1>
+        <p class="hero-description">
+          3D 설계 + 자동 견적 + 도면 내보내기를 한 곳에서.<br />
+          제안서 퀄리티를 높이고 경쟁력 있는 가격을 제시하세요.
+        </p>
+        <div class="hero-actions">
+          <CTA text="무료로 시작하기" link={simulatorLink} variant="primary" />
+          <a href="#features" class="hero-secondary">기능 상세 보기</a>
+        </div>
+        <div class="hero-highlights">
+          {highlights.map((item) => (
+            <div class="hero-highlight">
+              <span class="highlight-value">{item.value}</span>
+              <span class="highlight-label">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="hero-visual" id="demo">
+        <div class="visual-header">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+        <div class="visual-body">
+          <div class="visual-grid">
+            <div class="visual-card">
+              <span class="card-label">3D 설계</span>
+              <span class="card-value">실시간 미리보기</span>
+            </div>
+            <div class="visual-card">
+              <span class="card-label">자재 선택</span>
+              <span class="card-value">100+ 라이브러리</span>
+            </div>
+            <div class="visual-card">
+              <span class="card-label">견적 결과</span>
+              <span class="card-value">즉시 계산</span>
+            </div>
+            <div class="visual-card">
+              <span class="card-label">내보내기</span>
+              <span class="card-value">PDF·리스트</span>
+            </div>
+          </div>
+          <div class="visual-note">데모 화면 구성 예시</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Section title="기능 상세" description="설계부터 견적, 내보내기까지 모든 기능을 한 번에 제공합니다.">
+    <div class="feature-grid" id="features">
+      {features.map((feature) => (
+        <article class="feature-card">
+          <div class="feature-icon">
+            {feature.icon === 'cube' && (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            )}
+            {feature.icon === 'library' && (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            )}
+            {feature.icon === 'calculator' && (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                <line x1="8" y1="6" x2="16" y2="6"></line>
+                <line x1="8" y1="10" x2="8" y2="10.01"></line>
+                <line x1="12" y1="10" x2="12" y2="10.01"></line>
+                <line x1="16" y1="10" x2="16" y2="10.01"></line>
+                <line x1="8" y1="14" x2="8" y2="14.01"></line>
+                <line x1="12" y1="14" x2="12" y2="14.01"></line>
+                <line x1="16" y1="14" x2="16" y2="14.01"></line>
+                <line x1="8" y1="18" x2="8" y2="18.01"></line>
+                <line x1="12" y1="18" x2="16" y2="18"></line>
+              </svg>
+            )}
+            {feature.icon === 'download' && (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            )}
+            {feature.icon === 'spark' && (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2l2.4 6.4L20 10l-5.6 1.6L12 18l-2.4-6.4L4 10l5.6-1.6L12 2z"></path>
+              </svg>
+            )}
+          </div>
+          <h3>{feature.title}</h3>
+          <p>{feature.description}</p>
+          <ul class="feature-points">
+            {feature.points.map((point) => (
+              <li>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                {point}
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </Section>
+
+  <Section title="사용 흐름" description="딱 3단계면 데크 설계와 견적이 완성됩니다." variant="alt">
+    <ol class="step-list">
+      {steps.map((step, index) => (
+        <li class="step-item">
+          <span class="step-index">0{index + 1}</span>
+          <div class="step-body">
+            <h3>{step.title}</h3>
+            <p>{step.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </Section>
+
+  <Section title="갤러리" description="시뮬레이터로 만든 설계 예시를 확인해 보세요.">
+    <div class="gallery-grid" id="gallery">
+      {galleryItems.map((item) => (
+        <article class="gallery-card">
+          <div class="gallery-image">
+            <img src={item.image} alt={item.title} loading="lazy" />
+          </div>
+          <div class="gallery-body">
+            <h3>{item.title}</h3>
+            <div class="gallery-meta">
+              <span class="meta-pill">{item.style}</span>
+              <span class="meta-pill is-muted">{item.template}</span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </Section>
+
+  <Section title="가격" description="필요한 만큼만 선택하세요. 기본 기능은 무료입니다." variant="alt">
+    <div class="pricing-grid" id="pricing">
+      {plans.map((plan) => (
+        <article class={`pricing-card ${plan.highlighted ? 'is-highlighted' : ''}`}>
+          {plan.highlighted && <span class="pricing-badge">인기</span>}
+          <h3>{plan.name}</h3>
+          <div class="pricing-price">
+            {plan.price === '문의' ? (
+              <span class="price-text">문의</span>
+            ) : (
+              <>
+                {plan.price !== '무료' && <span class="price-currency">₩</span>}
+                <span class="price-amount">{plan.price}</span>
+                {plan.period && <span class="price-period">/{plan.period}</span>}
+              </>
+            )}
+          </div>
+          <p class="pricing-description">{plan.description}</p>
+          <ul class="pricing-features">
+            {plan.features.map((feature) => (
+              <li>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                {feature}
+              </li>
+            ))}
+          </ul>
+          <CTA text={plan.ctaText} link={plan.ctaLink} variant={plan.highlighted ? 'primary' : 'secondary'} />
+        </article>
+      ))}
+    </div>
+  </Section>
+
+  <section class="final-cta">
+    <div class="final-cta-inner">
+      <div class="final-cta-card">
+        <div class="final-cta-content">
+          <span class="final-cta-kicker">무료 체험 · 신용카드 불필요</span>
+          <h2>지금 바로 시작하세요</h2>
+          <p>3D 설계부터 실시간 견적까지 한 번에 확인할 수 있습니다.</p>
+          <div class="final-cta-actions">
+            <CTA text="무료로 시작하기" link={simulatorLink} variant="primary" />
+            <a href="#pricing" class="hero-secondary">가격 보기</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .sim-hero {
+    padding: 5rem 2rem 3rem;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+    color: var(--color-white);
+  }
+
+  .hero-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-full);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .hero-description {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--color-bg-secondary);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    align-items: center;
+  }
+
+  .hero-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    background: var(--color-white);
+    font-weight: 600;
+    transition: var(--transition-base);
+  }
+
+  .hero-secondary:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .hero-highlights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .hero-highlight {
+    background: var(--color-accent-soft);
+    border: 1px solid var(--color-accent-border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .highlight-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .highlight-label {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+  }
+
+  .hero-visual {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  .visual-header {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-secondary);
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-full);
+    background: var(--color-text-light);
+  }
+
+  .visual-body {
+    padding: 1.5rem;
+    color: var(--color-text);
+  }
+
+  .visual-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .visual-card {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border: 1px solid var(--color-border);
+  }
+
+  .card-label {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+  }
+
+  .card-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .visual-note {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+    text-align: right;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feature-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .feature-card p {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .feature-points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--color-text-tertiary);
+    font-size: 0.9rem;
+  }
+
+  .feature-points li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .feature-points svg {
+    color: var(--color-accent);
+  }
+
+  .step-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .step-item {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .step-index {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .step-body h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+    color: var(--color-primary);
+  }
+
+  .step-body p {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .gallery-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .gallery-image {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .gallery-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gallery-body {
+    padding: 1rem 1.25rem 1.5rem;
+  }
+
+  .gallery-body h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary);
+  }
+
+  .gallery-meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .meta-pill.is-muted {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-tertiary);
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .pricing-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pricing-card.is-highlighted {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .pricing-badge {
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    background: var(--color-accent);
+    color: var(--color-white);
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .pricing-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+
+  .price-currency {
+    font-size: 1.1rem;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .price-amount,
+  .price-text {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--color-accent);
+  }
+
+  .price-period {
+    font-size: 0.9rem;
+    color: var(--color-text-tertiary);
+  }
+
+  .pricing-description {
+    color: var(--color-text-secondary);
+  }
+
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--color-text-tertiary);
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .pricing-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .pricing-features svg {
+    color: var(--color-accent);
+  }
+
+  .final-cta {
+    padding: 4rem 2rem 6rem;
+    background: var(--color-bg-secondary);
+  }
+
+  .final-cta-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  .final-cta-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 3rem;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .final-cta-kicker {
+    display: inline-block;
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .final-cta-content h2 {
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    margin-bottom: 0.75rem;
+    color: var(--color-primary);
+  }
+
+  .final-cta-content p {
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .final-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  @media (max-width: 960px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-visual {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sim-hero {
+      padding: 4rem 1.5rem 2rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .hero-secondary {
+      width: 100%;
+    }
+
+    .final-cta-card {
+      padding: 2rem;
+    }
+  }
+</style>

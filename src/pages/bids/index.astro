@@ -203,7 +203,14 @@ const getRegionProvince = (region: string | null) => {
               </div>
 
               <h3 class="bid-title">
-                <a href={bid.detail_url || '#'} target="_blank" rel="noopener">{bid.title}</a>
+                {bid.detail_url ? (
+                  <a href={bid.detail_url} target="_blank" rel="noopener noreferrer">
+                    {bid.title}
+                    <svg class="external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </a>
+                ) : (
+                  <span class="no-link">{bid.title}</span>
+                )}
               </h3>
 
               <div class="bid-info">
@@ -251,8 +258,8 @@ const getRegionProvince = (region: string | null) => {
                   <span class="footer-date">등록 {formatDate(bid.reg_date)}</span>
                 )}
                 <div class="bid-links">
-                  {bid.file_url && <a href={bid.file_url} class="link-file" target="_blank" rel="noopener">첨부파일</a>}
-                  {bid.detail_url && <a href={bid.detail_url} class="link-detail" target="_blank" rel="noopener">상세보기 →</a>}
+                  {bid.file_url && <a href={bid.file_url} class="link-file" target="_blank" rel="noopener noreferrer">첨부파일</a>}
+                  {bid.detail_url && <a href={bid.detail_url} class="link-detail" target="_blank" rel="noopener noreferrer">상세보기 →</a>}
                 </div>
               </div>
             </article>
@@ -260,6 +267,52 @@ const getRegionProvince = (region: string | null) => {
         })}
       </div>
     )}
+  </section>
+
+  <!-- 시뮬레이터 연결 배너 -->
+  <section class="simulator-banner">
+    <div class="banner-content">
+      <div class="banner-text">
+        <span class="banner-badge">시뮬레이터</span>
+        <h2>입찰 준비에 시뮬레이터를 활용하세요</h2>
+        <p>3D 설계 + 자동 견적으로 제안서 퀄리티를 높이고, 최적의 자재 조합으로 경쟁력 있는 가격을 제시하세요.</p>
+        <ul class="banner-features">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            3D 설계 도면으로 제안서 차별화
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            자재별 비용 비교로 최적 견적 산출
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            PDF 도면 + 자재 리스트 즉시 다운로드
+          </li>
+        </ul>
+        <a href="/simulator" class="banner-cta">
+          시뮬레이터로 설계하기
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="banner-visual">
+        <div class="visual-mockup">
+          <div class="mockup-header">
+            <span class="mockup-dot"></span>
+            <span class="mockup-dot"></span>
+            <span class="mockup-dot"></span>
+          </div>
+          <div class="mockup-body">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+            <span>3D 시뮬레이터</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- 낙찰 결과 -->
@@ -341,11 +394,45 @@ const getRegionProvince = (region: string | null) => {
     </section>
   )}
 
-  <!-- CTA -->
-  <section class="cta-section">
-    <h2>입찰 알림을 받아보세요</h2>
-    <p>데크 관련 새 입찰 공고가 등록되면 카카오톡으로 알려드립니다.</p>
-    <a href="/contact" class="cta-btn">알림 신청하기</a>
+  <!-- 이메일 알림 구독 -->
+  <section class="subscribe-section">
+    <div class="subscribe-card">
+      <div class="subscribe-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
+      <h2>새 입찰 공고를 이메일로 받아보세요</h2>
+      <p>데크 관련 새 입찰 공고가 등록되면 매일 아침 이메일로 알려드립니다. 놓치는 공고 없이 빠르게 대응하세요.</p>
+      <form class="subscribe-form" id="subscribeForm">
+        <div class="form-row">
+          <input
+            type="email"
+            id="subscribeEmail"
+            class="subscribe-input"
+            placeholder="이메일 주소를 입력하세요"
+            required
+          />
+          <button type="submit" class="subscribe-btn">
+            <span class="btn-text">구독하기</span>
+            <span class="btn-loading">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin">
+                <path d="M21 12a9 9 0 11-6.219-8.56"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+        <p class="subscribe-note">무료 · 언제든 구독 취소 가능 · 스팸 없음</p>
+      </form>
+      <div class="subscribe-success" id="subscribeSuccess">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span>구독이 완료되었습니다! 새 입찰 공고가 등록되면 알려드리겠습니다.</span>
+      </div>
+    </div>
   </section>
 </BaseLayout>
 
@@ -407,6 +494,28 @@ const getRegionProvince = (region: string | null) => {
     searchInput?.addEventListener('input', applyFilters);
     regionFilter?.addEventListener('change', applyFilters);
     statusFilter?.addEventListener('change', applyFilters);
+
+    // 이메일 구독 폼
+    const subscribeForm = document.getElementById('subscribeForm') as HTMLFormElement;
+    const subscribeSuccess = document.getElementById('subscribeSuccess');
+
+    subscribeForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById('subscribeEmail') as HTMLInputElement;
+      const submitButton = subscribeForm.querySelector('.subscribe-btn') as HTMLButtonElement;
+
+      if (!emailInput?.value) return;
+
+      // 로딩 상태
+      submitButton?.classList.add('is-loading');
+
+      // 구독 처리 (향후 실제 API 연결)
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      // 성공 표시
+      subscribeForm.classList.add('is-hidden');
+      subscribeSuccess?.classList.add('is-visible');
+    });
   });
 </script>
 
@@ -423,12 +532,12 @@ const getRegionProvince = (region: string | null) => {
     font-size: 2.25rem;
     font-weight: 800;
     margin-bottom: 0.5rem;
-    color: var(--color-primary, #0f1419);
+    color: var(--color-primary);
   }
 
   .page-header p {
     font-size: 1.05rem;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
   }
 
   /* ===== 통계 바 ===== */
@@ -442,8 +551,8 @@ const getRegionProvince = (region: string | null) => {
   }
 
   .stat-card {
-    background: var(--color-bg, #fff);
-    border: 1px solid var(--color-border, #e7e5e4);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
     padding: 1.25rem 1rem;
     text-align: center;
@@ -455,13 +564,13 @@ const getRegionProvince = (region: string | null) => {
   .stat-value {
     font-size: 1.75rem;
     font-weight: 800;
-    color: var(--color-accent, #0d9488);
+    color: var(--color-accent);
     line-height: 1.2;
   }
 
   .stat-label {
     font-size: 0.8rem;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
     font-weight: 500;
   }
 
@@ -473,8 +582,8 @@ const getRegionProvince = (region: string | null) => {
   }
 
   .filter-bar {
-    background: var(--color-bg, #fff);
-    border: 1px solid var(--color-border, #e7e5e4);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
     padding: 1.25rem;
     display: flex;
@@ -497,25 +606,25 @@ const getRegionProvince = (region: string | null) => {
   .filter-label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
   .search-input {
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-border, #e7e5e4);
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     font-size: 0.9rem;
-    background: var(--color-bg, #fff);
-    color: var(--color-text, #1a1a1a);
+    background: var(--color-white);
+    color: var(--color-text);
     width: 100%;
   }
 
   .search-input:focus {
-    outline: none;
-    border-color: var(--color-accent, #0d9488);
-    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+    border-color: var(--color-accent);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
   }
 
   .source-tabs {
@@ -526,47 +635,47 @@ const getRegionProvince = (region: string | null) => {
 
   .source-tab {
     padding: 0.4rem 0.75rem;
-    border: 1px solid var(--color-border, #e7e5e4);
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     background: transparent;
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
     transition: all 0.15s;
   }
 
   .source-tab:hover {
-    border-color: var(--color-accent, #0d9488);
-    color: var(--color-accent, #0d9488);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   .source-tab.active {
-    background: var(--color-accent, #0d9488);
-    border-color: var(--color-accent, #0d9488);
-    color: #fff;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-white);
   }
 
   .region-select {
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-border, #e7e5e4);
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     font-size: 0.85rem;
-    background: var(--color-bg, #fff);
-    color: var(--color-text, #1a1a1a);
+    background: var(--color-white);
+    color: var(--color-text);
     cursor: pointer;
     min-width: 120px;
   }
 
   .region-select:focus {
     outline: none;
-    border-color: var(--color-accent, #0d9488);
+    border-color: var(--color-accent);
   }
 
   .filter-result {
     padding: 0.75rem 0 0;
     font-size: 0.85rem;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
   }
 
   /* ===== 공통 섹션 ===== */
@@ -584,8 +693,8 @@ const getRegionProvince = (region: string | null) => {
     font-weight: 700;
     margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--color-border, #e7e5e4);
-    color: var(--color-primary, #0f1419);
+    border-bottom: 2px solid var(--color-border);
+    color: var(--color-primary);
   }
 
   .heading-icon {
@@ -595,24 +704,24 @@ const getRegionProvince = (region: string | null) => {
     border-radius: 50%;
   }
 
-  .result-icon { background: #3b82f6; }
-  .company-icon { background: #f59e0b; }
+  .result-icon { background: var(--color-info); }
+  .company-icon { background: var(--color-warning); }
 
   .heading-count {
     font-size: 0.85rem;
     font-weight: 400;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
     margin-left: auto;
   }
 
   .empty {
     text-align: center;
     padding: 3rem 1rem;
-    background: var(--color-surface, #f5f5f4);
+    background: var(--color-bg-secondary);
     border-radius: 10px;
   }
 
-  .empty p { color: var(--color-text-secondary, #4a5568); }
+  .empty p { color: var(--color-text-secondary); }
   .empty .sub { font-size: 0.9rem; margin-top: 0.5rem; }
 
   /* ===== 입찰 카드 ===== */
@@ -623,8 +732,8 @@ const getRegionProvince = (region: string | null) => {
   }
 
   .bid-card {
-    background: var(--color-bg, #fff);
-    border: 1px solid var(--color-border, #e7e5e4);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
     padding: 1.25rem;
     display: flex;
@@ -634,12 +743,12 @@ const getRegionProvince = (region: string | null) => {
   }
 
   .bid-card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    border-color: var(--color-accent, #0d9488);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent);
   }
 
   .bid-card.is-active {
-    border-left: 3px solid #22c55e;
+    border-left: 3px solid var(--color-success);
   }
 
   .bid-card.is-closed {
@@ -670,11 +779,11 @@ const getRegionProvince = (region: string | null) => {
     letter-spacing: 0.02em;
   }
 
-  .source-badge.src-g2b { background: #dbeafe; color: #1d4ed8; }
-  .source-badge.src-kapt { background: #dcfce7; color: #15803d; }
-  .source-badge.src-d2b { background: #fce7f3; color: #9d174d; }
-  .source-badge.src-lofin { background: #e0e7ff; color: #3730a3; }
-  .source-badge.src-alio { background: #fef3c7; color: #92400e; }
+  .source-badge.src-g2b { background: var(--color-info-soft); color: var(--color-info); }
+  .source-badge.src-kapt { background: var(--color-success-soft); color: var(--color-success); }
+  .source-badge.src-d2b { background: var(--color-danger-soft); color: var(--color-danger); }
+  .source-badge.src-lofin { background: var(--color-accent-soft); color: var(--color-accent); }
+  .source-badge.src-alio { background: var(--color-warning-soft); color: var(--color-warning); }
 
   .status-badge {
     font-size: 0.7rem;
@@ -683,21 +792,21 @@ const getRegionProvince = (region: string | null) => {
     border-radius: 4px;
   }
 
-  .status-badge.active { background: #dcfce7; color: #15803d; }
-  .status-badge.closed { background: #f3f4f6; color: #6b7280; }
+  .status-badge.active { background: var(--color-success-soft); color: var(--color-success); }
+  .status-badge.closed { background: var(--color-bg-secondary); color: var(--color-text-tertiary); }
 
   .dday {
     font-size: 0.8rem;
     font-weight: 700;
-    color: #dc2626;
-    background: #fef2f2;
+    color: var(--color-danger);
+    background: var(--color-danger-soft);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
   }
 
   .dday.today {
-    background: #dc2626;
-    color: #fff;
+    background: var(--color-danger);
+    color: var(--color-white);
     animation: pulse 2s infinite;
   }
 
@@ -708,7 +817,7 @@ const getRegionProvince = (region: string | null) => {
 
   .reg-date {
     font-size: 0.8rem;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
   }
 
   .bid-title {
@@ -719,12 +828,31 @@ const getRegionProvince = (region: string | null) => {
   }
 
   .bid-title a {
-    color: var(--color-primary, #0f1419);
+    color: var(--color-primary);
     text-decoration: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
   }
 
   .bid-title a:hover {
-    color: var(--color-accent, #0d9488);
+    color: var(--color-accent);
+  }
+
+  .bid-title .external-icon {
+    flex-shrink: 0;
+    opacity: 0.4;
+    position: relative;
+    top: 1px;
+    transition: opacity var(--transition-fast);
+  }
+
+  .bid-title a:hover .external-icon {
+    opacity: 0.7;
+  }
+
+  .bid-title .no-link {
+    color: var(--color-text);
   }
 
   .bid-info {
@@ -738,12 +866,12 @@ const getRegionProvince = (region: string | null) => {
     align-items: center;
     gap: 0.3rem;
     font-size: 0.8rem;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
   }
 
   .info-item svg {
     flex-shrink: 0;
-    color: var(--color-text-secondary, #9ca3af);
+    color: var(--color-text-light);
   }
 
   .bid-price {
@@ -751,24 +879,24 @@ const getRegionProvince = (region: string | null) => {
     align-items: baseline;
     gap: 0.4rem;
     padding: 0.5rem 0.65rem;
-    background: var(--color-surface, #f5f5f4);
+    background: var(--color-bg-secondary);
     border-radius: 6px;
   }
 
   .price-label {
     font-size: 0.75rem;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
   }
 
   .price-value {
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--color-accent, #0d9488);
+    color: var(--color-accent);
   }
 
   .price-short {
     font-size: 0.8rem;
-    color: var(--color-text-secondary, #9ca3af);
+    color: var(--color-text-light);
   }
 
   .bid-keywords {
@@ -779,8 +907,8 @@ const getRegionProvince = (region: string | null) => {
 
   .kw-tag {
     font-size: 0.7rem;
-    background: var(--color-accent, #0d9488);
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-white);
     padding: 0.1rem 0.4rem;
     border-radius: 3px;
   }
@@ -790,13 +918,13 @@ const getRegionProvince = (region: string | null) => {
     justify-content: space-between;
     align-items: center;
     padding-top: 0.6rem;
-    border-top: 1px solid var(--color-border, #e7e5e4);
+    border-top: 1px solid var(--color-border);
     margin-top: auto;
   }
 
   .footer-date {
     font-size: 0.78rem;
-    color: var(--color-text-secondary, #9ca3af);
+    color: var(--color-text-tertiary);
   }
 
   .bid-links {
@@ -811,8 +939,8 @@ const getRegionProvince = (region: string | null) => {
     font-weight: 500;
   }
 
-  .link-file { color: var(--color-text-secondary, #6b7280); }
-  .link-detail { color: var(--color-accent, #0d9488); }
+  .link-file { color: var(--color-text-tertiary); }
+  .link-detail { color: var(--color-accent); }
   .link-detail:hover { text-decoration: underline; }
 
   /* ===== 낙찰 결과 ===== */
@@ -823,9 +951,9 @@ const getRegionProvince = (region: string | null) => {
   }
 
   .result-card {
-    background: var(--color-bg, #fff);
-    border: 1px solid var(--color-border, #e7e5e4);
-    border-left: 3px solid #3b82f6;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-info);
     border-radius: 8px;
     padding: 1rem 1.25rem;
     display: flex;
@@ -842,17 +970,17 @@ const getRegionProvince = (region: string | null) => {
   .result-company {
     font-weight: 700;
     font-size: 0.95rem;
-    color: var(--color-primary, #0f1419);
+    color: var(--color-primary);
   }
 
   .result-date {
     font-size: 0.78rem;
-    color: var(--color-text-secondary, #9ca3af);
+    color: var(--color-text-secondary);
   }
 
   .result-title {
     font-size: 0.85rem;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
     line-height: 1.4;
     margin: 0;
   }
@@ -861,14 +989,14 @@ const getRegionProvince = (region: string | null) => {
     display: flex;
     gap: 0.6rem;
     font-size: 0.78rem;
-    color: var(--color-text-secondary, #9ca3af);
+    color: var(--color-text-secondary);
   }
 
   .result-numbers {
     display: flex;
     gap: 1rem;
     padding-top: 0.5rem;
-    border-top: 1px solid var(--color-border, #e7e5e4);
+    border-top: 1px solid var(--color-border);
     margin-top: 0.25rem;
   }
 
@@ -880,18 +1008,18 @@ const getRegionProvince = (region: string | null) => {
 
   .rp-label {
     font-size: 0.7rem;
-    color: var(--color-text-secondary, #9ca3af);
+    color: var(--color-text-secondary);
   }
 
   .rp-value {
     font-size: 0.88rem;
     font-weight: 700;
-    color: #2563eb;
+    color: var(--color-info);
   }
 
   .result-rate .rp-value,
   .result-ratio .rp-value {
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
   }
 
   /* ===== 주요 수주 업체 ===== */
@@ -905,8 +1033,8 @@ const getRegionProvince = (region: string | null) => {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    background: var(--color-bg, #fff);
-    border: 1px solid var(--color-border, #e7e5e4);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 0.85rem 1rem;
   }
@@ -914,7 +1042,7 @@ const getRegionProvince = (region: string | null) => {
   .company-rank {
     font-size: 1rem;
     font-weight: 800;
-    color: var(--color-accent, #0d9488);
+    color: var(--color-accent);
     min-width: 2rem;
   }
 
@@ -927,51 +1055,276 @@ const getRegionProvince = (region: string | null) => {
   .company-name {
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--color-primary, #0f1419);
+    color: var(--color-primary);
   }
 
   .company-stats {
     display: flex;
     gap: 0.6rem;
     font-size: 0.78rem;
-    color: var(--color-text-secondary, #4a5568);
+    color: var(--color-text-secondary);
   }
 
-  /* ===== CTA ===== */
-  .cta-section {
+  /* ===== 시뮬레이터 배너 ===== */
+  .simulator-banner {
+    max-width: var(--max-width, 1200px);
+    margin: 0.5rem auto 1rem;
+    padding: 0 1.5rem;
+  }
+
+  .banner-content {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2.5rem;
+    align-items: center;
+    background: linear-gradient(135deg, var(--color-accent-soft) 0%, var(--color-warm-50) 100%);
+    border: 1px solid var(--color-accent-border);
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+  }
+
+  .banner-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
+    padding: 0.25rem 0.65rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+
+  .banner-text h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .banner-text > p {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .banner-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .banner-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--color-text);
+  }
+
+  .banner-features svg {
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .banner-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--color-accent);
+    color: var(--color-white);
+    padding: 0.65rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .banner-cta:hover {
+    background: var(--color-accent-dark);
+    transform: translateY(-1px);
+  }
+
+  .banner-visual {
+    display: flex;
+    justify-content: center;
+  }
+
+  .visual-mockup {
+    width: 220px;
+    background: var(--color-white);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+
+  .mockup-header {
+    display: flex;
+    gap: 5px;
+    padding: 8px 12px;
+    background: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mockup-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-text-light);
+  }
+
+  .mockup-body {
+    padding: 2.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+  }
+
+  /* ===== 이메일 구독 ===== */
+  .subscribe-section {
     max-width: var(--max-width, 1200px);
     margin: 2rem auto 4rem;
-    padding: 3rem 2rem;
-    background: var(--color-accent, #0d9488);
-    color: white;
+    padding: 0 1.5rem;
+  }
+
+  .subscribe-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 12px;
+    padding: 2.5rem;
     text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
   }
 
-  .cta-section h2 {
-    font-size: 1.65rem;
+  .subscribe-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+    border-radius: 14px;
+    color: var(--color-white);
+    margin-bottom: 1rem;
+  }
+
+  .subscribe-card h2 {
+    font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 0.75rem;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
   }
 
-  .cta-section p {
-    opacity: 0.85;
+  .subscribe-card > p {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
     margin-bottom: 1.5rem;
   }
 
-  .cta-btn {
-    display: inline-block;
-    background: white;
-    color: var(--color-accent, #0d9488);
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: transform 0.2s;
+  .subscribe-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  .cta-btn:hover {
-    transform: translateY(-2px);
+  .form-row {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 460px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .subscribe-input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: var(--color-white);
+    color: var(--color-text);
+    transition: border-color 0.2s;
+  }
+
+  .subscribe-input:focus {
+    border-color: var(--color-accent);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+
+  .subscribe-btn {
+    padding: 0.7rem 1.5rem;
+    background: var(--color-accent);
+    color: var(--color-white);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .subscribe-btn:hover {
+    background: var(--color-accent-dark);
+  }
+
+  .subscribe-note {
+    font-size: 0.78rem;
+    color: var(--color-text-tertiary);
+    margin-top: 0.25rem;
+  }
+
+  .subscribe-success {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--color-success-soft);
+    border: 1px solid var(--color-success-border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--color-success);
+    margin-top: 0.5rem;
+  }
+
+  .subscribe-form.is-hidden {
+    display: none;
+  }
+
+  .subscribe-success.is-visible {
+    display: flex;
+  }
+
+  .btn-loading {
+    display: none;
+  }
+
+  .subscribe-btn.is-loading .btn-text {
+    display: none;
+  }
+
+  .subscribe-btn.is-loading .btn-loading {
+    display: inline-flex;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .spin {
+    animation: spin 1s linear infinite;
   }
 
   /* ===== 반응형 ===== */
@@ -998,8 +1351,19 @@ const getRegionProvince = (region: string | null) => {
     .result-grid { grid-template-columns: 1fr; }
     .company-grid { grid-template-columns: 1fr; }
 
-    .cta-section { margin: 2rem 1rem; padding: 2rem 1.25rem; }
-    .cta-section h2 { font-size: 1.35rem; }
+    .simulator-banner { padding: 0 1rem; }
+    .banner-content {
+      grid-template-columns: 1fr;
+      padding: 1.5rem;
+      gap: 1.5rem;
+    }
+    .banner-visual { display: none; }
+
+    .subscribe-section { padding: 0 1rem; margin: 2rem auto 3rem; }
+    .subscribe-card { padding: 1.75rem 1.25rem; }
+    .subscribe-card h2 { font-size: 1.2rem; }
+    .form-row { flex-direction: column; }
+    .subscribe-btn { width: 100%; }
   }
 
   @media (max-width: 480px) {
