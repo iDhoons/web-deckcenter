@@ -117,25 +117,25 @@ const testimonials = [
   <Pricing />
 
   <!-- Final CTA -->
-  <section class="final-cta py-section-spacing bg-gradient-to-br from-primary to-primary-soft">
-    <div class="final-cta-inner max-w-DEFAULT mx-auto px-container">
-      <div class="final-cta-card bg-warm-50/10 backdrop-blur-sm rounded-3xl p-8 md:p-16 border border-warm-200/20">
-        <div class="final-cta-content text-center max-w-2xl mx-auto">
-          <span class="final-cta-kicker inline-flex items-center px-4 py-2 rounded-full border border-accent/30 text-accent-light text-sm font-semibold mb-6">
+  <section class="final-cta">
+    <div class="final-cta-inner">
+      <div class="final-cta-card">
+        <div class="final-cta-content">
+          <span class="final-cta-kicker">
             무료 체험 · 신용카드 불필요
           </span>
-          <h2 class="text-3xl md:text-5xl font-bold text-warm-50 mb-6">지금 바로 시작하세요</h2>
-          <p class="text-lg text-warm-200 mb-10 leading-relaxed">
+          <h2>지금 바로 시작하세요</h2>
+          <p>
             무료로 데크 설계를 체험해 보세요. 3D 설계부터 실시간 견적까지 한 번에 확인할 수 있습니다.
           </p>
-          <div class="final-cta-actions flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/app" class="btn-primary inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-accent-light text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-base">
+          <div class="final-cta-actions">
+            <a href="/app" class="btn-primary">
               무료로 시작하기
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </a>
-            <a href="/features" class="btn-secondary inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-warm-200 hover:border-warm-100 text-warm-100 hover:text-white font-semibold rounded-xl transition-all duration-base">
+            <a href="/features" class="btn-secondary">
               기능 더 알아보기
             </a>
           </div>
@@ -281,70 +281,81 @@ const testimonials = [
   .final-cta {
     position: relative;
     overflow: hidden;
-  }
-
-  .final-cta::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--color-warm-200) 1px, transparent 1px),
-      linear-gradient(90deg, var(--color-warm-200) 1px, transparent 1px);
-    background-size: 60px 60px;
-    opacity: 0.1;
-    pointer-events: none;
+    background: var(--color-warm-50);
+    padding: var(--section-spacing) 0;
   }
 
   .final-cta-inner {
     position: relative;
     z-index: 1;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
   }
 
   .final-cta-card {
-    box-shadow: var(--shadow-xl);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 3rem;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .final-cta-content {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
   }
 
   .final-cta-kicker {
-    box-shadow: 0 2px 8px rgba(13, 148, 136, 0.2);
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
   }
 
-  .btn-primary {
-    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+  .final-cta-content h2 {
+    font-size: var(--font-size-4xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 1.5rem;
   }
 
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+  .final-cta-content p {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
   }
 
-  /* Dark mode adjustments */
-  [data-theme="dark"] .final-cta {
-    background: linear-gradient(to bottom right, var(--color-bg), var(--color-bg-secondary));
-  }
-
-  [data-theme="dark"] .final-cta-card {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  [data-theme="dark"] .btn-secondary {
-    border-color: var(--color-warm-200);
-    color: var(--color-warm-100);
-  }
-
-  [data-theme="dark"] .btn-secondary:hover {
-    border-color: var(--color-warm-100);
-    background: rgba(255, 255, 255, 0.05);
+  .final-cta-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
   }
 
   /* Responsive */
   @media (max-width: 768px) {
+    .final-cta-card {
+      padding: 2rem;
+    }
+
     .final-cta-content h2 {
       font-size: 2rem;
     }
 
     .final-cta-content p {
       font-size: 1rem;
+    }
+
+    .final-cta-actions {
+      flex-direction: column;
     }
   }
 </style>

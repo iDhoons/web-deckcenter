@@ -539,26 +539,6 @@ import CTA from '../components/CTA.astro';
     flex-wrap: wrap;
   }
 
-  /* Dark mode */
-  :global([data-theme="dark"]) .value-card,
-  :global([data-theme="dark"]) .user-card,
-  :global([data-theme="dark"]) .roadmap-item {
-    background: var(--color-bg-alt);
-    border-color: rgba(255,255,255,0.1);
-  }
-
-  :global([data-theme="dark"]) .story-section {
-    background: var(--color-bg);
-  }
-
-  :global([data-theme="dark"]) .user-icon {
-    background: var(--color-bg);
-  }
-
-  :global([data-theme="dark"]) .roadmap-item.current {
-    background: var(--color-bg);
-  }
-
   /* 반응형 */
   @media (max-width: 900px) {
     .about-hero-content h1 {

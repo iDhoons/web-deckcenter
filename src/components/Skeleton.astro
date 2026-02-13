@@ -59,17 +59,6 @@ const { variant = 'text', width, height, count = 1 } = Astro.props;
     border-radius: var(--radius-full);
   }
 
-  /* Dark mode */
-  [data-theme="dark"] .skeleton {
-    background: linear-gradient(
-      90deg,
-      var(--color-warm-200) 25%,
-      var(--color-warm-100) 50%,
-      var(--color-warm-200) 75%
-    );
-    background-size: 200% 100%;
-  }
-
   /* Utility combinations */
   .skeleton-group {
     display: flex;

@@ -49,17 +49,4 @@ const { title, description, image, link, badge, badgeColor } = Astro.props;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
-  /* Dark mode adjustments */
-  [data-theme="dark"] .card {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-warm-200);
-  }
-
-  [data-theme="dark"] .card:hover {
-    border-color: var(--color-accent);
-  }
-
-  [data-theme="dark"] .card-badge {
-    background: rgba(28, 25, 23, 0.95);
-  }
 </style>

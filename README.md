@@ -1,43 +1,52 @@
-# Astro Starter Kit: Minimal
+# Deckctr (데크센터)
 
-```sh
-npm create astro@latest -- --template minimal
+데크센터(Deckctr) B2B/B2C 데크 자재 공급업체 마케팅 웹사이트입니다.
+
+## Stack
+
+- Astro 5.16
+- TypeScript (strict)
+- MDX 콘텐츠 컬렉션
+- Scoped CSS + Tailwind 유틸리티 클래스
+- pnpm
+
+## Commands
+
+```bash
+pnpm dev      # 개발 서버 (localhost:4321)
+pnpm build    # 프로덕션 빌드 (./dist/)
+pnpm preview  # 빌드 미리보기
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Project Structure
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```
+src/
+  components/  # UI 컴포넌트
+  content/     # MDX 콘텐츠 컬렉션 (products, cases, blog)
+  layouts/     # BaseLayout
+  lib/         # 외부 서비스 클라이언트 (Supabase)
+  pages/       # 라우팅 페이지
+  styles/      # 전역 스타일 (tailwind import)
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Content Collections
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+스키마는 `src/content/config.ts`에서 관리합니다.
 
-Any static assets, like images, can be placed in the `public/` directory.
+- `products`: 제품 정보
+- `cases`: 시공 사례
+- `blog`: 블로그 포스트
 
-## 🧞 Commands
+## Environment
 
-All commands are run from the root of the project, from a terminal:
+Supabase 연결에 아래 환경 변수가 필요합니다.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```
+PUBLIC_SUPABASE_URL=
+PUBLIC_SUPABASE_ANON_KEY=
+```
 
-## 👀 Want to learn more?
+## References
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+운영 규칙과 컨텍스트는 `AGENTS.md`, 세부 가이드는 `CLAUDE.md`를 참고합니다.

@@ -88,8 +88,8 @@
 
 <style>
   footer {
-    background: var(--color-primary);
-    color: var(--color-warm-100);
+    background: var(--color-warm-50);
+    color: var(--color-text);
     padding: 80px var(--container-padding) 32px;
   }
 
@@ -112,19 +112,19 @@
   .footer-logo {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--color-warm-50);
+    color: var(--color-text);
     display: block;
   }
 
   .tagline {
     font-size: 0.9375rem;
-    color: var(--color-warm-200);
+    color: var(--color-text-secondary);
     margin: 0;
   }
 
   .description {
     font-size: 0.875rem;
-    color: var(--color-warm-300);
+    color: var(--color-text-tertiary);
     line-height: 1.6;
     margin: 0;
   }
@@ -139,14 +139,14 @@
   .social-icon {
     width: 40px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--color-bg);
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-warm-200);
+    color: var(--color-text-tertiary);
     transition: all var(--transition-base);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--color-border);
   }
 
   .social-icon:hover {
@@ -165,7 +165,7 @@
   .footer-column h4 {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--color-warm-50);
+    color: var(--color-text);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 20px;
@@ -181,12 +181,12 @@
 
   .footer-column a {
     font-size: 0.9375rem;
-    color: var(--color-warm-200);
+    color: var(--color-text-secondary);
     transition: color var(--transition-fast);
   }
 
   .footer-column a:hover {
-    color: var(--color-accent-light);
+    color: var(--color-accent);
   }
 
   /* Newsletter */
@@ -199,14 +199,14 @@
   .footer-newsletter h4 {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--color-warm-50);
+    color: var(--color-text);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
   .footer-newsletter p {
     font-size: 0.875rem;
-    color: var(--color-warm-300);
+    color: var(--color-text-tertiary);
     margin: 0;
   }
 
@@ -218,23 +218,23 @@
   }
 
   .newsletter-input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: 12px 16px;
-    color: var(--color-white);
+    color: var(--color-text);
     font-size: 0.875rem;
     transition: all var(--transition-fast);
   }
 
   .newsletter-input::placeholder {
-    color: var(--color-warm-300);
+    color: var(--color-text-tertiary);
   }
 
   .newsletter-input:focus {
     outline: none;
     border-color: var(--color-accent);
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--color-bg);
   }
 
   .newsletter-button {
@@ -259,7 +259,7 @@
     max-width: var(--max-width);
     margin: 0 auto;
     padding-top: 32px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--color-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -267,7 +267,7 @@
 
   .footer-bottom-left p {
     font-size: 0.8125rem;
-    color: var(--color-warm-300);
+    color: var(--color-text-tertiary);
     margin: 0;
   }
 
@@ -279,12 +279,12 @@
   }
 
   .footer-bottom-right a {
-    color: var(--color-warm-300);
+    color: var(--color-text-tertiary);
     transition: color var(--transition-fast);
   }
 
   .footer-bottom-right a:hover {
-    color: var(--color-accent-light);
+    color: var(--color-accent);
   }
 
   .separator {

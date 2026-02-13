@@ -83,16 +83,6 @@ const { stats, title = "신뢰할 수 있는 결과" } = Astro.props;
   .delay-200 { animation-delay: 0.2s; }
   .delay-300 { animation-delay: 0.3s; }
 
-  /* Dark mode */
-  [data-theme="dark"] .trust-indicators {
-    background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
-  }
-
-  [data-theme="dark"] .trust-indicators::before {
-    background-image:
-      linear-gradient(var(--color-warm-200) 1px, transparent 1px),
-      linear-gradient(90deg, var(--color-warm-200) 1px, transparent 1px);
-  }
 </style>
 
 <script>

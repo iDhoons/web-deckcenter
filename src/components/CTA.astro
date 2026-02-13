@@ -48,13 +48,4 @@ const { text, link, variant = 'primary' } = Astro.props;
     color: var(--color-accent);
   }
 
-  /* Dark mode */
-  :global([data-theme="dark"]) .cta-primary {
-    background: var(--color-accent);
-    color: var(--color-black);
-  }
-
-  :global([data-theme="dark"]) .cta-primary:hover {
-    background: var(--color-accent-light);
-  }
 </style>

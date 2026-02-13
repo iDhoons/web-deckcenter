@@ -21,10 +21,6 @@
     background: linear-gradient(135deg, #f5f0eb 0%, #ffffff 50%, #ebe5df 100%);
   }
 
-  [data-theme="dark"] .hero-3d-container {
-    background: linear-gradient(135deg, #1a1512 0%, #0f0d0b 50%, #1a1512 100%);
-  }
-
   /* 로딩 인디케이터 */
   .hero-3d-loading {
     position: absolute;
@@ -112,11 +108,6 @@
     };
   }
 
-  // 테마 감지
-  function isDarkMode(): boolean {
-    return document.documentElement.getAttribute('data-theme') === 'dark';
-  }
-
   // === 텍스처 생성 (절차적) ===
   function createWoodTexture(): THREE.CanvasTexture {
     const canvas = document.createElement('canvas');
@@ -125,14 +116,11 @@
     const ctx = canvas.getContext('2d')!;
 
     // 기본 우드 색상
-    const baseColor = isDarkMode() ? '#5a4a3a' : '#a08060';
-    ctx.fillStyle = baseColor;
+    ctx.fillStyle = '#a08060';
     ctx.fillRect(0, 0, 512, 512);
 
     // 나뭇결 라인 생성
-    const grainColors = isDarkMode()
-      ? ['#4a3a2a', '#6a5a4a', '#5a4535', '#7a6a5a']
-      : ['#8a6a4a', '#c0a080', '#9a7a5a', '#b09070'];
+    const grainColors = ['#8a6a4a', '#c0a080', '#9a7a5a', '#b09070'];
 
     for (let i = 0; i < 80; i++) {
       const y = Math.random() * 512;
@@ -175,30 +163,21 @@
   // === 씬 생성 ===
   function createScene(): THREE.Scene {
     const scene = new THREE.Scene();
-    const dark = isDarkMode();
 
-    scene.background = new THREE.Color(dark ? 0x0f0d0b : 0xf5f0eb);
-    scene.fog = new THREE.Fog(dark ? 0x0f0d0b : 0xf5f0eb, 15, 40);
+    scene.background = new THREE.Color(0xf5f0eb);
+    scene.fog = new THREE.Fog(0xf5f0eb, 15, 40);
 
     return scene;
   }
 
   // === 조명 설정 ===
   function setupLighting(scene: THREE.Scene, quality: ReturnType<typeof getQualitySettings>) {
-    const dark = isDarkMode();
-
     // 환경광
-    const ambientLight = new THREE.AmbientLight(
-      dark ? 0xffeedd : 0xffffff,
-      dark ? 0.4 : 0.6
-    );
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
     // 메인 태양광 (그림자)
-    const sunLight = new THREE.DirectionalLight(
-      dark ? 0xffeedd : 0xfff8f0,
-      dark ? 0.8 : 1.0
-    );
+    const sunLight = new THREE.DirectionalLight(0xfff8f0, 1.0);
     sunLight.position.set(8, 12, 8);
     sunLight.castShadow = quality.shadowEnabled;
 
@@ -217,10 +196,7 @@
     scene.add(sunLight);
 
     // 필 라이트 (그림자 영역 밝히기)
-    const fillLight = new THREE.DirectionalLight(
-      dark ? 0x8899aa : 0xaabbcc,
-      dark ? 0.2 : 0.3
-    );
+    const fillLight = new THREE.DirectionalLight(0xaabbcc, 0.3);
     fillLight.position.set(-5, 5, -5);
     scene.add(fillLight);
 
@@ -289,7 +265,7 @@
   function createGround(scene: THREE.Scene) {
     const groundGeometry = new THREE.PlaneGeometry(60, 60);
     const groundMaterial = new THREE.ShadowMaterial({
-      opacity: isDarkMode() ? 0.3 : 0.15,
+      opacity: 0.15,
     });
 
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
@@ -331,7 +307,7 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = isDarkMode() ? 0.9 : 1.1;
+    renderer.toneMappingExposure = 1.1;
 
     container.appendChild(renderer.domElement);
 
@@ -424,12 +400,6 @@
     isInitialized = false;
   }
 
-  // === 테마 변경 감지 ===
-  function handleThemeChange() {
-    cleanup();
-    initHero3D();
-  }
-
   // === 이벤트 리스너 ===
   // 초기 로드
   if (document.readyState === 'loading') {
@@ -445,19 +415,4 @@
   });
 
   document.addEventListener('astro:before-swap', cleanup);
-
-  // 테마 변경 감지 (MutationObserver)
-  const observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.attributeName === 'data-theme') {
-        handleThemeChange();
-        break;
-      }
-    }
-  });
-
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme'],
-  });
 </script>

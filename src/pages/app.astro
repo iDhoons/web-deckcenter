@@ -223,21 +223,6 @@ import CTA from '../components/CTA.astro';
     opacity: 0.8;
   }
 
-  /* Dark mode */
-  :global([data-theme="dark"]) .notify-form input {
-    background: var(--color-bg-alt);
-    border-color: rgba(255,255,255,0.1);
-    color: var(--color-text);
-  }
-
-  :global([data-theme="dark"]) .features-preview {
-    background: var(--color-bg-alt);
-  }
-
-  :global([data-theme="dark"]) .feature {
-    background: var(--color-bg);
-  }
-
   @media (max-width: 600px) {
     h1 {
       font-size: 2rem;
