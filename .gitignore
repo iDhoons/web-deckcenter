@@ -28,3 +28,9 @@ pnpm-debug.log*
 # agent reports (runtime)
 .agent-reports/*.last
 .vercel
+
+# playwright MCP logs
+.playwright-mcp/
+
+# temp screenshots
+*.jpeg
