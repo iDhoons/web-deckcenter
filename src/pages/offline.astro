@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="오프라인 | 데크센터" description="인터넷 연결이 끊어졌습니다.">
+  <section class="offline-page">
+    <div class="offline-icon" aria-hidden="true">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.56 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+    <h1>인터넷 연결이 끊어졌습니다</h1>
+    <p>현재 오프라인 상태입니다. 네트워크 연결을 확인한 후 다시 시도해 주세요.</p>
+    <button class="btn btn-primary" onclick="window.location.reload()">
+      다시 시도
+    </button>
+    <p class="offline-hint">이전에 방문한 페이지는 오프라인에서도 볼 수 있습니다.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .offline-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 2rem var(--container-padding);
+    gap: 1.5rem;
+  }
+
+  .offline-icon {
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+  }
+
+  p {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    max-width: 400px;
+    line-height: var(--line-height-normal);
+  }
+
+  .offline-hint {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    margin-top: 1rem;
+  }
+</style>
