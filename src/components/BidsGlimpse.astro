@@ -1,5 +1,6 @@
 ---
 import { supabase } from '../lib/supabase';
+import { getDetailUrl } from '../lib/bid-urls';
 
 const { count: activeCount } = await supabase
   .from('bid_notices')
@@ -12,23 +13,6 @@ const { data: bids } = await supabase
   .eq('status', 'active')
   .order('reg_date', { ascending: false })
   .limit(3);
-
-function getDetailUrl(bid: any): string | null {
-  if (bid.detail_url) return bid.detail_url;
-  if (bid.source === 'lofin' && bid.raw_data?.laf_cd) {
-    return `https://lofin365.go.kr/portal/service/openInf498.do?laf_cd=${bid.raw_data.laf_cd}&ctrt_trgt_nm=${encodeURIComponent((bid.title || '').slice(0, 50))}`;
-  }
-  if (bid.source === 'g2b' && bid.bid_num) {
-    return `https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoDtl.do?bidno=${bid.bid_num}`;
-  }
-  if (bid.source === 'kapt' && bid.bid_num) {
-    return `https://www.k-apt.go.kr/bid/bidDetail.do?bidNum=${bid.bid_num}`;
-  }
-  if (bid.source === 'd2b' && bid.bid_num) {
-    return `https://www.d2b.go.kr/internet/pblancDetail.do?pblancNo=${bid.bid_num}`;
-  }
-  return null;
-}
 
 function getDday(deadline: string) {
   const diff = Math.ceil((new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));

@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BidAnalytics from '../../components/BidAnalytics.astro';
 import { supabase } from '../../lib/supabase';
+import { getDetailUrl } from '../../lib/bid-urls';
 
 // 모든 입찰 공고 (active + closed)
 const { data: allBids } = await supabase
@@ -105,23 +106,6 @@ const getRegionProvince = (region: string | null) => {
   return region.split(' ')[0] || '';
 };
 
-// detail_url이 없는 경우 소스별 fallback URL 생성
-const getDetailUrl = (bid: any): string | null => {
-  if (bid.detail_url) return bid.detail_url;
-  if (bid.source === 'lofin' && bid.raw_data?.laf_cd) {
-    return `https://lofin365.go.kr/portal/service/openInf498.do?laf_cd=${bid.raw_data.laf_cd}&ctrt_trgt_nm=${encodeURIComponent((bid.title || '').slice(0, 50))}`;
-  }
-  if (bid.source === 'g2b' && bid.bid_num) {
-    return `https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoDtl.do?bidno=${bid.bid_num}`;
-  }
-  if (bid.source === 'kapt' && bid.bid_num) {
-    return `https://www.k-apt.go.kr/bid/bidDetail.do?bidNum=${bid.bid_num}`;
-  }
-  if (bid.source === 'd2b' && bid.bid_num) {
-    return `https://www.d2b.go.kr/internet/pblancDetail.do?pblancNo=${bid.bid_num}`;
-  }
-  return null;
-};
 ---
 
 <BaseLayout

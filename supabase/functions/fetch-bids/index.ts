@@ -613,10 +613,8 @@ async function fetchLofinContracts(apiKey: string, supabase: any): Promise<{ bid
 
       const region = [item.wa_laf_hg_nm, item.laf_hg_nm].filter(Boolean).join(' ');
 
-      // 지방재정365 계약현황 검색 URL 생성
-      const lofinDetailUrl = item.laf_cd
-        ? `https://lofin365.go.kr/portal/service/openInf498.do?laf_cd=${item.laf_cd}&ctrt_trgt_nm=${encodeURIComponent(contractName.slice(0, 50))}`
-        : null;
+      // 프론트엔드 getDetailUrl()에서 raw_data.laf_cd 기반으로 지자체 입찰 페이지 URL 동적 생성
+      const lofinDetailUrl = null;
 
       bids.push({
         source: 'lofin',
