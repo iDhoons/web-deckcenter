@@ -32,5 +32,5 @@ pnpm-debug.log*
 # playwright MCP logs
 .playwright-mcp/
 
-# temp screenshots
-*.jpeg
+# design snapshots
+design-snapshots/
