@@ -1,0 +1,234 @@
+---
+import { getCollection } from 'astro:content';
+
+const cases = await getCollection('cases');
+const latestCases = cases
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<section class="cases" aria-labelledby="cases-heading">
+  <div class="cases-inner">
+    <div class="cases-header">
+      <h2 id="cases-heading">실제 시공 현장</h2>
+      <p>데크센터로 설계하고 시공한 프로젝트</p>
+    </div>
+
+    {latestCases.length > 0 ? (
+      <div class="cases-bento">
+        {latestCases.map((c, i) => (
+          <article class={`case-item ${i === 0 ? 'case-item--featured' : ''}`}>
+            <img
+              src={c.data.cover}
+              alt={c.data.title}
+              loading="lazy"
+              class="case-img"
+            />
+            <div class="case-overlay">
+              <span class="case-badge">{c.data.location}</span>
+              <div class="case-info">
+                <h3>{c.data.title}</h3>
+                <div class="case-meta">
+                  <span>{c.data.area}</span>
+                  <span class="case-meta-dot">·</span>
+                  <span>{c.data.material}</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p class="cases-empty">시공 사례가 준비 중입니다.</p>
+    )}
+
+    <div class="cases-footer">
+      <a href="/gallery" class="link-arrow">
+        시공 사례 더보기
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { staggerReveal } from '../lib/animations';
+
+  function initCases() {
+    staggerReveal('.cases-bento', '.case-item');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCases);
+  } else {
+    initCases();
+  }
+  document.addEventListener('astro:page-load', initCases);
+</script>
+
+<style>
+  .cases {
+    padding: var(--section-spacing) 0;
+    background: var(--color-bg);
+  }
+
+  .cases-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .cases-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .cases-header h2 {
+    font-size: var(--font-size-h2);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .cases-header p {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .cases-bento {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+    height: 560px;
+  }
+
+  .case-item {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.4s ease;
+  }
+
+  .case-item:hover {
+    box-shadow: var(--shadow-xl);
+  }
+
+  .case-item--featured {
+    grid-row: 1 / -1;
+  }
+
+  .case-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .case-item:hover .case-img {
+    transform: scale(1.03);
+  }
+
+  .case-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 60%);
+    transition: background 0.4s ease;
+  }
+
+  .case-item:hover .case-overlay {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 70%);
+  }
+
+  .case-badge {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    color: white;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+  }
+
+  .case-info {
+    color: white;
+    transform: translateY(8px);
+    transition: transform 0.4s ease;
+  }
+
+  .case-item:hover .case-info {
+    transform: translateY(0);
+  }
+
+  .case-info h3 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: 0.375rem;
+    line-height: 1.4;
+  }
+
+  .case-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: var(--font-size-sm);
+    opacity: 0.8;
+  }
+
+  .case-meta-dot {
+    opacity: 0.5;
+  }
+
+  .cases-empty {
+    text-align: center;
+    color: var(--color-text-tertiary);
+    padding: 80px 0;
+  }
+
+  .cases-footer {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-accent);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: gap var(--transition-base), color var(--transition-base);
+  }
+
+  .link-arrow:hover {
+    gap: 12px;
+    color: var(--color-accent-light);
+  }
+
+  @media (max-width: 768px) {
+    .cases-bento {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      height: auto;
+    }
+
+    .case-item {
+      aspect-ratio: 16 / 10;
+    }
+
+    .case-item--featured {
+      grid-row: auto;
+    }
+  }
+</style>

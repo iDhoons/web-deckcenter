@@ -1,0 +1,438 @@
+---
+import { supabase } from '../lib/supabase';
+
+const { count: activeCount } = await supabase
+  .from('bid_notices')
+  .select('*', { count: 'exact', head: true })
+  .eq('status', 'active');
+
+const bidCount = activeCount ?? 0;
+---
+
+<section class="value-props" aria-labelledby="value-heading">
+  <div class="value-inner">
+    <div class="value-header">
+      <h2 id="value-heading">왜 데크센터인가</h2>
+      <p>시공사와 건축주 모두를 위한 올인원 플랫폼</p>
+    </div>
+
+    <div class="value-list">
+      <!-- Prop 1: 비용 최적화 -->
+      <div class="value-block">
+        <div class="value-text">
+          <span class="value-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            비용 최적화
+          </span>
+          <h3>평균 18% 절감,<br />AI가 찾아낸 최적 자재 조합</h3>
+          <p>자재 가격 DB와 시공 조건을 분석해 불필요한 비용을 자동으로 줄입니다.</p>
+        </div>
+        <div class="value-visual">
+          <div class="value-card">
+            <svg class="progress-ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="progress-ring-bg" cx="60" cy="60" r="52" />
+              <circle class="progress-ring-fill" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="268" />
+            </svg>
+            <span class="value-card-number" data-count="18" data-suffix="%">0%</span>
+            <span class="value-card-desc">평균 절감률</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="value-divider" />
+
+      <!-- Prop 2: 3분 견적 -->
+      <div class="value-block value-block--reversed">
+        <div class="value-text">
+          <span class="value-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            3분 견적
+          </span>
+          <h3>입력부터 견적서까지,<br />3분이면 끝납니다</h3>
+          <p>면적과 자재를 선택하면 자동 산출. 수작업 1시간이 3분으로 단축됩니다.</p>
+        </div>
+        <div class="value-visual">
+          <div class="value-card">
+            <div class="timeline-visual">
+              <div class="timeline-steps">
+                <div class="timeline-step done"><span>입력</span></div>
+                <div class="timeline-connector done"></div>
+                <div class="timeline-step done"><span>분석</span></div>
+                <div class="timeline-connector done"></div>
+                <div class="timeline-step active"><span>견적</span></div>
+              </div>
+              <div class="timeline-bar">
+                <div class="timeline-bar-fill"></div>
+              </div>
+            </div>
+            <span class="value-card-number" data-count="3" data-suffix="분">0분</span>
+            <span class="value-card-desc">견적 완료까지</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="value-divider" />
+
+      <!-- Prop 3: 실시간 입찰 -->
+      <div class="value-block">
+        <div class="value-text">
+          <span class="value-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            실시간 입찰
+          </span>
+          <h3>공공 입찰 정보,<br />놓치지 마세요</h3>
+          <p>전국 데크 공사 입찰 정보를 실시간 수집. 알림 설정으로 기회를 잡으세요.</p>
+        </div>
+        <div class="value-visual">
+          <div class="value-card">
+            <div class="live-feed">
+              <div class="live-feed-row"><span class="live-skeleton" style="width:70%"></span><span class="live-badge">D-3</span></div>
+              <div class="live-feed-row"><span class="live-skeleton" style="width:85%"></span><span class="live-badge">D-7</span></div>
+              <div class="live-feed-row"><span class="live-skeleton" style="width:60%"></span><span class="live-badge new">NEW</span></div>
+            </div>
+            <div class="live-count">
+              <span class="live-dot"></span>
+              <span class="value-card-number" data-count={bidCount} data-suffix="건">{bidCount}건</span>
+              <span class="value-card-desc">진행 중</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { fadeInUp, countUp } from '../lib/animations';
+
+  function initValueProps() {
+    document.querySelectorAll('.value-block').forEach((block) => {
+      fadeInUp(block, { y: 30 });
+    });
+
+    document.querySelectorAll('.value-card-number[data-count]').forEach((el) => {
+      const target = Number(el.getAttribute('data-count') || 0);
+      const suffix = el.getAttribute('data-suffix') || '';
+      countUp(el, target, suffix);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initValueProps);
+  } else {
+    initValueProps();
+  }
+  document.addEventListener('astro:page-load', initValueProps);
+</script>
+
+<style>
+  .value-props {
+    padding: var(--section-spacing) 0;
+    background: var(--color-bg);
+  }
+
+  .value-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .value-header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+
+  .value-header h2 {
+    font-size: var(--font-size-h2);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .value-header p {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .value-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .value-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 60px 0;
+  }
+
+  .value-block--reversed {
+    direction: rtl;
+  }
+
+  .value-block--reversed > * {
+    direction: ltr;
+  }
+
+  .value-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-border), transparent);
+    margin: 0;
+  }
+
+  .value-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: 1rem;
+  }
+
+  .value-label svg {
+    flex-shrink: 0;
+  }
+
+  .value-text h3 {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+    letter-spacing: var(--letter-spacing-tight);
+    margin-bottom: 1rem;
+  }
+
+  .value-text p {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    max-width: 420px;
+  }
+
+  .value-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Value Card */
+  .value-card {
+    width: 100%;
+    max-width: 320px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-slow), transform var(--transition-slow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .value-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+  }
+
+  .value-card-number {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .value-card-desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+  }
+
+  /* Progress Ring */
+  .progress-ring {
+    width: 120px;
+    height: 120px;
+  }
+
+  .progress-ring-bg {
+    fill: none;
+    stroke: var(--color-border);
+    stroke-width: 8;
+  }
+
+  .progress-ring-fill {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 1.5s ease-out;
+  }
+
+  /* Timeline Visual */
+  .timeline-visual {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .timeline-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  .timeline-step {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
+  }
+
+  .timeline-step.done {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+  }
+
+  .timeline-step.active {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    animation: step-pulse 2s infinite;
+  }
+
+  @keyframes step-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 30%, transparent); }
+    50% { box-shadow: 0 0 0 6px transparent; }
+  }
+
+  .timeline-connector {
+    flex: 1;
+    height: 2px;
+    background: var(--color-border);
+  }
+
+  .timeline-connector.done {
+    background: var(--color-accent);
+  }
+
+  .timeline-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+
+  .timeline-bar-fill {
+    width: 85%;
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(to right, var(--color-accent-dark), var(--color-accent-light));
+  }
+
+  /* Live Feed */
+  .live-feed {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .live-feed-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  .live-skeleton {
+    height: 10px;
+    border-radius: 5px;
+    background: var(--color-warm-200);
+    display: block;
+  }
+
+  .live-badge {
+    flex-shrink: 0;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
+  }
+
+  .live-badge.new {
+    background: color-mix(in srgb, var(--color-success) 10%, transparent);
+    color: var(--color-success);
+  }
+
+  .live-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-success);
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  @media (max-width: 768px) {
+    .value-block {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 40px 0;
+      text-align: center;
+    }
+
+    .value-block--reversed {
+      direction: ltr;
+    }
+
+    .value-text p {
+      max-width: none;
+    }
+
+    .value-card {
+      max-width: 100%;
+    }
+
+    .value-header {
+      margin-bottom: 48px;
+    }
+  }
+</style>

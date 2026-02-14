@@ -147,6 +147,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     /* Accent Tints */
     --color-accent-soft: #f0fdfa;
     --color-accent-border: #ccfbf1;
+    --color-accent-glow: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    --shadow-accent: 0 4px 14px color-mix(in srgb, var(--color-accent) 25%, transparent);
 
     /* Deck Material Accents */
     --color-wood-cedar: #a47e3b;
@@ -177,6 +179,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     --font-size-3xl: 2rem;
     --font-size-4xl: 2.5rem;
     --font-size-5xl: 3rem;
+    --font-size-6xl: clamp(3.5rem, 7vw, 5.5rem);
+    --font-size-7xl: clamp(4rem, 8vw, 6.5rem);
     --font-size-h1: clamp(2.5rem, 5vw, 3.75rem);
     --font-size-h2: clamp(2rem, 3.5vw, 2.5rem);
     --font-size-h3: 1.5rem;
@@ -188,6 +192,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
     --line-height-relaxed: 1.75;
 
     /* Letter Spacing */
+    --letter-spacing-tighter: -0.03em;
     --letter-spacing-tight: -0.02em;
     --letter-spacing-normal: 0;
     --letter-spacing-wide: 0.02em;
@@ -201,7 +206,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
 
     /* Layout */
     --max-width: 1200px;
-    --section-spacing: 120px;
+    --max-width-narrow: 800px;
+    --max-width-text: 640px;
+    --section-spacing: 140px;
     --container-padding: 24px;
 
     /* Shadows - Layered Depth */
@@ -337,7 +344,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
   @media (min-width: 1440px) {
     :root {
       --container-padding: 48px;
-      --section-spacing: 160px;
+      --section-spacing: 180px;
     }
   }
 

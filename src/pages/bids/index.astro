@@ -104,6 +104,24 @@ const getRegionProvince = (region: string | null) => {
   if (!region) return '';
   return region.split(' ')[0] || '';
 };
+
+// detail_url이 없는 경우 소스별 fallback URL 생성
+const getDetailUrl = (bid: any): string | null => {
+  if (bid.detail_url) return bid.detail_url;
+  if (bid.source === 'lofin' && bid.raw_data?.laf_cd) {
+    return `https://lofin365.go.kr/portal/service/openInf498.do?laf_cd=${bid.raw_data.laf_cd}&ctrt_trgt_nm=${encodeURIComponent((bid.title || '').slice(0, 50))}`;
+  }
+  if (bid.source === 'g2b' && bid.bid_num) {
+    return `https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoDtl.do?bidno=${bid.bid_num}`;
+  }
+  if (bid.source === 'kapt' && bid.bid_num) {
+    return `https://www.k-apt.go.kr/bid/bidDetail.do?bidNum=${bid.bid_num}`;
+  }
+  if (bid.source === 'd2b' && bid.bid_num) {
+    return `https://www.d2b.go.kr/internet/pblancDetail.do?pblancNo=${bid.bid_num}`;
+  }
+  return null;
+};
 ---
 
 <BaseLayout
@@ -227,8 +245,8 @@ const getRegionProvince = (region: string | null) => {
               </div>
 
               <h3 class="bid-title">
-                {bid.detail_url ? (
-                  <a href={bid.detail_url} target="_blank" rel="noopener noreferrer">
+                {getDetailUrl(bid) ? (
+                  <a href={getDetailUrl(bid)!} target="_blank" rel="noopener noreferrer">
                     {bid.title}
                     <svg class="external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                   </a>
@@ -322,7 +340,7 @@ const getRegionProvince = (region: string | null) => {
                 )}
                 <div class="bid-links">
                   {bid.file_url && <a href={bid.file_url} class="link-file" target="_blank" rel="noopener noreferrer">첨부파일</a>}
-                  {bid.detail_url && <a href={bid.detail_url} class="link-detail" target="_blank" rel="noopener noreferrer">상세보기 →</a>}
+                  {getDetailUrl(bid) && <a href={getDetailUrl(bid)!} class="link-detail" target="_blank" rel="noopener noreferrer">상세보기 →</a>}
                 </div>
               </div>
             </article>

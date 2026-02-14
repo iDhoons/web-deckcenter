@@ -1,0 +1,317 @@
+---
+import { supabase } from '../lib/supabase';
+
+const { count: activeCount } = await supabase
+  .from('bid_notices')
+  .select('*', { count: 'exact', head: true })
+  .eq('status', 'active');
+
+const { data: bids } = await supabase
+  .from('bid_notices')
+  .select('id, title, org_name, region, estimated_price, deadline, detail_url, source, bid_num, raw_data')
+  .eq('status', 'active')
+  .order('reg_date', { ascending: false })
+  .limit(3);
+
+function getDetailUrl(bid: any): string | null {
+  if (bid.detail_url) return bid.detail_url;
+  if (bid.source === 'lofin' && bid.raw_data?.laf_cd) {
+    return `https://lofin365.go.kr/portal/service/openInf498.do?laf_cd=${bid.raw_data.laf_cd}&ctrt_trgt_nm=${encodeURIComponent((bid.title || '').slice(0, 50))}`;
+  }
+  if (bid.source === 'g2b' && bid.bid_num) {
+    return `https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoDtl.do?bidno=${bid.bid_num}`;
+  }
+  if (bid.source === 'kapt' && bid.bid_num) {
+    return `https://www.k-apt.go.kr/bid/bidDetail.do?bidNum=${bid.bid_num}`;
+  }
+  if (bid.source === 'd2b' && bid.bid_num) {
+    return `https://www.d2b.go.kr/internet/pblancDetail.do?pblancNo=${bid.bid_num}`;
+  }
+  return null;
+}
+
+function getDday(deadline: string) {
+  const diff = Math.ceil((new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'D-Day';
+  if (diff > 0) return `D-${diff}`;
+  return '마감';
+}
+
+function formatPrice(price: number | null) {
+  if (!price) return '-';
+  if (price >= 100000000) return `${(price / 100000000).toFixed(1)}억`;
+  if (price >= 10000) return `${Math.round(price / 10000).toLocaleString()}만원`;
+  return `${price.toLocaleString()}원`;
+}
+
+const displayCount = activeCount ?? 0;
+---
+
+<section class="bids" aria-labelledby="bids-heading">
+  <div class="bids-inner">
+    <div class="bids-header">
+      <h2 id="bids-heading">
+        지금 진행 중인 데크 입찰
+        <span class="bids-badge">{displayCount}건</span>
+      </h2>
+      <p>공공 · 아파트 · 상업 시설 데크 공사 입찰 정보</p>
+    </div>
+
+    {bids && bids.length > 0 ? (
+      <div class="bids-container">
+        {bids.map((bid, i) => (
+          <div class={`bid-row ${i < bids.length - 1 ? 'bid-row--bordered' : ''}`}>
+            <span class={`bid-dday ${getDday(bid.deadline) === 'D-Day' ? 'bid-dday--urgent' : getDday(bid.deadline) === '마감' ? 'bid-dday--closed' : ''}`}>
+              {getDday(bid.deadline)}
+            </span>
+            <div class="bid-content">
+              <h3 class="bid-title">
+                {getDetailUrl(bid) ? (
+                  <a href={getDetailUrl(bid)!} target="_blank" rel="noopener noreferrer">{bid.title}</a>
+                ) : (
+                  bid.title
+                )}
+              </h3>
+              <div class="bid-meta">
+                {bid.org_name && <span>{bid.org_name}</span>}
+                {bid.region && <span>{bid.region}</span>}
+                {bid.estimated_price && <span class="bid-price">{formatPrice(bid.estimated_price)}</span>}
+              </div>
+            </div>
+            <span class="bid-source">{bid.source}</span>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="bids-empty">현재 진행 중인 입찰이 없습니다.</p>
+    )}
+
+    <div class="bids-footer">
+      <a href="/bids" class="link-arrow">
+        전체 입찰 정보 보기
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { staggerReveal } from '../lib/animations';
+
+  function initBids() {
+    staggerReveal('.bids-container', '.bid-row');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBids);
+  } else {
+    initBids();
+  }
+  document.addEventListener('astro:page-load', initBids);
+</script>
+
+<style>
+  .bids {
+    padding: var(--section-spacing) 0;
+    background: var(--color-bg);
+  }
+
+  .bids-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .bids-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .bids-header h2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: var(--font-size-h2);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .bids-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: white;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    animation: badge-pulse 2s infinite;
+  }
+
+  @keyframes badge-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 30%, transparent); }
+    50% { box-shadow: 0 0 0 6px transparent; }
+  }
+
+  .bids-header p {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .bids-container {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-bg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .bid-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    transition: background var(--transition-base);
+  }
+
+  .bid-row:hover {
+    background: var(--color-accent-soft);
+  }
+
+  .bid-row--bordered {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .bid-dday {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
+  }
+
+  .bid-dday--urgent {
+    background: color-mix(in srgb, #ef4444 10%, transparent);
+    color: #ef4444;
+  }
+
+  .bid-dday--closed {
+    background: var(--color-warm-100);
+    color: var(--color-text-tertiary);
+  }
+
+  .bid-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bid-title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bid-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  .bid-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .bid-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  .bid-meta span:not(:last-child)::after {
+    content: '·';
+    margin-left: 12px;
+    opacity: 0.4;
+  }
+
+  .bid-price {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
+  .bid-source {
+    flex-shrink: 0;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  .bids-empty {
+    text-align: center;
+    color: var(--color-text-tertiary);
+    padding: 48px 0;
+  }
+
+  .bids-footer {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-accent);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: gap var(--transition-base), color var(--transition-base);
+  }
+
+  .link-arrow:hover {
+    gap: 12px;
+    color: var(--color-accent-light);
+  }
+
+  @media (max-width: 768px) {
+    .bid-row {
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 16px 20px;
+    }
+
+    .bid-content {
+      flex-basis: 100%;
+      order: 2;
+    }
+
+    .bid-title {
+      white-space: normal;
+    }
+
+    .bid-source {
+      order: 1;
+    }
+
+    .bids-header h2 {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>

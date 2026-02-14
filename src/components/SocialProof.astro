@@ -1,0 +1,264 @@
+---
+const metrics = [
+  { value: 2400, suffix: '+', label: '시뮬레이션 완료' },
+  { value: 18, suffix: '%', label: '평균 비용 절감' },
+  { value: 4.9, suffix: '/5.0', label: '시공사 만족도', isDecimal: true },
+];
+
+const testimonials = [
+  {
+    quote: '견적 작성 시간이 1시간에서 10분으로 단축되었습니다. 정말 효율적입니다.',
+    name: '박민수',
+    role: '데크 시공 업체',
+  },
+  {
+    quote: '고객에게 실시간으로 3D 데크 설계를 보여줄 수 있어 견적 성공률이 40% 올랐습니다.',
+    name: '김준영',
+    role: '주택개발사',
+  },
+];
+---
+
+<section class="social-proof" aria-labelledby="proof-heading">
+  <div class="proof-inner">
+    <div class="proof-header">
+      <h2 id="proof-heading">전문가들이 인정한 결과</h2>
+    </div>
+
+    <div class="proof-metrics">
+      {metrics.map((m) => (
+        <div class="metric">
+          <span
+            class="metric-value"
+            data-count={m.isDecimal ? undefined : m.value}
+            data-suffix={m.suffix}
+          >
+            {m.isDecimal ? `${m.value}${m.suffix}` : `0${m.suffix}`}
+          </span>
+          <span class="metric-label">{m.label}</span>
+        </div>
+      ))}
+    </div>
+
+    <div class="proof-quotes">
+      {testimonials.map((t) => (
+        <blockquote class="quote-card">
+          <span class="quote-mark" aria-hidden="true">"</span>
+          <p class="quote-text">{t.quote}</p>
+          <footer class="quote-author">
+            <span class="quote-avatar" aria-hidden="true">{t.name.charAt(0)}</span>
+            <div class="quote-author-info">
+              <span class="quote-name">{t.name}</span>
+              <span class="quote-role">{t.role}</span>
+            </div>
+          </footer>
+        </blockquote>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { fadeInUp, countUp } from '../lib/animations';
+
+  function initProof() {
+    fadeInUp('.proof-metrics', { y: 20 });
+    fadeInUp('.proof-quotes', { y: 20 });
+
+    document.querySelectorAll('.metric-value[data-count]').forEach((el) => {
+      const target = Number(el.getAttribute('data-count') || 0);
+      const suffix = el.getAttribute('data-suffix') || '';
+      countUp(el, target, suffix);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProof);
+  } else {
+    initProof();
+  }
+  document.addEventListener('astro:page-load', initProof);
+</script>
+
+<style>
+  .social-proof {
+    padding: var(--section-spacing) 0;
+    background: linear-gradient(135deg, #0f1419 0%, #1a2228 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle glow decoration */
+  .social-proof::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 6%, transparent), transparent 70%);
+    top: -200px;
+    right: -100px;
+    pointer-events: none;
+  }
+
+  .proof-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+    position: relative;
+    z-index: 1;
+  }
+
+  .proof-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .proof-header h2 {
+    font-size: var(--font-size-h2);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  /* Metrics */
+  .proof-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding-bottom: 56px;
+    margin-bottom: 56px;
+    text-align: center;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-xl);
+    padding: 36px 24px;
+    transition: background var(--transition-base);
+  }
+
+  .metric:hover {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .metric-value {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    color: var(--color-accent-light);
+    line-height: 1;
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .metric-label {
+    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+  }
+
+  /* Quotes */
+  .proof-quotes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .quote-card {
+    position: relative;
+    padding: 32px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(8px);
+    transition: background var(--transition-base), border-color var(--transition-base);
+  }
+
+  .quote-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .quote-mark {
+    position: absolute;
+    top: 16px;
+    left: 24px;
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--color-accent-light);
+    opacity: 0.25;
+    font-family: Georgia, serif;
+    pointer-events: none;
+  }
+
+  .quote-text {
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quote-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: var(--font-size-sm);
+  }
+
+  .quote-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+  }
+
+  .quote-author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .quote-name {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .quote-role {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: var(--font-size-xs);
+  }
+
+  @media (max-width: 768px) {
+    .proof-metrics {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding-bottom: 40px;
+      margin-bottom: 40px;
+    }
+
+    .metric {
+      padding: 24px 20px;
+    }
+
+    .proof-quotes {
+      grid-template-columns: 1fr;
+    }
+
+    .quote-card {
+      padding: 24px;
+    }
+  }
+</style>
