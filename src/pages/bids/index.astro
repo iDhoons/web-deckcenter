@@ -90,7 +90,7 @@ const getDday = (deadline: string | null) => {
 };
 
 const sourceLabels: Record<string, string> = {
-  g2b: '나라장터', kapt: 'K-APT', d2b: '국방조달', lofin: '지자체', alio: 'ALIO'
+  g2b: '나라장터', kapt: 'K-APT', d2b: '국방조달', lofin: '지자체', alio: 'ALIO', kwater: 'K-water', lh: 'LH'
 };
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
@@ -909,6 +909,8 @@ const getRegionProvince = (region: string | null) => {
   .source-badge.src-d2b { background: var(--color-danger-soft); color: var(--color-danger); }
   .source-badge.src-lofin { background: var(--color-accent-soft); color: var(--color-accent); }
   .source-badge.src-alio { background: var(--color-warning-soft); color: var(--color-warning); }
+  .source-badge.src-kwater { background: #e0f2fe; color: #0369a1; }
+  .source-badge.src-lh { background: #fce7f3; color: #be185d; }
 
   .status-badge {
     font-size: 0.7rem;

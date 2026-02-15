@@ -30,6 +30,10 @@ function formatPrice(price: number | null) {
   return `${price.toLocaleString()}원`;
 }
 
+const sourceLabels: Record<string, string> = {
+  g2b: '나라장터', kapt: 'K-APT', d2b: '국방조달', lofin: '지자체', kwater: 'K-water', lh: 'LH'
+};
+
 const displayCount = activeCount ?? 0;
 ---
 
@@ -50,7 +54,7 @@ const displayCount = activeCount ?? 0;
               <span class={`bid-dday ${getDday(bid.deadline) === 'D-Day' ? 'urgent' : ''}`}>
                 {getDday(bid.deadline)}
               </span>
-              <span class="bid-source">{bid.source}</span>
+              <span class="bid-source">{sourceLabels[bid.source] || bid.source}</span>
             </div>
             <h3 class="bid-title">
               {getDetailUrl(bid) ? (
