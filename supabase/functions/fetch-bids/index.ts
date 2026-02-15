@@ -34,6 +34,12 @@ const G2B_RESULT_SERVC = "https://apis.data.go.kr/1230000/as/ScsbidInfoService/g
 const D2B_BID_BASE = "http://openapi.d2b.go.kr/openapi/service/BidPblancInfoService/getDmstcCmpetBidPblancList";
 const D2B_RESULT_BASE = "http://openapi.d2b.go.kr/openapi/service/BidResultInfoService/getDmstcCmpetBidResultList";
 
+// K-water 전자조달 입찰공고 API (공사)
+const KWATER_BID_CNSTWK = "https://apis.data.go.kr/B500001/ebid/tndr3/cntrwkList";
+
+// LH 전자조달 입찰공고 API
+const LH_BID_BASE = "http://openapi.ebid.lh.or.kr/ebid.com.openapi.service.OpenBidInfoList.dev";
+
 // 지방재정365 계약현황 API (www.lofin365.go.kr 공식 OpenAPI)
 const LOFIN_API_BASE = "https://www.lofin365.go.kr/lf/hub/WCEGCF";
 
@@ -649,6 +655,206 @@ async function fetchLofinContracts(apiKey: string, supabase: any): Promise<{ bid
   return { bids, results };
 }
 
+// K-water 전자조달 입찰공고 수집 (공사)
+// API 응답 필드: tndrPbanno, tndrPblancNm, cntrctDeptNm, ctrmthdCdNm,
+//   tndrPblancDe(YYYYMMDD), tndrPblancEnddt(YYYYMMDD), tndrPlnprc, tndrStat
+async function fetchKwaterBids(apiKey: string): Promise<any[]> {
+  const results: any[] = [];
+  const seen = new Set<string>();
+
+  const now = new Date();
+  // 현재 월 + 지난달 (2개월 조회)
+  const months: string[] = [];
+  for (let i = 0; i < 2; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(`${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`);
+  }
+
+  for (const searchDt of months) {
+    let pageNo = 1;
+    const maxPages = 5;
+
+    while (pageNo <= maxPages) {
+      try {
+        const url = new URL(KWATER_BID_CNSTWK);
+        url.searchParams.set("serviceKey", apiKey);
+        url.searchParams.set("pageNo", String(pageNo));
+        url.searchParams.set("numOfRows", "100");
+        url.searchParams.set("searchDt", searchDt);
+        url.searchParams.set("_type", "json");
+
+        console.log(`[K-water] Fetching ${searchDt} page ${pageNo}`);
+        const res = await fetch(url.toString());
+        if (!res.ok) {
+          console.error(`[K-water] HTTP ${res.status} for ${searchDt} page ${pageNo}`);
+          break;
+        }
+
+        const data = await res.json();
+        const totalCount = data?.response?.body?.totalCount || 0;
+        const rawItems = data?.response?.body?.items?.item;
+        if (!rawItems) break;
+
+        const itemList = Array.isArray(rawItems) ? rawItems : [rawItems];
+        console.log(`[K-water] ${searchDt} page ${pageNo}: ${itemList.length}/${totalCount} items`);
+
+        for (const item of itemList) {
+          const title = item.tndrPblancNm || '';
+          const bidNum = item.tndrPbanno || '';
+          if (!bidNum || !title) continue;
+          if (seen.has(bidNum)) continue;
+
+          const matched = matchKeywords(title);
+          if (matched.length === 0) continue;
+
+          seen.add(bidNum);
+          results.push({
+            source: 'kwater',
+            bid_num: bidNum,
+            title: title,
+            org_name: item.cntrctDeptNm || '한국수자원공사',
+            estimated_price: item.tndrPlnprc ? parseInt(String(item.tndrPlnprc).replace(/[^0-9]/g, '')) : null,
+            bid_method: item.ctrmthdCdNm || null,
+            bid_type: '공사',
+            reg_date: toTimestamp(String(item.tndrPblancDe)),
+            deadline: toTimestamp(String(item.tndrPblancEnddt)),
+            open_date: null,
+            detail_url: 'https://ebid.kwater.or.kr/',
+            matched_keywords: matched,
+            status: item.tndrStat === '마감' ? 'closed' : 'active',
+            raw_data: item,
+          });
+        }
+
+        if (pageNo * 100 >= totalCount) break;
+        pageNo++;
+        await new Promise(r => setTimeout(r, 300));
+      } catch (e) {
+        const errMsg = e instanceof Error ? e.message : 'Unknown error';
+        console.error(`K-water fetch error ${searchDt} page ${pageNo}: ${errMsg}`);
+        break;
+      }
+    }
+  }
+
+  return results;
+}
+
+// LH XML에서 태그 값 추출 (CDATA 포함)
+function xmlGetText(itemXml: string, tag: string): string {
+  const re = new RegExp(`<${tag}>(?:<!\\[CDATA\\[)?([^<]*?)(?:\\]\\]>)?\\s*</${tag}>`);
+  const m = itemXml.match(re);
+  return m ? m[1].trim() : '';
+}
+
+// LH 전자조달 입찰공고 수집 (XML + EUC-KR 인코딩)
+// API 응답 필드: bidNum, bidnmKor, zoneHqCd, tndrCtrctMedCd,
+//   tndrbidRegDt(YYYYMMDD), tndrdocAcptEndDtm(YYYY/MM/DD HH:mm),
+//   openDtm, presmtPrc, fdmtlAmt, addtTax, bidProgrsStatus
+async function fetchLhBids(apiKey: string): Promise<any[]> {
+  const results: any[] = [];
+  const seen = new Set<string>();
+
+  const now = new Date();
+  const from = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const fmt = (d: Date) =>
+    `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+
+  let pageNo = 1;
+  const maxPages = 5;
+
+  while (pageNo <= maxPages) {
+    try {
+      const url = new URL(LH_BID_BASE);
+      url.searchParams.set("serviceKey", apiKey);
+      url.searchParams.set("numOfRows", "100");
+      url.searchParams.set("pageNo", String(pageNo));
+      url.searchParams.set("tndrbidRegDtStart", fmt(from));
+      url.searchParams.set("tndrbidRegDtEnd", fmt(now));
+
+      console.log(`[LH] Fetching page ${pageNo}`);
+      const res = await fetch(url.toString());
+      if (!res.ok) {
+        console.error(`[LH] HTTP ${res.status} page ${pageNo}`);
+        break;
+      }
+
+      // EUC-KR 디코딩
+      const buffer = await res.arrayBuffer();
+      let text: string;
+      try {
+        text = new TextDecoder('euc-kr').decode(buffer);
+      } catch {
+        text = new TextDecoder('utf-8').decode(buffer);
+      }
+
+      // totalCount 추출
+      const totalCountMatch = text.match(/<totalCount>(\d+)<\/totalCount>/);
+      const totalCount = totalCountMatch ? parseInt(totalCountMatch[1]) : 0;
+
+      // item 블록 추출
+      const itemBlocks = [...text.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+      console.log(`[LH] page ${pageNo}: ${itemBlocks.length}/${totalCount} items`);
+
+      if (itemBlocks.length === 0) break;
+
+      for (const block of itemBlocks) {
+        const xml = block[1];
+        const title = xmlGetText(xml, 'bidnmKor');
+        const bidNum = xmlGetText(xml, 'bidNum');
+        if (!bidNum || !title) continue;
+        if (seen.has(bidNum)) continue;
+
+        const matched = matchKeywords(title);
+        if (matched.length === 0) continue;
+
+        seen.add(bidNum);
+        const priceStr = xmlGetText(xml, 'presmtPrc');
+
+        results.push({
+          source: 'lh',
+          bid_num: bidNum,
+          title: title,
+          org_name: xmlGetText(xml, 'zoneHqCd') || '한국토지주택공사',
+          estimated_price: priceStr ? parseInt(priceStr.replace(/[^0-9]/g, '')) : null,
+          bid_method: xmlGetText(xml, 'tndrCtrctMedCd') || null,
+          bid_type: '공사',
+          reg_date: toTimestamp(xmlGetText(xml, 'tndrbidRegDt')),
+          deadline: toTimestamp(xmlGetText(xml, 'tndrdocAcptEndDtm')),
+          open_date: toTimestamp(xmlGetText(xml, 'openDtm')),
+          detail_url: 'https://ebid.lh.or.kr/',
+          matched_keywords: matched,
+          status: xmlGetText(xml, 'bidProgrsStatus') === '마감' ? 'closed' : 'active',
+          raw_data: {
+            bidNum,
+            bidnmKor: title,
+            zoneHqCd: xmlGetText(xml, 'zoneHqCd'),
+            presmtPrc: xmlGetText(xml, 'presmtPrc'),
+            fdmtlAmt: xmlGetText(xml, 'fdmtlAmt'),
+            addtTax: xmlGetText(xml, 'addtTax'),
+            tndrCtrctMedCd: xmlGetText(xml, 'tndrCtrctMedCd'),
+            tndrbidRegDt: xmlGetText(xml, 'tndrbidRegDt'),
+            tndrdocAcptEndDtm: xmlGetText(xml, 'tndrdocAcptEndDtm'),
+            openDtm: xmlGetText(xml, 'openDtm'),
+            bidProgrsStatus: xmlGetText(xml, 'bidProgrsStatus'),
+            cstrtnJobGbNm: xmlGetText(xml, 'cstrtnJobGbNm'),
+          },
+        });
+      }
+
+      if (pageNo * 100 >= totalCount) break;
+      pageNo++;
+      await new Promise(r => setTimeout(r, 300));
+    } catch (e) {
+      const errMsg = e instanceof Error ? e.message : 'Unknown error';
+      console.error(`LH fetch error page ${pageNo}: ${errMsg}`);
+      break;
+    }
+  }
+
+  return results;
+}
+
 Deno.serve(async (req: Request) => {
   const ALLOWED_ORIGIN = 'https://www.deckctr.com';
   const corsHeaders = {
@@ -704,7 +910,7 @@ Deno.serve(async (req: Request) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-  const stats = { kapt: 0, g2b: 0, d2b: 0, lofin: 0, results: 0, d2b_results: 0, lofin_results: 0, errors: [] as string[] };
+  const stats = { kapt: 0, g2b: 0, d2b: 0, lofin: 0, kwater: 0, lh: 0, results: 0, d2b_results: 0, lofin_results: 0, errors: [] as string[] };
 
   try {
     // 1. K-APT 입찰 수집
@@ -817,7 +1023,27 @@ Deno.serve(async (req: Request) => {
       else stats.d2b_results = d2bResults.length;
     }
 
-    // 7. 마감된 공고 상태 업데이트
+    // 7. K-water 입찰 수집
+    const kwaterBids = await fetchKwaterBids(DATA_GO_KR_API_KEY);
+    if (kwaterBids.length > 0) {
+      const { error } = await supabase
+        .from('bid_notices')
+        .upsert(kwaterBids, { onConflict: 'source,bid_num' });
+      if (error) stats.errors.push(`kwater upsert: ${error.message}`);
+      else stats.kwater = kwaterBids.length;
+    }
+
+    // 8. LH 입찰 수집
+    const lhBids = await fetchLhBids(DATA_GO_KR_API_KEY);
+    if (lhBids.length > 0) {
+      const { error } = await supabase
+        .from('bid_notices')
+        .upsert(lhBids, { onConflict: 'source,bid_num' });
+      if (error) stats.errors.push(`lh upsert: ${error.message}`);
+      else stats.lh = lhBids.length;
+    }
+
+    // 9. 마감된 공고 상태 업데이트
     await supabase
       .from('bid_notices')
       .update({ status: 'closed' })
@@ -861,6 +1087,8 @@ Deno.serve(async (req: Request) => {
       g2b_bids: stats.g2b,
       d2b_bids: stats.d2b,
       lofin_contracts: stats.lofin,
+      kwater_bids: stats.kwater,
+      lh_bids: stats.lh,
       g2b_results: stats.results,
       d2b_results: stats.d2b_results,
       lofin_results: stats.lofin_results,

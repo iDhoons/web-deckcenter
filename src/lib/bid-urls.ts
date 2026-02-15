@@ -38,6 +38,10 @@ export function getDetailUrl(bid: {
       return bid.bid_num
         ? `https://www.d2b.go.kr/internet/pblancDetail.do?pblancNo=${bid.bid_num}`
         : null;
+    case 'kwater':
+      return 'https://ebid.kwater.or.kr/';
+    case 'lh':
+      return 'https://ebid.lh.or.kr/';
     default:
       return null;
   }
