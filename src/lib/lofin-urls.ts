@@ -11,18 +11,18 @@ const PROVINCE_BID_URLS: Record<string, string> = {
   '26': 'https://www.busan.go.kr/depart/noticetender',                  // 부산
   '27': 'https://www.daegu.go.kr/index.do?menu_id=00000856',            // 대구
   '28': 'https://gyeyak.incheon.go.kr/',                                // 인천
-  '29': 'https://www.gwangju.go.kr/contentsView.do?pageId=www791',      // 광주
+  '29': 'https://gyeyak.gwangju.go.kr/',                                // 광주
   '30': 'https://www.daejeon.go.kr/gyeyak/index.do',                    // 대전
   '31': 'https://www.ulsan.go.kr/contract/bid/announcement/service',    // 울산
   '36': 'https://www.sejong.go.kr/contract.do',                         // 세종
   '41': 'https://www.gg.go.kr/bbs/board.do?bsIdx=488&menuId=1579',     // 경기
-  '42': 'https://www.provin.gangwon.kr/gw/portal/sub05_05_02',          // 강원
+  '42': 'https://confin.gwd.go.kr/contract/continfo/status',            // 강원
   '43': 'https://www.chungbuk.go.kr/www/selectGosiPblancList.do?key=422', // 충북
-  '44': 'http://gyeyak.chungnam.net/main.do',                           // 충남
-  '45': 'https://jeonbuk.go.kr/board/list.jeonbuk?boardId=BBS_0000028&menuCd=DOM_000000103004007000', // 전북
+  '44': 'https://www.chungnam.go.kr/gyeyak.do',                         // 충남
+  '45': 'https://www.jeonbuk.go.kr/index.jeonbuk?menuCd=DOM_000000103004005000', // 전북
   '46': 'https://www.jeonnam.go.kr/J0203/boardView.do',                 // 전남
   '47': 'https://www.gb.go.kr/Main/page.do?mnu_uid=6789&BD_CODE=gosi_notice&cmd=2', // 경북
-  '48': 'https://www.gyeongnam.go.kr/index.gyeong?menuCd=DOM_000000116003002000', // 경남
+  '48': 'https://minwon.gyeongnam.go.kr/citynet/jsp/sap/SAPGosiBizProcess.do?command=searchList&flag=gosiGL&svp=Y&sido=', // 경남
   '49': 'https://www.jeju.go.kr/open/contract/bid.htm',                 // 제주
   '50': 'https://www.jeju.go.kr/open/contract/bid.htm',                 // 제주 (신코드)
 };
