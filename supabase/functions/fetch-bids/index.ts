@@ -128,6 +128,20 @@ interface LofinContractItem {
   sbc_yn?: string;           // 하도급유무
 }
 
+const FETCH_TIMEOUT_MS = 15000; // 15초
+
+function fetchWithTimeout(url: string, opts?: RequestInit): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  return fetch(url, { ...opts, signal: controller.signal }).finally(() => clearTimeout(timeoutId));
+}
+
+function safeParseInt(val?: string | number | null): number | null {
+  if (val == null || val === '') return null;
+  const n = parseInt(String(val).replace(/[^0-9-]/g, ''));
+  return isNaN(n) ? null : n;
+}
+
 function matchKeywords(text: string): string[] {
   const lower = text.toLowerCase();
   return SEARCH_KEYWORDS.filter(kw => lower.includes(kw.toLowerCase()));
@@ -136,7 +150,12 @@ function matchKeywords(text: string): string[] {
 function toTimestamp(dateStr?: string): string | null {
   if (!dateStr) return null;
   try {
-    const d = new Date(dateStr);
+    let normalized = dateStr.trim();
+    // YYYYMMDD → YYYY-MM-DD (K-water, LH 등 data.go.kr API 형식)
+    if (/^\d{8}$/.test(normalized)) {
+      normalized = `${normalized.slice(0, 4)}-${normalized.slice(4, 6)}-${normalized.slice(6, 8)}`;
+    }
+    const d = new Date(normalized);
     return isNaN(d.getTime()) ? null : d.toISOString();
   } catch {
     return null;
@@ -159,7 +178,7 @@ async function fetchKaptBids(apiKey: string): Promise<any[]> {
       url.searchParams.set("type", "json");
 
       console.log(`[K-APT] Fetching keyword: ${keyword}, year: ${year}`);
-      const res = await fetch(url.toString());
+      const res = await fetchWithTimeout(url.toString());
       console.log(`[K-APT] Response status: ${res.status}`);
       if (!res.ok) {
         console.error(`[K-APT] HTTP ${res.status} for keyword '${keyword}'`);
@@ -247,7 +266,7 @@ async function fetchG2bBids(apiKey: string): Promise<any[]> {
         url.searchParams.set("bidNtceNm", keyword);
 
         console.log(`[G2B-${endpoint.type}] Fetching keyword: ${keyword}`);
-        const res = await fetch(url.toString());
+        const res = await fetchWithTimeout(url.toString());
         if (!res.ok) {
           console.error(`[G2B-${endpoint.type}] HTTP ${res.status} for '${keyword}'`);
           continue;
@@ -272,7 +291,7 @@ async function fetchG2bBids(apiKey: string): Promise<any[]> {
             title: item.bidNtceNm,
             org_name: item.ntceInsttNm || item.dminsttNm || null,
             org_code: item.ntceInsttCd || null,
-            estimated_price: item.presmptPrce ? parseInt(item.presmptPrce) : null,
+            estimated_price: safeParseInt(item.presmptPrce),
             bid_method: item.bidMethdNm || null,
             award_method: item.sucsfbidMthdNm || null,
             bid_type: endpoint.type,
@@ -329,7 +348,7 @@ async function fetchG2bResults(apiKey: string): Promise<any[]> {
         url.searchParams.set("inqryEndDt", formatDate(now));
 
         console.log(`[G2B-결과-${endpoint.type}] page ${pageNo}`);
-        const res = await fetch(url.toString());
+        const res = await fetchWithTimeout(url.toString());
         if (!res.ok) {
           console.error(`[G2B-결과-${endpoint.type}] HTTP ${res.status} page ${pageNo}`);
           break;
@@ -358,7 +377,7 @@ async function fetchG2bResults(apiKey: string): Promise<any[]> {
             bid_num: item.bidNtceNo,
             company_name: item.bidwinnrNm,
             company_bizno: item.bidwinnrBizno || null,
-            award_price: item.sucsfbidAmt ? parseInt(item.sucsfbidAmt) : null,
+            award_price: safeParseInt(item.sucsfbidAmt),
             award_rate: item.sucsfbidRate ? parseFloat(item.sucsfbidRate) : null,
             award_date: toTimestamp(item.fnlSucsfDate || item.rlOpengDt),
             raw_data: item,
@@ -400,7 +419,7 @@ async function fetchD2bBids(apiKey: string): Promise<any[]> {
       url.searchParams.set("bidNm", keyword);
 
       console.log(`[D2B] Fetching keyword: ${keyword}`);
-      const res = await fetch(url.toString());
+      const res = await fetchWithTimeout(url.toString());
       if (!res.ok) {
         console.error(`[D2B] HTTP ${res.status} for '${keyword}'`);
         continue;
@@ -478,7 +497,7 @@ async function fetchD2bResults(apiKey: string): Promise<any[]> {
     url.searchParams.set("opengDateEnd", fmt(now));
 
     console.log(`[D2B-결과] Fetching results`);
-    const res = await fetch(url.toString());
+    const res = await fetchWithTimeout(url.toString());
     if (!res.ok) {
       console.error(`[D2B-결과] HTTP ${res.status}`);
       return results;
@@ -608,9 +627,7 @@ async function fetchLofinContracts(apiKey: string, supabase: any): Promise<{ bid
       if (seen.has(contractId)) continue;
       seen.add(contractId);
 
-      const price = item.ctrt_tot_tott_amt
-        ? parseInt(String(item.ctrt_tot_tott_amt).replace(/[^0-9]/g, '')) || null
-        : null;
+      const price = safeParseInt(item.ctrt_tot_tott_amt);
 
       const ctrtDate = item.smz_ctrt_ymd || dateStr;
       const isoDate = ctrtDate.length === 8
@@ -684,7 +701,7 @@ async function fetchKwaterBids(apiKey: string): Promise<any[]> {
         url.searchParams.set("_type", "json");
 
         console.log(`[K-water] Fetching ${searchDt} page ${pageNo}`);
-        const res = await fetch(url.toString());
+        const res = await fetchWithTimeout(url.toString());
         if (!res.ok) {
           console.error(`[K-water] HTTP ${res.status} for ${searchDt} page ${pageNo}`);
           break;
@@ -713,7 +730,7 @@ async function fetchKwaterBids(apiKey: string): Promise<any[]> {
             bid_num: bidNum,
             title: title,
             org_name: item.cntrctDeptNm || '한국수자원공사',
-            estimated_price: item.tndrPlnprc ? parseInt(String(item.tndrPlnprc).replace(/[^0-9]/g, '')) : null,
+            estimated_price: safeParseInt(item.tndrPlnprc),
             bid_method: item.ctrmthdCdNm || null,
             bid_type: '공사',
             reg_date: toTimestamp(String(item.tndrPblancDe)),
@@ -740,11 +757,16 @@ async function fetchKwaterBids(apiKey: string): Promise<any[]> {
   return results;
 }
 
-// LH XML에서 태그 값 추출 (CDATA 포함)
+// LH XML에서 태그 값 추출 (CDATA 내 특수문자 대응)
 function xmlGetText(itemXml: string, tag: string): string {
-  const re = new RegExp(`<${tag}>(?:<!\\[CDATA\\[)?([^<]*?)(?:\\]\\]>)?\\s*</${tag}>`);
-  const m = itemXml.match(re);
-  return m ? m[1].trim() : '';
+  // CDATA 경로: <tag><![CDATA[...anything...]]></tag>
+  const cdataRe = new RegExp(`<${tag}><!\\[CDATA\\[([\\s\\S]*?)\\]\\]></${tag}>`);
+  const cdataMatch = itemXml.match(cdataRe);
+  if (cdataMatch) return cdataMatch[1].trim();
+  // 일반 경로: <tag>text</tag>
+  const plainRe = new RegExp(`<${tag}>([^<]*)</${tag}>`);
+  const plainMatch = itemXml.match(plainRe);
+  return plainMatch ? plainMatch[1].trim() : '';
 }
 
 // LH 전자조달 입찰공고 수집 (XML + EUC-KR 인코딩)
@@ -773,7 +795,7 @@ async function fetchLhBids(apiKey: string): Promise<any[]> {
       url.searchParams.set("tndrbidRegDtEnd", fmt(now));
 
       console.log(`[LH] Fetching page ${pageNo}`);
-      const res = await fetch(url.toString());
+      const res = await fetchWithTimeout(url.toString());
       if (!res.ok) {
         console.error(`[LH] HTTP ${res.status} page ${pageNo}`);
         break;
@@ -816,7 +838,7 @@ async function fetchLhBids(apiKey: string): Promise<any[]> {
           bid_num: bidNum,
           title: title,
           org_name: xmlGetText(xml, 'zoneHqCd') || '한국토지주택공사',
-          estimated_price: priceStr ? parseInt(priceStr.replace(/[^0-9]/g, '')) : null,
+          estimated_price: safeParseInt(priceStr),
           bid_method: xmlGetText(xml, 'tndrCtrctMedCd') || null,
           bid_type: '공사',
           reg_date: toTimestamp(xmlGetText(xml, 'tndrbidRegDt')),
