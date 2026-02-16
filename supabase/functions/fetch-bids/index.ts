@@ -136,6 +136,15 @@ function fetchWithTimeout(url: string, opts?: RequestInit): Promise<Response> {
   return fetch(url, { ...opts, signal: controller.signal }).finally(() => clearTimeout(timeoutId));
 }
 
+// 결정적 문자열 해시 (LOFIN contractId 폴백용)
+function simpleHash(str: string): string {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+  }
+  return (h >>> 0).toString(36);
+}
+
 function safeParseInt(val?: string | number | null): number | null {
   if (val == null || val === '') return null;
   const n = parseInt(String(val).replace(/[^0-9-]/g, ''));
@@ -622,7 +631,7 @@ async function fetchLofinContracts(apiKey: string, supabase: any): Promise<{ bid
       if (matched.length === 0) continue;
 
       const contractId = item.ctrt_ldgr_mng_no
-        || `${item.laf_cd || ''}-${item.smz_ctrt_ymd || dateStr}-${contractName.slice(0, 30)}`;
+        || `lofin-${item.laf_cd || ''}-${item.smz_ctrt_ymd || dateStr}-${simpleHash(contractName)}`;
 
       if (seen.has(contractId)) continue;
       seen.add(contractId);
@@ -877,6 +886,41 @@ async function fetchLhBids(apiKey: string): Promise<any[]> {
   return results;
 }
 
+// 낙찰 결과 → bid_notices 배치 연결 (N+1 제거)
+async function linkResultsToNotices(supabase: any, results: any[]) {
+  if (results.length === 0) return;
+
+  // source별로 그룹핑
+  const bySource = new Map<string, string[]>();
+  for (const r of results) {
+    if (!r.source || !r.bid_num) continue;
+    const nums = bySource.get(r.source) || [];
+    nums.push(r.bid_num);
+    bySource.set(r.source, nums);
+  }
+
+  // source별 배치 조회
+  const idMap = new Map<string, string>(); // "source:bid_num" → id
+  for (const [source, bidNums] of bySource) {
+    const { data: notices } = await supabase
+      .from('bid_notices')
+      .select('id, source, bid_num')
+      .eq('source', source)
+      .in('bid_num', bidNums);
+    if (notices) {
+      for (const n of notices) {
+        idMap.set(`${n.source}:${n.bid_num}`, n.id);
+      }
+    }
+  }
+
+  // 결과에 bid_notice_id 매핑
+  for (const r of results) {
+    const id = idMap.get(`${r.source}:${r.bid_num}`);
+    if (id) r.bid_notice_id = id;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   const ALLOWED_ORIGIN = 'https://www.deckctr.com';
   const corsHeaders = {
@@ -968,19 +1012,7 @@ Deno.serve(async (req: Request) => {
     // 4. 나라장터 낙찰 결과 수집
     const g2bResults = await fetchG2bResults(DATA_GO_KR_API_KEY);
     if (g2bResults.length > 0) {
-      for (const result of g2bResults) {
-        const { data: notice } = await supabase
-          .from('bid_notices')
-          .select('id')
-          .eq('source', result.source)
-          .eq('bid_num', result.bid_num)
-          .single();
-
-        if (notice) {
-          result.bid_notice_id = notice.id;
-        }
-      }
-
+      await linkResultsToNotices(supabase, g2bResults);
       const { error } = await supabase
         .from('bid_results')
         .upsert(g2bResults, { onConflict: 'source,bid_num' });
@@ -1001,17 +1033,7 @@ Deno.serve(async (req: Request) => {
       }
 
       if (lofin.results.length > 0) {
-        for (const result of lofin.results) {
-          const { data: notice } = await supabase
-            .from('bid_notices')
-            .select('id')
-            .eq('source', result.source)
-            .eq('bid_num', result.bid_num)
-            .single();
-
-          if (notice) result.bid_notice_id = notice.id;
-        }
-
+        await linkResultsToNotices(supabase, lofin.results);
         const { error } = await supabase
           .from('bid_results')
           .upsert(lofin.results, { onConflict: 'source,bid_num' });
@@ -1025,19 +1047,7 @@ Deno.serve(async (req: Request) => {
     // 6. D2B 입찰결과 수집
     const d2bResults = await fetchD2bResults(DATA_GO_KR_API_KEY);
     if (d2bResults.length > 0) {
-      for (const result of d2bResults) {
-        const { data: notice } = await supabase
-          .from('bid_notices')
-          .select('id')
-          .eq('source', result.source)
-          .eq('bid_num', result.bid_num)
-          .single();
-
-        if (notice) {
-          result.bid_notice_id = notice.id;
-        }
-      }
-
+      await linkResultsToNotices(supabase, d2bResults);
       const { error } = await supabase
         .from('bid_results')
         .upsert(d2bResults, { onConflict: 'source,bid_num' });
@@ -1066,11 +1076,22 @@ Deno.serve(async (req: Request) => {
     }
 
     // 9. 마감된 공고 상태 업데이트
-    await supabase
+    const { error: deadlineErr } = await supabase
       .from('bid_notices')
       .update({ status: 'closed' })
       .lt('deadline', new Date().toISOString())
       .eq('status', 'active');
+    if (deadlineErr) stats.errors.push(`deadline update: ${deadlineErr.message}`);
+
+    // 9-b. deadline null + 등록 90일 경과 → closed (데이터 부패 방지)
+    const staleDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    const { error: staleErr } = await supabase
+      .from('bid_notices')
+      .update({ status: 'closed' })
+      .eq('status', 'active')
+      .is('deadline', null)
+      .lt('reg_date', staleDate);
+    if (staleErr) stats.errors.push(`stale cleanup: ${staleErr.message}`);
 
   } catch (e) {
     stats.errors.push(`general: ${(e as Error).message}`);

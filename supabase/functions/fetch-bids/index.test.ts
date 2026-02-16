@@ -224,6 +224,35 @@ Deno.test("safeParseInt - 문자열 (NaN)", () => {
   assertEquals(safeParseInt("abc"), null);
 });
 
+// ============================================
+// 테스트: simpleHash
+// ============================================
+
+function simpleHash(str: string): string {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+  }
+  return (h >>> 0).toString(36);
+}
+
+Deno.test("simpleHash - 결정적 (같은 입력 → 같은 출력)", () => {
+  const a = simpleHash("데크 시설물 보수공사");
+  const b = simpleHash("데크 시설물 보수공사");
+  assertEquals(a, b);
+});
+
+Deno.test("simpleHash - 다른 입력 → 다른 출력", () => {
+  const a = simpleHash("데크 시설물 보수공사");
+  const b = simpleHash("데크 시설물 보수공사 2차");
+  assertEquals(a !== b, true);
+});
+
+Deno.test("simpleHash - 빈 문자열", () => {
+  const result = simpleHash("");
+  assertEquals(result, "0");
+});
+
 Deno.test("safeParseInt - 음수", () => {
   assertEquals(safeParseInt("-500"), -500);
 });
