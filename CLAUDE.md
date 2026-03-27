@@ -111,6 +111,16 @@ Defined in `BaseLayout.astro`:
 - Required: `title`, `excerpt`, `cover`, `location`, `area`, `material`, `duration`, `date`
 - Optional: `gallery[]`
 
+## Skills
+
+| 스킬 | 설명 | 트리거 |
+| ---- | ---- | ------ |
+| `verify-astro-style` | CSS 변수 사용, 하드코딩 색상 금지, scoped 스타일 준수 | `.astro` 파일 수정 후 |
+| `verify-content-schema` | MDX frontmatter 필수 필드 완전성 검증 | `src/content/**/*.mdx` 수정 후 |
+| `verify-edge-functions` | CORS, env null 체크, try/catch, 시크릿 금지 | `supabase/functions/` 수정 후 |
+| `verify-implementation` | 위 3개 스킬 순차 실행 (통합 검증) | PR 전 |
+| `manage-skills` | verify 스킬 드리프트 탐지 및 업데이트 | 새 패턴 도입 후 |
+
 ## External Integrations
 
 - **Estimate Calculator:** https://calc.deckctr.com (linked from CTAs)
@@ -118,3 +128,20 @@ Defined in `BaseLayout.astro`:
 - **RSS Feed:** Auto-generated via `@astrojs/rss`
 - **Smooth Scroll:** Lenis library (reinitialized on view transitions)
 - **Font CDN:** Paperlogy via `https://cdn.jsdelivr.net/gh/niceplugin/Paperlogy/Paperlogy.css`
+
+## Operations
+
+| 항목 | 내용 |
+|------|------|
+| 배포 | Vercel (자동 배포, PWA + 정적 생성) |
+| DB | Supabase (입찰 데이터 수집) |
+| 모니터링 | PostHog |
+| 패키지 | pnpm 9.15.4 |
+| 환경변수 | `.env.local` (SUPABASE_URL, ANON_KEY, DATA_GO_KR_API_KEY, FETCH_BIDS_SECRET) |
+| 사이트 | https://www.deckctr.com |
+
+### 알려진 이슈
+
+- `/src/pages/app.astro` Line 83: 이메일 수집 로직 미구현
+- Contact 페이지, FAQ 페이지, B2B/도매 페이지 미생성
+- 입찰 수집 안정성 개선 진행 중 (N+1 제거, 해시 ID, 에러 로깅)
