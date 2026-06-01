@@ -4,6 +4,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+@~/dev/outdoor/_shared-context/outdoor-structures.md
+
 ## Project Overview
 
 데크센터(Deckctr) - A Korean B2B/B2C marketing website for deck material suppliers. Built with Astro 5 static site generator.
