@@ -34,3 +34,12 @@ pnpm-debug.log*
 
 # design snapshots
 design-snapshots/
+
+# Claude screenshots (verification/debug captures)
+screenshots/
+screen_*.png
+*-check.png
+*-final.png
+
+# MCP server config (personal)
+.mcp.json

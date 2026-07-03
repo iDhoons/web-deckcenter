@@ -4,7 +4,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-@~/dev/outdoor/_shared-context/outdoor-structures.md
+@~/projects/outdoor/_shared-context/outdoor-structures.md
 
 ## Project Overview
 
@@ -122,6 +122,10 @@ Defined in `BaseLayout.astro`:
 | `verify-edge-functions` | CORS, env null 체크, try/catch, 시크릿 금지 | `supabase/functions/` 수정 후 |
 | `verify-implementation` | 위 3개 스킬 순차 실행 (통합 검증) | PR 전 |
 | `manage-skills` | verify 스킬 드리프트 탐지 및 업데이트 | 새 패턴 도입 후 |
+
+## 코드 규약 (단위 접미사)
+
+JS/TS 숫자 변수는 단위 접미사를 붙인다 (`Mm`/`M2`/`Pyeong`/`Krw`/`Deg`/`Pct` 등). 전체 표·정의는 `_shared-context/outdoor-structures.md §4.5` (위 @import로 자동 로드). **신규 코드부터 적용**, 기존 코드 전면 변환은 별도(DEC-730).
 
 ## External Integrations
 
