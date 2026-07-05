@@ -1,0 +1,394 @@
+---
+// CinematicStage — 데크센터 홈 시네마틱 WebGL 경험 (합성목재 제조사)
+// sticky WebGL 스테이지 위로 5막 내러티브가 스크롤된다. 에셋 원격 0, 절차적 생성.
+---
+
+<div class="cine" id="cine">
+  <div class="cine-stage" aria-hidden="true">
+    <canvas id="cine-canvas"></canvas>
+    <div class="cine-atmo"></div>
+    <div class="cine-fallback" id="cine-fallback"></div>
+  </div>
+
+  <div class="cine-acts">
+    <!-- Act 0 — Hero / 제조 정체성 -->
+    <section class="cine-act" data-act="0" data-align="center" aria-labelledby="cine-h0">
+      <div class="act-inner">
+        <span class="act-kicker" data-reveal><span class="k-dot"></span>합성목재 제조 · 데크센터</span>
+        <h1 class="act-h hero-h" id="cine-h0" data-reveal>세월을 견디는<br /><em>목재의 아름다움</em></h1>
+        <p class="act-lede" data-reveal>목분과 고분자 수지로 빚어낸 합성목재(WPC). 데크센터가 소재 설계부터 시공까지 책임집니다.</p>
+        <div class="act-actions" data-reveal>
+          <a href="/contact" class="btn btn-primary">프로젝트 상담</a>
+          <a href="#cine-products" class="act-link">제품 보기
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="cine-cue" data-reveal><span>스크롤</span><span class="cue-line"></span></div>
+    </section>
+
+    <!-- Act 1 — 소재 / 왜 합성목재인가 -->
+    <section class="cine-act" data-act="1" data-align="left" aria-labelledby="cine-h1">
+      <div class="act-inner">
+        <span class="act-index" data-reveal>01 — 소재</span>
+        <h2 class="act-h" id="cine-h1" data-reveal>썩지도, 갈라지지도<br /><em>않습니다</em></h2>
+        <p class="act-lede" data-reveal>천연 목재의 아름다움은 그대로, 단점은 완벽히 보완한 고밀도 캡형(capped) 합성목재. 오일 스테인 없이 가벼운 물청소만으로 충분합니다.</p>
+        <ul class="act-points" data-reveal>
+          <li>부패·해충 저항 — 반영구적 사용</li>
+          <li>표면 코팅으로 햇빛 변색 최소화</li>
+          <li>옹이·휨 없는 균일한 품질</li>
+          <li>논슬립 표면 — 눈·비에도 안전</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Act 2 — 제품군 -->
+    <section class="cine-act" data-act="2" data-align="right" id="cine-products" aria-labelledby="cine-h2">
+      <div class="act-inner">
+        <span class="act-index" data-reveal>02 — 제품</span>
+        <h2 class="act-h" id="cine-h2" data-reveal>하나의 소재,<br /><em>모든 외부공간</em></h2>
+        <p class="act-lede" data-reveal>데크부터 펜스, 파고라까지. 같은 품질의 합성목재로 야외 공간 전체를 하나의 언어로 완성합니다.</p>
+        <div class="act-chips" data-reveal>
+          <span class="chip">데크</span>
+          <span class="chip">펜스 · 난간</span>
+          <span class="chip">파고라</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Act 3 — 품질 / 인증 -->
+    <section class="cine-act" data-act="3" data-align="left" aria-labelledby="cine-h3">
+      <div class="act-inner">
+        <span class="act-index" data-reveal>03 — 품질</span>
+        <h2 class="act-h" id="cine-h3" data-reveal>검증된<br /><em>제조 품질</em></h2>
+        <p class="act-lede" data-reveal>규격과 성적서로 증명하는 신뢰. 데크센터의 합성목재는 국가 표준과 공인 시험을 통과했습니다.</p>
+        <ul class="act-badges" data-reveal>
+          <li><strong>KS F 3230</strong><span>목재·플라스틱 복합재</span></li>
+          <li><strong>공인 시험성적서</strong><span>물성 검증</span></li>
+          <li><strong>환경표지 인증</strong><span>친환경 자재</span></li>
+          <li><strong>혁신시제품 · 벤처기업</strong><span>기업부설연구소</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Act 4 — 문의 CTA -->
+    <section class="cine-act" data-act="4" data-align="center" aria-labelledby="cine-h4">
+      <div class="act-inner">
+        <span class="act-index" data-reveal>04 — 시작</span>
+        <h2 class="act-h" id="cine-h4" data-reveal>공간의 다음 계절을<br /><em>함께 짓습니다</em></h2>
+        <p class="act-lede" data-reveal>도면 한 장, 사진 한 장이면 충분합니다. 데크센터가 소재부터 시공까지 함께합니다.</p>
+        <div class="act-actions" data-reveal>
+          <a href="/contact" class="btn btn-primary">프로젝트 상담하기</a>
+          <a href="/gallery" class="act-link">시공 사례
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <nav class="cine-rail" aria-hidden="true" id="cine-rail"></nav>
+</div>
+
+<script>
+  import { createCinematicScene, ACT_COUNT, type CineController } from '../lib/cinematic-scene';
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  declare global {
+    interface Window {
+      __DECKCTR_READY__?: boolean;
+      __DECKCTR_STATS__?: unknown;
+    }
+  }
+
+  const RAIL_LABELS = ['소개', '소재', '제품', '품질', '문의'];
+
+  let controller: CineController | null = null;
+  let triggers: ScrollTrigger[] = [];
+  let railButtons: HTMLElement[] = [];
+  let resizeHandler: (() => void) | null = null;
+
+  function reduced(): boolean {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function buildRail(): void {
+    const rail = document.getElementById('cine-rail');
+    if (!rail) return;
+    rail.innerHTML = '';
+    railButtons = RAIL_LABELS.map((label, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rail-dot';
+      b.innerHTML = `<span class="rail-label">${String(i).padStart(2, '0')} ${label}</span><span class="rail-mark"></span>`;
+      b.addEventListener('click', () => {
+        const act = document.querySelector(`.cine-act[data-act="${i}"]`);
+        act?.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth' });
+      });
+      rail.appendChild(b);
+      return b;
+    });
+  }
+
+  function setActive(i: number): void {
+    controller?.setActiveAct(i);
+    railButtons.forEach((b, j) => b.classList.toggle('is-active', j === i));
+  }
+
+  function init(): void {
+    const canvas = document.getElementById('cine-canvas') as HTMLCanvasElement | null;
+    const cine = document.getElementById('cine');
+    if (!canvas || !cine) return;
+
+    const isReduced = reduced();
+    controller = createCinematicScene(canvas, { reducedMotion: isReduced });
+    buildRail();
+
+    // global scroll progress → camera choreography
+    triggers.push(
+      ScrollTrigger.create({
+        trigger: cine,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: (self) => controller?.setProgress(self.progress),
+      }),
+    );
+
+    // per-act activation + content reveal
+    const acts = Array.from(document.querySelectorAll<HTMLElement>('.cine-act'));
+    acts.forEach((act, i) => {
+      triggers.push(
+        ScrollTrigger.create({
+          trigger: act,
+          start: 'top 55%',
+          end: 'bottom 45%',
+          onEnter: () => setActive(i),
+          onEnterBack: () => setActive(i),
+        }),
+      );
+      const revealEls = act.querySelectorAll<HTMLElement>('[data-reveal]');
+      if (isReduced) {
+        gsap.set(revealEls, { clearProps: 'all' });
+      } else {
+        gsap.set(revealEls, { y: 40, opacity: 0 });
+        triggers.push(
+          ScrollTrigger.create({
+            trigger: act,
+            start: 'top 72%',
+            onEnter: () => gsap.to(revealEls, { y: 0, opacity: 1, duration: 1.1, stagger: 0.1, ease: 'power3.out' }),
+            onLeaveBack: () => gsap.to(revealEls, { y: 40, opacity: 0, duration: 0.4 }),
+          }),
+        );
+      }
+    });
+
+    setActive(0);
+    if (!isReduced) gsap.to('.cine-act[data-act="0"] [data-reveal]', { y: 0, opacity: 1, duration: 1.1, stagger: 0.1, ease: 'power3.out' });
+
+    resizeHandler = () => controller?.resize();
+    window.addEventListener('resize', resizeHandler);
+    ScrollTrigger.refresh();
+
+    window.__DECKCTR_READY__ = true;
+    window.__DECKCTR_STATS__ = controller.stats;
+  }
+
+  function cleanup(): void {
+    window.__DECKCTR_READY__ = false;
+    triggers.forEach((t) => t.kill());
+    triggers = [];
+    railButtons = [];
+    if (resizeHandler) window.removeEventListener('resize', resizeHandler);
+    resizeHandler = null;
+    controller?.dispose();
+    controller = null;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+  document.addEventListener('astro:page-load', () => { cleanup(); init(); });
+  document.addEventListener('astro:before-swap', cleanup);
+</script>
+
+<style>
+  .cine {
+    position: relative;
+    /* full-bleed out of the centred <main> */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+  }
+
+  .cine-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 0;
+    overflow: hidden;
+    background: linear-gradient(170deg, #eef1f0 0%, #f6f4ef 55%, #e8ece9 100%);
+  }
+  #cine-canvas { display: block; width: 100%; height: 100%; }
+
+  /* soft light atmosphere: top glow + edge vignette (keeps it premium, not flat) */
+  .cine-atmo {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 45% at 50% 12%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 70%),
+      radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(60, 50, 40, 0.10) 100%);
+  }
+  .cine-fallback { position: absolute; inset: 0; z-index: -1; background: var(--color-bg); }
+
+  .cine-acts {
+    position: relative;
+    z-index: 1;
+    margin-top: -100vh; /* pull the narrative over the sticky stage */
+  }
+
+  .cine-act {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 clamp(24px, 7vw, 120px);
+    position: relative;
+  }
+  .cine-act[data-align='center'] { justify-content: center; text-align: center; }
+  .cine-act[data-align='right'] { justify-content: flex-end; text-align: right; }
+  .cine-act[data-align='left'] { justify-content: flex-start; }
+
+  .act-inner {
+    max-width: 560px;
+    /* frosted legibility panel over the 3D */
+    background: color-mix(in srgb, var(--color-bg) 62%, transparent);
+    backdrop-filter: blur(10px) saturate(1.05);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
+    border: 1px solid color-mix(in srgb, var(--color-white) 45%, transparent);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    padding: clamp(28px, 4vw, 48px);
+  }
+  .cine-act[data-align='center'] .act-inner { max-width: 720px; }
+
+  .act-kicker,
+  .act-index {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    letter-spacing: var(--letter-spacing-wide);
+    color: var(--color-accent);
+    margin-bottom: 1.5rem;
+  }
+  .act-index { text-transform: uppercase; letter-spacing: 0.14em; }
+  .k-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent); }
+
+  .act-h {
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: var(--letter-spacing-tighter);
+    color: var(--color-text);
+    font-size: var(--font-size-h1);
+    margin-bottom: 1.25rem;
+  }
+  .hero-h { font-size: var(--font-size-6xl); }
+  .act-h em { font-style: normal; color: var(--color-accent); }
+
+  .act-lede {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+    margin-bottom: 1.75rem;
+  }
+
+  .act-points,
+  .act-badges { list-style: none; display: grid; gap: 0.75rem; }
+  .act-points li {
+    position: relative;
+    padding-left: 1.4rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+  }
+  .act-points li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.55em;
+    width: 8px; height: 8px; border-radius: 2px;
+    background: var(--color-accent);
+  }
+  .act-badges { grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+  .act-badges li {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 0.9rem 1rem;
+    background: color-mix(in srgb, var(--color-accent) 6%, var(--color-white));
+    border: 1px solid var(--color-accent-border);
+    border-radius: var(--radius-md);
+  }
+  .act-badges strong { color: var(--color-text); font-size: var(--font-size-base); font-weight: 700; }
+  .act-badges span { color: var(--color-text-tertiary); font-size: var(--font-size-xs); }
+
+  .act-actions {
+    display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .cine-act[data-align='center'] .act-actions { justify-content: center; }
+  .cine-act[data-align='right'] .act-actions,
+  .cine-act[data-align='right'] .act-chips { justify-content: flex-end; }
+  .act-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    color: var(--color-text-secondary); font-weight: 600; font-size: var(--font-size-base);
+    transition: color var(--transition-base);
+  }
+  .act-link:hover { color: var(--color-accent); }
+
+  .act-chips { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .chip {
+    padding: 0.5rem 1.1rem; border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-accent) 8%, var(--color-white));
+    border: 1px solid var(--color-accent-border);
+    color: var(--color-accent); font-weight: 600; font-size: var(--font-size-sm);
+  }
+
+  .cine-cue {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    font-size: var(--font-size-xs); letter-spacing: 0.3em; color: var(--color-text-tertiary);
+  }
+  .cue-line { width: 1px; height: 42px; background: linear-gradient(var(--color-accent), transparent); animation: cue 2.4s ease-in-out infinite; transform-origin: top; }
+  @keyframes cue { 0%, 100% { transform: scaleY(0.3); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+
+  .cine-rail {
+    position: fixed; right: clamp(14px, 2.5vw, 34px); top: 50%; transform: translateY(-50%);
+    z-index: 5; display: flex; flex-direction: column; gap: 14px; align-items: flex-end;
+  }
+  .rail-dot {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: none; border: none; cursor: pointer; color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs); letter-spacing: 0.12em; text-transform: uppercase;
+    opacity: 0.55; transition: opacity var(--transition-base);
+  }
+  .rail-label { opacity: 0; transform: translateX(6px); transition: all var(--transition-base); }
+  .rail-mark { width: 7px; height: 7px; border-radius: 50%; background: currentColor; transition: all var(--transition-base); }
+  .rail-dot:hover { opacity: 1; }
+  .rail-dot:hover .rail-label { opacity: 1; transform: translateX(0); }
+  .rail-dot.is-active { opacity: 1; color: var(--color-accent); }
+  .rail-dot.is-active .rail-mark { transform: scale(1.7); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 18%, transparent); }
+  .rail-dot.is-active .rail-label { opacity: 1; transform: translateX(0); }
+
+  @media (max-width: 900px) {
+    .cine-rail { display: none; }
+    .act-inner { max-width: 100%; }
+    .act-badges { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .cine-act { padding: 0 20px; text-align: left; justify-content: flex-start; }
+    .cine-act[data-align='center'], .cine-act[data-align='right'] { text-align: left; justify-content: flex-start; }
+    .cine-act[data-align='right'] .act-actions, .cine-act[data-align='center'] .act-actions { justify-content: flex-start; }
+    .hero-h { font-size: var(--font-size-5xl); }
+  }
+</style>

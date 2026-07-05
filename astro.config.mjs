@@ -18,7 +18,7 @@ export default defineConfig({
       manifest: {
         name: '데크센터',
         short_name: '데크센터',
-        description: '데크 시공 입찰 정보 · 견적 시뮬레이터 · 소재 가이드',
+        description: '합성목재(WPC) 데크·펜스·파고라 제조. KS F 3230 인증 자재. 데크센터.',
         theme_color: '#0d9488',
         background_color: '#fafafa',
         display: 'standalone',

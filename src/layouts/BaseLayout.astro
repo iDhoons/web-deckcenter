@@ -11,8 +11,8 @@ interface Props {
 }
 
 const {
-  title = '데크센터 | 3D 데크 설계 시뮬레이터',
-  description = '드래그 앤 드롭으로 쉽게 데크를 설계하고, 실시간 견적을 확인하세요.',
+  title = '데크센터 | 합성목재(WPC) 데크·펜스·파고라 제조',
+  description = '합성목재(WPC) 전문. KS F 3230 인증 자재로 야외 공간을 짓습니다. 소재 설계부터 시공까지 — 데크센터.',
   image = 'https://images.unsplash.com/photo-1590059392209-799446d3283c?auto=format&fit=crop&q=80&w=1200',
 } = Astro.props;
 
@@ -237,6 +237,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://www.deck
   html {
     scroll-behavior: smooth;
     scrollbar-gutter: stable;
+    overflow-x: clip; /* contain off-canvas mobile menu without breaking position:sticky */
   }
 
   html.lenis, html.lenis body {
