@@ -54,6 +54,7 @@ function glowTexture(): THREE.CanvasTexture {
     x.fillRect(0, 0, 128, 128);
   }
   const t = new THREE.CanvasTexture(c);
+  t.flipY = false;
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
@@ -64,7 +65,11 @@ function createWpcTexture(baseHex: number, grainHex: number): THREE.CanvasTextur
   canvas.width = 1024;
   canvas.height = 512;
   const ctx = canvas.getContext('2d');
-  if (!ctx) return new THREE.CanvasTexture(canvas);
+  if (!ctx) {
+    const fallback = new THREE.CanvasTexture(canvas);
+    fallback.flipY = false;
+    return fallback;
+  }
   const base = new THREE.Color(baseHex);
   const grain = new THREE.Color(grainHex);
   ctx.fillStyle = `#${base.getHexString()}`;
@@ -87,6 +92,7 @@ function createWpcTexture(baseHex: number, grainHex: number): THREE.CanvasTextur
   }
   ctx.putImageData(img, 0, 0);
   const tex = new THREE.CanvasTexture(canvas);
+  tex.flipY = false;
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 8;
