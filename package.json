@@ -3,6 +3,11 @@
   "type": "module",
   "version": "0.0.1",
   "packageManager": "pnpm@9.15.4",
+  "pnpm": {
+    "overrides": {
+      "fast-xml-parser": "5.10.1"
+    }
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
