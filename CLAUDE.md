@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-> AI 에이전트 상세 규칙은 [AGENTS.md](./AGENTS.md)를 참조하세요.
+@AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -149,5 +149,5 @@ JS/TS 숫자 변수는 단위 접미사를 붙인다 (`Mm`/`M2`/`Pyeong`/`Krw`/`
 ### 알려진 이슈
 
 - `/src/pages/app.astro` Line 83: 이메일 수집 로직 미구현
-- Contact 페이지, FAQ 페이지, B2B/도매 페이지 미생성
+- B2B/도매 페이지 미생성
 - 입찰 수집 안정성 개선 진행 중 (N+1 제거, 해시 ID, 에러 로깅)

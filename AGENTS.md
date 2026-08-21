@@ -238,6 +238,22 @@ content: 콘텐츠(MDX) 추가/수정
 - 견적 계산기: https://calc.deckctr.com (CTA 링크 대상)
 - Sitemap/RSS: @astrojs/sitemap, @astrojs/rss 자동 생성
 
+### SEO 도구 (미설치)
+
+기술 SEO·Schema.org·GEO(AI 검색) 감사가 필요하면 claude-seo 플러그인을 설치해 쓴다.
+설치 전까지는 로드되지 않으므로 자동으로 호출되지 않는다.
+
+```
+/plugin marketplace add AgriciDaniel/claude-seo
+/plugin install claude-seo@agricidaniel-claude-seo
+/seo doctor
+```
+
+- 현재 공백: Schema.org 구조화 데이터 없음 (`src/` 전체 `ld+json` 0건)
+- 이미 있음: `@astrojs/sitemap`, `src/pages/robots.txt.ts`
+- 한계: Google 중심 — Naver SEO 방법론은 커버하지 않는다
+- 판정 근거: notes-board `apple:b55b8f35e4f1f652` (adopted, 2026-08-21)
+
 ## Maintenance Policy
 
 1. 이 파일의 규칙과 실제 코드가 불일치하면 즉시 업데이트를 제안하라
